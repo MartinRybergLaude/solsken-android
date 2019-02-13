@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/text_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:text="Tisdag"
+        android:textColor="@color/textPrimary"
+        android:textSize="20sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:textAlignment="textEnd"
+        android:text="11 februari 2019"
+        android:textColor="@color/textSecondary"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:textStyle="normal"/>
+
+</LinearLayout>

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Skyfall</string>
+    <string name="today">Idag</string>
+    <string name="permission_error">Något gick fel! Försök igen.</string>
+    <string name="permission_welcome">Hej!</string>
+    <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
+    <string name="permission_button">Godkänn</string>
+
 </resources>
