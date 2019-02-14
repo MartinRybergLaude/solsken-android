@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.EventItem;
 import com.martinryberglaude.skyfall.data.ListItem;
+import com.martinryberglaude.skyfall.model.RequestLocationModel;
 import com.martinryberglaude.skyfall.model.RequestWeatherModel;
 import com.martinryberglaude.skyfall.presenter.MainPresenter;
 
@@ -43,7 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View {
+public class MainActivity extends AppCompatActivity implements MainContract.View, MainContract.RequestLocationIntractor.OnFinishedListerner {
 
     private RecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
@@ -56,6 +58,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private TextView wsymb2Text;
     private SwipeRefreshLayout pullToRefresh;
     private List<ListItem> recyclerViewList = new ArrayList<>();
+
+    public Coordinate getCurrentCoordinate() {
+        return currentCoordinate;
+    }
+    private Coordinate currentCoordinate;
+    private MainContract.RequestLocationIntractor getLocationIntractor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +91,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
-
-        mainPresenter = new MainPresenter(this, new RequestWeatherModel());
-
-        mainPresenter.loadColorTheme();
-        mainPresenter.requestWeatherData();
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        getLocationIntractor = new RequestLocationModel(locationManager);
+        mainPresenter = new MainPresenter(this, new RequestWeatherModel(), getResources().getString(R.string.weather_error));
+        mainPresenter.updateLocationAndUI();
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mainPresenter.requestWeatherData();
+                mainPresenter.updateLocationAndUI();
             }
         });
     }
@@ -136,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void initWeatherUI(final List<ListItem> itemList) {
+        // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -152,11 +160,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
                 recyclerView.setAdapter(adapter);
             }
-        }, 160);
+        }, 200);
     }
 
     @Override
     public void updateWeatherUI(final List<ListItem> itemList) {
+        // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 recyclerViewList.addAll(itemList);
                 adapter.notifyDataSetChanged();
             }
-        }, 160);
+        }, 200);
 
     }
 
@@ -177,13 +186,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Toast.makeText(MainActivity.this, message,
                 Toast.LENGTH_LONG).show();
     }
-
-    @Override
-    public Coordinate requestCoordinate() {
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        return new Coordinate(location.getLongitude(),location.getLatitude());
-    }
     @Override
     public String requestAdressString(Coordinate coordinate) {
         Geocoder geocoder;
@@ -191,14 +193,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         geocoder = new Geocoder(this, Locale.getDefault());
         try {
             addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
-            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
             String city = addresses.get(0).getLocality();
-            String state = addresses.get(0).getAdminArea();
-            String country = addresses.get(0).getCountryName();
-            String postalCode = addresses.get(0).getPostalCode();
-            String knownName = addresses.get(0).getFeatureName(); // Only if available else returns null
+            String adress = addresses.get(0).getAddressLine(0);
+            String knownName = addresses.get(0).getFeatureName();
             if (city == null) return knownName;
-            else return city + ", " + state;
+            else return city + ", " + adress;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -217,6 +216,25 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private boolean hasPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // Get location asynchronously, has to be called from activity as it needs context
+    @Override
+    public void updateLocationAndUI() {
+        getLocationIntractor.getLocation(this,this);
+    }
+
+    // When location has been retrieved, launch all other tasks.
+    @Override
+    public void onFinishedRetrieveLocation(Coordinate coordinate) {
+        this.currentCoordinate = coordinate;
+        mainPresenter.loadColorTheme();
+        mainPresenter.requestWeatherData();
+    }
+
+    @Override
+    public void onFailureRetrieveLocationn() {
+        showToast(getResources().getString(R.string.weather_error));
     }
 }
 

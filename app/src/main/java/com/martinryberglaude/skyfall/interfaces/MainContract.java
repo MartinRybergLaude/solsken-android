@@ -1,5 +1,7 @@
 package com.martinryberglaude.skyfall.interfaces;
 
+import android.content.Context;
+
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.ListItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
@@ -18,12 +20,14 @@ public interface MainContract {
         void updateWeatherUI(List<ListItem> itemList);
         void setColorTheme(TimeOfDay timeOfDay);
         void showToast(String message);
-        Coordinate requestCoordinate();
         String requestAdressString(Coordinate coordinate);
         void showRefresh(boolean b);
+        Coordinate getCurrentCoordinate();
+        void updateLocationAndUI();
     }
 
     interface Presenter {
+        void updateLocationAndUI();
         TimeOfDay getTimeOfDay();
         void loadColorTheme();
         void requestWeatherData();
@@ -36,6 +40,13 @@ public interface MainContract {
             void onFailureRetrieveData(Throwable t);
         }
         void getWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
+    }
+    interface RequestLocationIntractor {
+        interface OnFinishedListerner {
+            void onFinishedRetrieveLocation(Coordinate coordinate);
+            void onFailureRetrieveLocationn();
+        }
+        void getLocation(OnFinishedListerner onFinishedListerner, Context context);
     }
 
     interface FormatWeatherIntractor {

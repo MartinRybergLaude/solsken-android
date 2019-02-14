@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import retrofit2.Response;
 
-public class FormatDataAsyncTask extends AsyncTask<Response<RetroWeatherData>, Integer, List<ListItem>> implements MainContract.FormatWeatherIntractor {
+public class FormatDataAsyncTaskModel extends AsyncTask<Response<RetroWeatherData>, Integer, List<ListItem>> implements MainContract.FormatWeatherIntractor {
     public MainContract.FormatWeatherIntractor.OnFinishedListener delegate = null;
     // Background thread
     @Override

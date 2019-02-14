@@ -1,10 +1,9 @@
 package com.martinryberglaude.skyfall.presenter;
 
-
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.ListItem;
-import com.martinryberglaude.skyfall.model.FormatDataAsyncTask;
+import com.martinryberglaude.skyfall.model.FormatDataAsyncTaskModel;
 import com.martinryberglaude.skyfall.model.MainModel;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
 
@@ -18,38 +17,46 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     private MainContract.View view;
     private MainContract.RequestWeatherIntractor getWeatherIntractor;
     private MainModel model;
+    private String weatherErrorString;
 
     private boolean isStart = true;
 
-    public MainPresenter(MainContract.View view, MainContract.RequestWeatherIntractor getWeatherList) {
+    public MainPresenter(MainContract.View view, MainContract.RequestWeatherIntractor getWeatherIntractor, String weatherErrorString) {
         this.view = view;
-        this.getWeatherIntractor = getWeatherList;
+        this.getWeatherIntractor = getWeatherIntractor;
+        this.weatherErrorString = weatherErrorString;
         model = new MainModel();
     }
+
+    @Override
+    public void updateLocationAndUI() {
+        view.showRefresh(true);
+        view.updateLocationAndUI();
+    }
+
     @Override
     public TimeOfDay getTimeOfDay() {
-        return model.getTimeOfDay(view.requestCoordinate());
+        return model.getTimeOfDay(view.getCurrentCoordinate());
     }
 
     @Override
     public void loadColorTheme() {
-        view.setColorTheme(model.getTimeOfDay(view.requestCoordinate()));
+        view.setColorTheme(model.getTimeOfDay(view.getCurrentCoordinate()));
     }
 
     @Override
     public void requestWeatherData() {
-        view.showRefresh(true);
-        getWeatherIntractor.getWeatherData(this, view.requestCoordinate());
+        getWeatherIntractor.getWeatherData(this, view.getCurrentCoordinate());
     }
 
     @Override
     public void setAdressString() {
-        view.setToolbarTitle(view.requestAdressString(view.requestCoordinate()));
+        view.setToolbarTitle(view.requestAdressString(view.getCurrentCoordinate()));
     }
 
     @Override
     public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
-        FormatDataAsyncTask formatAsyncTask = new FormatDataAsyncTask();
+        FormatDataAsyncTaskModel formatAsyncTask = new FormatDataAsyncTaskModel();
         formatAsyncTask.delegate = this;
         formatAsyncTask.execute(response);
     }
@@ -57,7 +64,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     @Override
     public void onFailureRetrieveData(Throwable t) {
         view.showRefresh(false);
-        view.showToast("Vädret kunde inte laddas in!");
+        view.showToast(weatherErrorString);
     }
 
     @Override
@@ -72,6 +79,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     @Override
     public void onFailureFormatData() {
         view.showRefresh(false);
-        view.showToast("Vädret kunde inte laddas in!");
+        view.showToast(weatherErrorString);
     }
 }
