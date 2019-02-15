@@ -1,4 +1,6 @@
-package com.martinryberglaude.skyfall.network;
+package com.martinryberglaude.skyfall.interfaces;
+
+import com.martinryberglaude.skyfall.network.RetroWeatherData;
 
 import java.util.List;
 

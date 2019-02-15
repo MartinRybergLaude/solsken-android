@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import com.martinryberglaude.skyfall.data.EventItem;
 import com.martinryberglaude.skyfall.data.HeaderItem;
 import com.martinryberglaude.skyfall.data.ListItem;
-import com.martinryberglaude.skyfall.data.SMHIWeatherSymbol;
+import com.martinryberglaude.skyfall.utils_smhi.SMHIWeatherSymbol;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.network.RetroParameter;
 import com.martinryberglaude.skyfall.network.RetroTimeSeries;
@@ -60,10 +60,10 @@ public class FormatDataAsyncTaskModel extends AsyncTask<Response<RetroWeatherDat
                         // Find parameters
                         for (RetroParameter parameter : timeSeries2.getParameters()) {
                             if (parameter.getName().equals("t")) {
-                                item.setTemperatureString(parameter.getValues().get(0).toString() + "°C");
+                                item.setTemperatureString(String.valueOf(Math.round(parameter.getValues().get(0))) + "°");
                             }
                             if (parameter.getName().equals("ws")) {
-                                item.setWindSpeedString(parameter.getValues().get(0).toString() + " m/s");
+                                item.setWindSpeedString(String.valueOf(Math.round(parameter.getValues().get(0))) + " m/s");
                             }
                             if (parameter.getName().equals("Wsymb2")) {
                                 String symbol = new SMHIWeatherSymbol().getSymbolList().get((int)Math.round(timeSeries2.getParameters().get(18).getValues().get(0)) - 1);

@@ -1,7 +1,5 @@
 package com.martinryberglaude.skyfall.data;
 
-import com.martinryberglaude.skyfall.network.RetroTimeSeries;
-
 public class EventItem extends ListItem {
 
     private String temperatureString;

@@ -4,9 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.martinryberglaude.skyfall.R;
@@ -14,14 +11,9 @@ import com.martinryberglaude.skyfall.interfaces.RecyclerItemClickListener;
 import com.martinryberglaude.skyfall.data.EventItem;
 import com.martinryberglaude.skyfall.data.HeaderItem;
 import com.martinryberglaude.skyfall.data.ListItem;
-import com.martinryberglaude.skyfall.data.SMHIWeatherSymbol;
-import com.martinryberglaude.skyfall.network.RetroParameter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.recyclerview.widget.RecyclerView;
 

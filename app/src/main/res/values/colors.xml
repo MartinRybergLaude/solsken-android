@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#5683ff</color>
-    <color name="colorPrimaryDark">#5683ff</color>
+    <color name="colorPrimaryDark">#a3bded</color>
+    <color name="dayColor2Temp">#3168ff</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="dayColor1">#5683ff</color>
-    <color name="dayColor2">#3168ff</color>
+    <color name="dayColor1">#a3bded</color>
+    <color name="dayColor2">#6991c7</color>
 
-    <color name="sunriseColor1">#ff6456</color>
-    <color name="sunriseColor2">#ff9131</color>
+    <color name="sunriseColor1">#ff9966</color>
+    <color name="sunriseColor2">#ff5e62</color>
 
-    <color name="nightColor1">#060028</color>
-    <color name="nightColor2">#000000</color>
+    <color name="nightColor1">#75208a</color>
+    <color name="nightColor2">#2e2188</color>
 
     <color name="white">#fff</color>
+
+
+    <color name="background">#5683ff </color>
 
     <color name="textPrimary">#fff</color>
     <color name="textSecondary">#dfdfdf</color>

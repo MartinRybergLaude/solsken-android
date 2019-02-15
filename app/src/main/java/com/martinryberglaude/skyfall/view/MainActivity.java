@@ -1,20 +1,18 @@
 package com.martinryberglaude.skyfall.view;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -52,11 +50,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private MainPresenter mainPresenter;
     private ActionBar actionBar;
     private LinearLayout layout;
-    private ScrollView scrollView;
     private Window window;
     private TextView temperatureText;
     private TextView wsymb2Text;
+    private TextView cityText;
     private SwipeRefreshLayout pullToRefresh;
+    private ScrollView scrollView;
     private List<ListItem> recyclerViewList = new ArrayList<>();
 
     public Coordinate getCurrentCoordinate() {
@@ -80,17 +79,36 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
 
         layout = findViewById(R.id.display);
-        scrollView = findViewById(R.id.scroll_view);
         window = getWindow();
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         temperatureText = findViewById(R.id.title_temperature);
         wsymb2Text = findViewById(R.id.title_wsymb2);
         pullToRefresh = findViewById(R.id.refresh);
+        scrollView = findViewById(R.id.scroll_view);
+        cityText = findViewById(R.id.title_city);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
+
+        int target = getResources().getDimensionPixelSize(R.dimen.refresh_start);
+        int start = getResources().getDimensionPixelSize(R.dimen.refresh_start);
+        int end = getResources().getDimensionPixelSize(R.dimen.refresh_end);
+        pullToRefresh.setProgressViewEndTarget(true, target);
+        pullToRefresh.setProgressViewOffset(true, start, end);
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                if (scrollView.getScrollY() > 5) {
+                    toolbar.setElevation(4);
+                } else {
+                    toolbar.setElevation(0);
+                }
+            }
+        });
+
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         getLocationIntractor = new RequestLocationModel(locationManager);
         mainPresenter = new MainPresenter(this, new RequestWeatherModel(), getResources().getString(R.string.weather_error));
@@ -132,23 +150,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void showProgressBar(boolean b) {
-
-    }
-
-    @Override
-    public void setToolbarTitle(String toolbarTitle) {
-        actionBar.setTitle(toolbarTitle);
-    }
-
-    @Override
-    public void initWeatherUI(final List<ListItem> itemList) {
+    public void initWeatherUI(final List<ListItem> itemList, final String city) {
         // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 EventItem event = (EventItem) itemList.get(1);
+                cityText.setText(city);
                 wsymb2Text.setText(event.getWsymb2String());
                 temperatureText.setText(event.getTemperatureString());
                 recyclerViewList.addAll(itemList);
@@ -164,13 +173,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void updateWeatherUI(final List<ListItem> itemList) {
+    public void updateWeatherUI(final List<ListItem> itemList, final String city) {
         // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 EventItem event = (EventItem) itemList.get(1);
+                cityText.setText(city);
                 wsymb2Text.setText(event.getWsymb2String());
                 temperatureText.setText(event.getTemperatureString());
                 recyclerViewList.clear();
@@ -194,10 +204,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         try {
             addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
             String city = addresses.get(0).getLocality();
-            String adress = addresses.get(0).getAddressLine(0);
             String knownName = addresses.get(0).getFeatureName();
             if (city == null) return knownName;
-            else return city + ", " + adress;
+            else return city;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -14,10 +14,8 @@ import retrofit2.Response;
 public interface MainContract {
 
     interface  View {
-        void showProgressBar(boolean b);
-        void setToolbarTitle(String toolbarTitle);
-        void initWeatherUI(List<ListItem> itemList);
-        void updateWeatherUI(List<ListItem> itemList);
+        void initWeatherUI(List<ListItem> itemList, String city);
+        void updateWeatherUI(List<ListItem> itemList, String city);
         void setColorTheme(TimeOfDay timeOfDay);
         void showToast(String message);
         String requestAdressString(Coordinate coordinate);
@@ -31,7 +29,6 @@ public interface MainContract {
         TimeOfDay getTimeOfDay();
         void loadColorTheme();
         void requestWeatherData();
-        void setAdressString();
     }
 
     interface RequestWeatherIntractor {

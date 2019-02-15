@@ -1,4 +1,4 @@
-package com.martinryberglaude.skyfall.data;
+package com.martinryberglaude.skyfall.utils_smhi;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -50,11 +50,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     }
 
     @Override
-    public void setAdressString() {
-        view.setToolbarTitle(view.requestAdressString(view.getCurrentCoordinate()));
-    }
-
-    @Override
     public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
         FormatDataAsyncTaskModel formatAsyncTask = new FormatDataAsyncTaskModel();
         formatAsyncTask.delegate = this;
@@ -70,9 +65,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     @Override
     public void onFinishedFormatData(List<ListItem> itemList) {
         view.showRefresh(false);
-        setAdressString();
-        if (isStart) view.initWeatherUI(itemList);
-        else view.updateWeatherUI(itemList);
+        if (isStart) view.initWeatherUI(itemList, view.requestAdressString(view.getCurrentCoordinate()));
+        else view.updateWeatherUI(itemList, view.requestAdressString(view.getCurrentCoordinate()));
         isStart = false;
     }
 
