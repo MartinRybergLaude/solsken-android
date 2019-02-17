@@ -1,16 +1,20 @@
 package com.martinryberglaude.skyfall.view;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.martinryberglaude.skyfall.R;
+import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.interfaces.RecyclerItemClickListener;
 import com.martinryberglaude.skyfall.data.EventItem;
 import com.martinryberglaude.skyfall.data.HeaderItem;
 import com.martinryberglaude.skyfall.data.ListItem;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -18,109 +22,77 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<ListItem> itemList;
+    private List<DayItem> dayList;
     private LayoutInflater inflater;
     private RecyclerItemClickListener recyclerItemClickListener;
 
     // stores and recycles views as they are scrolled off screen
-    public class HeaderViewHolder extends RecyclerView.ViewHolder  {
-        TextView dayTextView;
-        TextView dateTextView;
-
-        HeaderViewHolder(View itemView) {
-            super(itemView);
-            dayTextView = itemView.findViewById(R.id.text_day);
-            dateTextView = itemView.findViewById(R.id.text_date);
-        }
-
-    }
-    // stores and recycles views as they are scrolled off screen
-    public class EventViewHolder extends RecyclerView.ViewHolder  {
+    public class DayViewHolder extends RecyclerView.ViewHolder  {
         TextView tTextView;
         TextView wsymb2TextView;
-        TextView hourTextView;
-        TextView windTextView;
+        TextView dayTextView;
+        ImageView wsymb2ImageView;
 
-        EventViewHolder(View itemView) {
+        DayViewHolder(View itemView) {
             super(itemView);
             tTextView = itemView.findViewById(R.id.text_temperature);
             wsymb2TextView = itemView.findViewById(R.id.text_wsymb2);
-            hourTextView = itemView.findViewById(R.id.text_time);
-            windTextView = itemView.findViewById(R.id.text_wind_speed);
+            dayTextView = itemView.findViewById(R.id.text_day);
+            wsymb2ImageView = itemView.findViewById(R.id.wsymb2_img);
         }
     }
 
-    public RecyclerViewAdapter(Context context, List<ListItem> itemList) {
+    public RecyclerViewAdapter(Context context, List<DayItem> dayList) {
         this.inflater = LayoutInflater.from(context);
-        this.itemList = itemList;
+        this.dayList = dayList;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case ListItem.TYPE_HEADER: {
-                View itemView = inflater.inflate(R.layout.recyclerview_header_row, parent, false);
-                return new HeaderViewHolder(itemView);
-            }
-            case ListItem.TYPE_EVENT: {
-                View itemView = inflater.inflate(R.layout.recyclerview_event_row, parent, false);
-                return new EventViewHolder(itemView);
-            }
-            default:
-                throw new IllegalStateException("unsupported item type");
-        }
+
+        View itemView = inflater.inflate(R.layout.recyclerview_day_row, parent, false);
+        return new DayViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        int viewType = getItemViewType(position);
-        switch (viewType) {
-            case ListItem.TYPE_HEADER: {
-                HeaderItem header = (HeaderItem) itemList.get(position);
-                HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
 
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(header.getDate());
-                boolean sameDay = cal.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR) &&
-                        cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR);
-                if (sameDay) {
-                    holder.dayTextView.setText(R.string.today);
-                } else {
-                    holder.dayTextView.setText(header.getDayString());
+            DayItem dayItem =  dayList.get(position);
+            DayViewHolder holder = (DayViewHolder) viewHolder;
+
+            holder.tTextView.setText(dayItem.getTemperatureString());
+
+            Calendar currentCal = Calendar.getInstance();
+            Calendar tomorrowCal = Calendar.getInstance();
+            tomorrowCal.add(Calendar.DAY_OF_MONTH, 1);
+            currentCal.setTime(dayItem.getDate());
+            boolean sameDay = currentCal.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR) &&
+                currentCal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR);
+
+            boolean nextDay = currentCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR) &&
+                currentCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR);
+
+            if (sameDay) {
+                holder.dayTextView.setText(R.string.today);
+            } else if (nextDay) {
+                holder.dayTextView.setText(R.string.tomorrow);
+            } else {
+                holder.dayTextView.setText(dayItem.getDayString());
+            }
+            holder.wsymb2TextView.setText(dayItem.getWsymb2String());
+            holder.wsymb2ImageView.setImageResource(dayItem.getWsymb2Drawable());
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerItemClickListener.onItemClick(dayList.get(position));
                 }
-                holder.dateTextView.setText(header.getDateString());
-                break;
-            }
-            case ListItem.TYPE_EVENT: {
-                EventItem event = (EventItem) itemList.get(position);
-                EventViewHolder holder = (EventViewHolder) viewHolder;
-
-                holder.tTextView.setText(event.getTemperatureString());
-                holder.hourTextView.setText(event.getHourString());
-                holder.windTextView.setText(event.getWindSpeedString());
-                holder.wsymb2TextView.setText(event.getWsymb2String());
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        recyclerItemClickListener.onItemClick(itemList.get(position));
-                    }
-                });
-                break;
-            }
-            default:
-                throw new IllegalStateException("unsupported item type");
-        }
+            });
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return itemList.size();
-    }
-
-    // convenience method for getting data at click position
-    @Override
-    public int getItemViewType(int position) {
-        return itemList.get(position).getType();
+        return dayList.size();
     }
 }

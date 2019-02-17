@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="backgrounds">
+        <item>Automatic (based on time)</item>
+        <item>Sky blue</item>
+        <item>Sunset orange</item>
+        <item>Twilight purple</item>
+    </string-array>
+    <string-array name="background_values">
+        <item>auto</item>
+        <item>day</item>
+        <item>sunset</item>
+        <item>night</item>
+    </string-array>
+</resources>

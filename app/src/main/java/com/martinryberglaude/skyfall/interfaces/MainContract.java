@@ -3,6 +3,7 @@ package com.martinryberglaude.skyfall.interfaces;
 import android.content.Context;
 
 import com.martinryberglaude.skyfall.data.Coordinate;
+import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.ListItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
@@ -14,8 +15,7 @@ import retrofit2.Response;
 public interface MainContract {
 
     interface  View {
-        void initWeatherUI(List<ListItem> itemList, String city);
-        void updateWeatherUI(List<ListItem> itemList, String city);
+        void updateWeatherUI(List<DayItem> itemList, String city, boolean initRecyclerview);
         void setColorTheme(TimeOfDay timeOfDay);
         void showToast(String message);
         String requestAdressString(Coordinate coordinate);
@@ -46,10 +46,17 @@ public interface MainContract {
         void getLocation(OnFinishedListerner onFinishedListerner, Context context);
     }
 
-    interface FormatWeatherIntractor {
+    interface FormatHourWeatherIntractor {
         interface OnFinishedListener {
-            void onFinishedFormatData(List<ListItem> itemList);
-            void onFailureFormatData();
+            void onFinishedFormatHours(List<ListItem> itemList);
+            void onFailureFormatHours();
+        }
+    }
+
+    interface FormatDayWeatherIntractor {
+        interface OnFinishedListener {
+            void onFinishedFormatDays(List<DayItem> dayList);
+            void onFailureFormatDays();
         }
     }
 }

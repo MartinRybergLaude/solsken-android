@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5683ff</color>
-    <color name="colorPrimaryDark">#a3bded</color>
-    <color name="dayColor2Temp">#3168ff</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="dayColor1">#0072ff</color>
+    <color name="dayColor2">#4d97ff</color>
 
-    <color name="dayColor1">#a3bded</color>
-    <color name="dayColor2">#6991c7</color>
+    <color name="dayPrimary">#3F51B5</color>
+    <color name="daySecondary">#303F9F</color>
 
     <color name="sunriseColor1">#ff9966</color>
     <color name="sunriseColor2">#ff5e62</color>
 
-    <color name="nightColor1">#75208a</color>
-    <color name="nightColor2">#2e2188</color>
+    <color name="sunrisePrimary">#ff5e62</color>
+    <color name="sunriseSecondary">#e25f41</color>
+
+    <color name="nightColor1">#4117b0</color>
+    <color name="nightColor2">#9730dc</color>
+
+    <color name="nightPrimary">#673AB7</color>
+    <color name="nightSecondary">#512DA8</color>
 
     <color name="white">#fff</color>
+    <color name="black">#000</color>
+    <color name="lightGray">#f0f4fd</color>
+    <color name="darkGray">#202020</color>
 
+    <color name="transparentWhite">#40ffffff</color>
 
     <color name="background">#5683ff </color>
 
-    <color name="textPrimary">#fff</color>
-    <color name="textSecondary">#dfdfdf</color>
+    <color name="textPrimaryInverse">#fff</color>
+    <color name="textSecondaryInverse">#eaeaea</color>
+
+    <color name="textPrimary">#000</color>
+    <color name="textSecondary">#8c8c8c</color>
 </resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="16dp"
+    android:background="@drawable/card_background"
+    android:id="@+id/recycler_row_layout">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+        <TextView
+            android:text="Torsdag"
+            android:id="@+id/text_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:textStyle="normal"
+            android:textColor="?attr/textColorPrimary"/>
+        <TextView
+            android:text="Moln"
+            android:id="@+id/text_wsymb2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_day"
+            android:textSize="14sp"
+            android:textColor="?attr/textColorSecondary"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:gravity="right"
+        android:text="5°"
+        android:id="@+id/text_temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        app:layout_constraintRight_toLeftOf="@+id/wsymb2_img"
+        android:padding="10dp"
+        android:textSize="18sp"
+        android:textColor="?attr/textColorPrimary"/>
+
+    <ImageView
+        android:id="@+id/wsymb2_img"
+        android:gravity="center_vertical"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/wi_cloudy"
+        android:tint="?attr/textColorPrimary"/>
+
+</LinearLayout>

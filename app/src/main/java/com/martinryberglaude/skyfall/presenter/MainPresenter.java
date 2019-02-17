@@ -1,9 +1,11 @@
 package com.martinryberglaude.skyfall.presenter;
 
+import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.ListItem;
-import com.martinryberglaude.skyfall.model.FormatDataAsyncTaskModel;
+import com.martinryberglaude.skyfall.model.FormatDaysAsyncTaskModel;
+import com.martinryberglaude.skyfall.model.FormatHoursAsyncTaskModel;
 import com.martinryberglaude.skyfall.model.MainModel;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
 
@@ -12,7 +14,7 @@ import java.util.List;
 import retrofit2.Response;
 
 public class MainPresenter implements MainContract.Presenter, MainContract.RequestWeatherIntractor.OnFinishedListerner,
-        MainContract.FormatWeatherIntractor.OnFinishedListener {
+        MainContract.FormatDayWeatherIntractor.OnFinishedListener {
 
     private MainContract.View view;
     private MainContract.RequestWeatherIntractor getWeatherIntractor;
@@ -51,9 +53,9 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
-        FormatDataAsyncTaskModel formatAsyncTask = new FormatDataAsyncTaskModel();
-        formatAsyncTask.delegate = this;
-        formatAsyncTask.execute(response);
+      FormatDaysAsyncTaskModel formatAsyncTask = new FormatDaysAsyncTaskModel();
+      formatAsyncTask.delegate = this;
+      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()));
     }
 
     @Override
@@ -63,15 +65,15 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     }
 
     @Override
-    public void onFinishedFormatData(List<ListItem> itemList) {
+    public void onFinishedFormatDays(List<DayItem> dayList) {
         view.showRefresh(false);
-        if (isStart) view.initWeatherUI(itemList, view.requestAdressString(view.getCurrentCoordinate()));
-        else view.updateWeatherUI(itemList, view.requestAdressString(view.getCurrentCoordinate()));
+        if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
+        else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);
         isStart = false;
     }
 
     @Override
-    public void onFailureFormatData() {
+    public void onFailureFormatDays() {
         view.showRefresh(false);
         view.showToast(weatherErrorString);
     }

@@ -1,7 +1,7 @@
 package com.martinryberglaude.skyfall.interfaces;
 
-import com.martinryberglaude.skyfall.data.ListItem;
+import com.martinryberglaude.skyfall.data.DayItem;
 
 public interface RecyclerItemClickListener {
-    void onItemClick(ListItem listItem);
+    void onItemClick(DayItem dayItem);
 }

@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
         android:text="@string/permission_welcome"
-        android:textColor="@color/textPrimary"
+        android:textColor="@color/textPrimaryInverse"
         android:textSize="30sp"
         android:textStyle="bold"/>
     <TextView
@@ -27,7 +27,7 @@
         android:layout_marginRight="20dp"
         android:layout_below="@+id/text_welcome"
         android:text="@string/permission_message"
-        android:textColor="@color/textSecondary"
+        android:textColor="@color/textSecondaryInverse"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="normal"/>
@@ -39,7 +39,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
         android:text="Godkänn"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/dayColor1"
         android:backgroundTint="@color/white" />
 
 </RelativeLayout>

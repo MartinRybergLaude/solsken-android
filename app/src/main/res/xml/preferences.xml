@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:title="Theme"
+        app:iconSpaceReserved="false">
+            <SwitchPreference
+                app:iconSpaceReserved="false"
+                android:title="Dark theme"
+                android:summary="Enable dark theme"
+                android:key="dark_theme"
+                android:defaultValue="false"/>
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="Color theme"
+            android:summary="Select color theme"
+            android:key="theme"
+            android:defaultValue="1"
+            android:entries="@array/backgrounds"
+            android:entryValues="@array/background_values"
+            android:order="3"/>
+    </PreferenceCategory>
+</PreferenceScreen>

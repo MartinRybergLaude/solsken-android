@@ -3,12 +3,156 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="primaryColor">@color/dayPrimary</item>
+        <item name="secondaryColor">@color/daySecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimary</item>
+        <item name="textColorSecondary">@color/textSecondary</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/white</item>
+        <item name="backgroundSecondary">@color/lightGray</item>
+
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/dayPrimary</item>
+        <item name="colorPrimaryDark">@color/daySecondary</item>
+        <item name="colorAccent">@color/dayPrimary</item>
+    </style>
+
+    <style name="AppThemeDay" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/dayPrimary</item>
+        <item name="secondaryColor">@color/daySecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimary</item>
+        <item name="textColorSecondary">@color/textSecondary</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/white</item>
+        <item name="backgroundSecondary">@color/lightGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/dayPrimary</item>
+        <item name="colorPrimaryDark">@color/daySecondary</item>
+        <item name="colorAccent">@color/dayPrimary</item>
+    </style>
+
+    <style name="AppThemeSunrise" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/sunrisePrimary</item>
+        <item name="secondaryColor">@color/sunriseSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimary</item>
+        <item name="textColorSecondary">@color/textSecondary</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/white</item>
+        <item name="backgroundSecondary">@color/lightGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/sunrisePrimary</item>
+        <item name="colorPrimaryDark">@color/sunriseSecondary</item>
+        <item name="colorAccent">@color/sunrisePrimary</item>
+    </style>
+
+    <style name="AppThemeNight" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/nightPrimary</item>
+        <item name="secondaryColor">@color/nightSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimary</item>
+        <item name="textColorSecondary">@color/textSecondary</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/white</item>
+        <item name="backgroundSecondary">@color/lightGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/nightPrimary</item>
+        <item name="colorPrimaryDark">@color/nightSecondary</item>
+        <item name="colorAccent">@color/nightPrimary</item>
+    </style>
+
+    <style name="DarkThemeDay" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/dayPrimary</item>
+        <item name="secondaryColor">@color/daySecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimaryInverse</item>
+        <item name="textColorSecondary">@color/textSecondaryInverse</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/black</item>
+        <item name="backgroundSecondary">@color/darkGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/black</item>
+
+        <item name="colorPrimary">@color/dayPrimary</item>
+        <item name="colorPrimaryDark">@color/daySecondary</item>
+        <item name="colorAccent">@color/dayPrimary</item>
+    </style>
+
+    <style name="DarkThemeSunrise" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/sunrisePrimary</item>
+        <item name="secondaryColor">@color/sunriseSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimaryInverse</item>
+        <item name="textColorSecondary">@color/textSecondaryInverse</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/black</item>
+        <item name="backgroundSecondary">@color/darkGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/black</item>
+
+        <item name="colorPrimary">@color/sunrisePrimary</item>
+        <item name="colorPrimaryDark">@color/sunriseSecondary</item>
+        <item name="colorAccent">@color/sunrisePrimary</item>
+    </style>
+
+    <style name="DarkThemeNight" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/nightPrimary</item>
+        <item name="secondaryColor">@color/nightSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimaryInverse</item>
+        <item name="textColorSecondary">@color/textSecondaryInverse</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/black</item>
+        <item name="backgroundSecondary">@color/darkGray</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/black</item>
+
+        <item name="colorPrimary">@color/nightPrimary</item>
+        <item name="colorPrimaryDark">@color/nightSecondary</item>
+        <item name="colorAccent">@color/nightPrimary</item>
     </style>
 
 </resources>
