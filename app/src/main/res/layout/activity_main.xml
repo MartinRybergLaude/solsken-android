@@ -52,10 +52,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"
-                    android:text="5°C"
+                    android:text="5°"
                     android:textColor="@color/white"
                     android:textSize="80sp"
-                    android:fontFamily="sans-serif-bold"/>
+                    android:textStyle="bold"/>
 
                 <LinearLayout
                     android:id="@+id/layout_wsymb2"

@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String time = sharedPreferences.getString("time", "day");
         final boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         theme = sharedPreferences.getString("theme", "auto");
         if (!darkTheme) {
