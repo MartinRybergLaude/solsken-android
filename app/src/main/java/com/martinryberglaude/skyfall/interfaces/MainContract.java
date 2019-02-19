@@ -1,6 +1,7 @@
 package com.martinryberglaude.skyfall.interfaces;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.DayItem;
@@ -22,6 +23,7 @@ public interface MainContract {
         void showRefresh(boolean b);
         Coordinate getCurrentCoordinate();
         void updateLocationAndUI();
+        SharedPreferences getSharedPreferences();
     }
 
     interface Presenter {

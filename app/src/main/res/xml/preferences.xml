@@ -1,22 +1,58 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:title="Theme"
+        android:title="@string/theme"
         app:iconSpaceReserved="false">
             <SwitchPreference
                 app:iconSpaceReserved="false"
-                android:title="Dark theme"
-                android:summary="Enable dark theme"
+                android:title="@string/dark_theme"
                 android:key="dark_theme"
                 android:defaultValue="false"/>
         <ListPreference
             app:iconSpaceReserved="false"
-            android:title="Color theme"
-            android:summary="Select color theme"
+            android:title="@string/color_theme"
             android:key="theme"
-            android:defaultValue="1"
+            android:defaultValue="auto"
             android:entries="@array/backgrounds"
-            android:entryValues="@array/background_values"
-            android:order="3"/>
+            android:entryValues="@array/background_values"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/units"
+        app:iconSpaceReserved="false">
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/temperature"
+            android:key="temperature"
+            android:defaultValue="c"
+            android:entries="@array/temperature_units"
+            android:entryValues="@array/temperature_units_values" />
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/wind"
+            android:key="wind"
+            android:defaultValue="mps"
+            android:entries="@array/wind_units"
+            android:entryValues="@array/wind_units_values" />
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/precipitation"
+            android:key="rain"
+            android:defaultValue="mm"
+            android:entries="@array/rain_units"
+            android:entryValues="@array/rain_units_values" />
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/pressure"
+            android:key="pressure"
+            android:defaultValue="hpa"
+            android:entries="@array/pressure_units"
+            android:entryValues="@array/pressure_units_values" />
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/visibility"
+            android:key="vis"
+            android:defaultValue="km"
+            android:entries="@array/visibility_units"
+            android:entryValues="@array/visibility_units_values" />
     </PreferenceCategory>
 </PreferenceScreen>

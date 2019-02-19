@@ -1,38 +1,12 @@
 package com.martinryberglaude.skyfall;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NavUtils;
-import androidx.fragment.app.Fragment;
-
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-
-import com.martinryberglaude.skyfall.data.CurrentTimeOfDay;
-import com.martinryberglaude.skyfall.data.TimeOfDay;
-import com.martinryberglaude.skyfall.model.MainModel;
 import com.martinryberglaude.skyfall.view.MainActivity;
 import com.martinryberglaude.skyfall.view.MainPreferenceFragment;
 
@@ -65,9 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void handleBackPress() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean hasChangedTheme = preferences.getBoolean("hasChangedTheme", false);
-        if (hasChangedTheme) {
-            preferences.edit().putBoolean("hasChangedTheme", false).commit();
+        boolean requiresRefresh = preferences.getBoolean("requiresRefresh", false);
+        if (requiresRefresh) {
+            preferences.edit().putBoolean("requiresRefresh", false).commit();
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             finish();
@@ -79,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String colorTheme = sharedPreferences.getString("theme", "day");
+        String colorTheme = sharedPreferences.getString("theme", "auto");
         String colorThemeActual = sharedPreferences.getString("themeActual", "day");
         boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         if (!darkTheme) {

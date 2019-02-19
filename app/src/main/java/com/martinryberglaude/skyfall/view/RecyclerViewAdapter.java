@@ -1,7 +1,6 @@
 package com.martinryberglaude.skyfall.view;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,6 @@ import android.widget.TextView;
 import com.martinryberglaude.skyfall.R;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.interfaces.RecyclerItemClickListener;
-import com.martinryberglaude.skyfall.data.EventItem;
-import com.martinryberglaude.skyfall.data.HeaderItem;
-import com.martinryberglaude.skyfall.data.ListItem;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;

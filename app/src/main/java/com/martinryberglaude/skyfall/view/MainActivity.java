@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -15,8 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -356,6 +353,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         getLocationIntractor.getLocation(this,this);
     }
 
+    @Override
+    public SharedPreferences getSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences;
+    }
+
     // When location has been retrieved, launch all other tasks.
     @Override
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
@@ -387,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             window.getDecorView().setSystemUiVisibility(0);
         }
     }
+
     private void setWindDirectionUI(@WindDirection.Direction int windDirection) {
         String windDirectionString;
 

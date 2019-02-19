@@ -1,5 +1,6 @@
 package com.martinryberglaude.skyfall.model;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,7 +14,9 @@ import com.martinryberglaude.skyfall.network.RetroTimeSeries;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
 import com.martinryberglaude.skyfall.utils_smhi.SMHIWeatherSymbol;
 
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,11 +31,13 @@ import retrofit2.Response;
 public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
 
     public MainContract.FormatDayWeatherIntractor.OnFinishedListener delegate = null;
+    private SharedPreferences sharedPreferences;
     @Override
     protected List<DayItem> doInBackground(Object... params) {
 
         Response<RetroWeatherData> response = (Response<RetroWeatherData>) params[0];
         TimeOfDay timeOfDay = (TimeOfDay) params[1];
+        sharedPreferences = (SharedPreferences) params[2];
 
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
@@ -68,31 +73,31 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                     if (timeSeries2.getDateString().equals(currentDate) && timeSeries2.getHourString().equals(targetHour)) {
                         for (RetroParameter parameter : timeSeries2.getParameters()) {
                             if (parameter.getName().equals("t")) {
-                                dayItem.setTemperatureString(String.valueOf(Math.round(parameter.getValues().get(0))) + "°");
+                                dayItem.setTemperatureString(getTemperatureString(parameter.getValues().get(0)));
                                 temperatureC = (int) Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("ws")) {
-                                dayItem.setWindSpeedString(String.valueOf(Math.round(parameter.getValues().get(0))) + " m/s");
+                                dayItem.setWindSpeedString(getWindString(parameter.getValues().get(0)));
                                 windSpeedMS = (int) Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("vis")) {
-                                dayItem.setVisbilityString(String.valueOf(Math.round(parameter.getValues().get(0))) + " km");
+                                dayItem.setVisbilityString(getVisString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("gust")) {
-                                dayItem.setGustSpeedString(String.valueOf(Math.round(parameter.getValues().get(0))) + " m/s");
+                                dayItem.setGustSpeedString(getWindString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("r")) {
                                 dayItem.setHumidityString(String.valueOf(Math.round(parameter.getValues().get(0))) + "%");
                                 humidity = (int)  Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("pmean")) {
-                                dayItem.setRainAmountString(String.valueOf(Math.round(parameter.getValues().get(0))) + " mm/h");
+                                dayItem.setRainAmountString(getPrecipitationString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("tcc_mean")) {
                                 dayItem.setCloudCoverString(String.valueOf(Math.round((parameter.getValues().get(0) / 8) * 100)) + "%");
                             }
                             if (parameter.getName().equals("msl")) {
-                                dayItem.setPressureString(String.valueOf(Math.round(parameter.getValues().get(0)) + " hpa"));
+                                dayItem.setPressureString(getPressureString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("wd")) {
                                 int wdInt = (int) Math.round(parameter.getValues().get(0));
@@ -139,6 +144,109 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
     protected void onPostExecute(List<DayItem> result) {
         super.onPostExecute(result);
         delegate.onFinishedFormatDays(result);
+    }
+
+
+    private String getTemperatureString(double temperature) {
+        String temperatureString;
+        switch (sharedPreferences.getString("temperature", "c")) {
+            case "c":
+                temperatureString = String.valueOf(Math.round(temperature)) + "°";
+                break;
+            case "f":
+                temperatureString = String.valueOf(Math.round(1.8 * temperature + 32)) + "°";
+                break;
+            default: temperatureString = String.valueOf(Math.round(temperature)) + "°";
+        }
+        return temperatureString;
+    }
+
+    private String getWindString(double wind) {
+        String windSpeedString;
+        switch (sharedPreferences.getString("wind", "mps")) {
+            case "mps":
+                windSpeedString = String.valueOf(Math.round(wind)) + " m/s";
+                break;
+            case "mph":
+                windSpeedString = String.valueOf(Math.round(wind * 2.2369)) + " mph";
+                break;
+            case "kmh":
+                windSpeedString = String.valueOf(Math.round(wind * 3.6)) + " km/h";
+                break;
+            case "kts":
+                windSpeedString = String.valueOf(Math.round(wind * 1.94384449)) + " kts";
+                break;
+            case "b":
+                if (wind < 0.3) windSpeedString = "0";
+                else if (wind >= 0.3 && wind < 1.6) windSpeedString = "1";
+                else if (wind >= 1.6 && wind < 3.4) windSpeedString = "2";
+                else if (wind >= 3.4 && wind < 5.5) windSpeedString = "3";
+                else if (wind >= 5.5 && wind < 8) windSpeedString = "4";
+                else if (wind >= 8 && wind < 10.8) windSpeedString = "5";
+                else if (wind >= 10.8 && wind < 13.9) windSpeedString = "6";
+                else if (wind >= 13.9 && wind < 17.2) windSpeedString = "7";
+                else if (wind >= 17.2 && wind < 20.8) windSpeedString = "8";
+                else if (wind >= 20.8 && wind < 24.5) windSpeedString = "9";
+                else if (wind >= 24.5 && wind < 28.5) windSpeedString = "10";
+                else if (wind >= 28.5 && wind < 32.7) windSpeedString = "11";
+                else if (wind >= 32.7) windSpeedString = "12";
+                else windSpeedString = "0";
+                break;
+                default: windSpeedString = String.valueOf(Math.round(wind)) + " m/s";
+        }
+        return windSpeedString;
+    }
+
+    private String getVisString(double vis) {
+        String visString;
+        switch (sharedPreferences.getString("vis","km")) {
+            case "km":
+                visString = String.valueOf(Math.round(vis)) + " km";
+                break;
+            case "miles":
+                visString = String.valueOf(Math.round(vis * 0.621371192)) + " miles";
+                break;
+                default: visString = String.valueOf(Math.round(vis)) + " km";
+        }
+        return visString;
+    }
+
+    private String getPrecipitationString(double prec) {
+        String precString;
+        switch (sharedPreferences.getString("rain","mm")) {
+            case "mm":
+                precString = String.valueOf(Math.round(prec)) + " mm";
+                break;
+            case "cm":
+                precString = String.valueOf(Math.round(prec / 10)) + " cm";
+                break;
+            case "in":
+                DecimalFormat df = new DecimalFormat("#.###");
+                df.setRoundingMode(RoundingMode.CEILING);
+                precString = String.valueOf(df.format(prec / 25.4)) + "\"";
+                break;
+            default: precString = String.valueOf(Math.round(prec)) + " mm";
+        }
+        return precString;
+    }
+
+    private String getPressureString(double pressure) {
+        String pressureString;
+        switch (sharedPreferences.getString("pressure","hpa")) {
+            case "hpa":
+                pressureString = String.valueOf(Math.round(pressure)) + " hPa";
+                break;
+            case "bar":
+                pressureString = String.valueOf(Math.round(pressure / 1000)) + " bar";
+                break;
+            case "at":
+                DecimalFormat df = new DecimalFormat("#.###");
+                df.setRoundingMode(RoundingMode.CEILING);
+                pressureString = String.valueOf(df.format(pressure * 0.00098692326671601)) + " at";
+                break;
+            default: pressureString = String.valueOf(Math.round(pressure)) + " hPa";
+        }
+        return pressureString;
     }
 
     private static boolean isBetween(int x, float lower, float upper) {

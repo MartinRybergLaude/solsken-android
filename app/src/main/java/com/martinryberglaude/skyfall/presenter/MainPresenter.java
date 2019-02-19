@@ -55,7 +55,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
       FormatDaysAsyncTaskModel formatAsyncTask = new FormatDaysAsyncTaskModel();
       formatAsyncTask.delegate = this;
-      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()));
+      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences());
     }
 
     @Override
