@@ -237,12 +237,14 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                 pressureString = String.valueOf(Math.round(pressure)) + " hPa";
                 break;
             case "bar":
-                pressureString = String.valueOf(Math.round(pressure / 1000)) + " bar";
+                DecimalFormat decimalFormatBar = new DecimalFormat("#.###");
+                decimalFormatBar.setRoundingMode(RoundingMode.CEILING);
+                pressureString = String.valueOf(decimalFormatBar.format(pressure / 1000)) + " bar";
                 break;
             case "at":
-                DecimalFormat df = new DecimalFormat("#.###");
-                df.setRoundingMode(RoundingMode.CEILING);
-                pressureString = String.valueOf(df.format(pressure * 0.00098692326671601)) + " at";
+                DecimalFormat decimalFormatAt = new DecimalFormat("#.###");
+                decimalFormatAt.setRoundingMode(RoundingMode.CEILING);
+                pressureString = String.valueOf(decimalFormatAt.format(pressure * 0.00098692326671601)) + " at";
                 break;
             default: pressureString = String.valueOf(Math.round(pressure)) + " hPa";
         }
