@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.martinryberglaude.skyfall.R;
 import com.martinryberglaude.skyfall.data.DayItem;
+import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.WindDirection;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -32,17 +34,18 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
 
     public MainContract.FormatDayWeatherIntractor.OnFinishedListener delegate = null;
     private SharedPreferences sharedPreferences;
+    private Calendar sunsrise;
+    private Calendar sunset;
+
     @Override
     protected List<DayItem> doInBackground(Object... params) {
 
         Response<RetroWeatherData> response = (Response<RetroWeatherData>) params[0];
         TimeOfDay timeOfDay = (TimeOfDay) params[1];
         sharedPreferences = (SharedPreferences) params[2];
-
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
-        String targetHour = "12:00:00Z";
 
         for (RetroTimeSeries timeSeries : response.body().getTimeSeries()) {
             currentDate = timeSeries.getDateString();
@@ -59,7 +62,7 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                DateFormat dateFormatDay = new SimpleDateFormat("EEEE", Locale.forLanguageTag("sv"));
+                DateFormat dateFormatDay = new SimpleDateFormat("EEEE", Locale.getDefault());
 
                 DayItem dayItem = new DayItem();
                 dayItem.setDayString(capitalizeFirstLetter(dateFormatDay.format(date)));
@@ -69,35 +72,38 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                 cal.setTime(dayItem.getDate());
                 boolean sameDay = cal.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR) &&
                         cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR);
+
+                List<HourItem> hourList = new ArrayList<>();
                 for (RetroTimeSeries timeSeries2 : response.body().getTimeSeries()) {
-                    if (timeSeries2.getDateString().equals(currentDate) && timeSeries2.getHourString().equals(targetHour)) {
+                    if (timeSeries2.getDateString().equals(currentDate)) {
+                        HourItem hourItem = new HourItem();
                         for (RetroParameter parameter : timeSeries2.getParameters()) {
                             if (parameter.getName().equals("t")) {
-                                dayItem.setTemperatureString(getTemperatureString(parameter.getValues().get(0)));
+                                hourItem.setTemperatureString(getTemperatureString(parameter.getValues().get(0)));
                                 temperatureC = (int) Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("ws")) {
-                                dayItem.setWindSpeedString(getWindString(parameter.getValues().get(0)));
+                                hourItem.setWindSpeedString(getWindString(parameter.getValues().get(0)));
                                 windSpeedMS = (int) Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("vis")) {
-                                dayItem.setVisbilityString(getVisString(parameter.getValues().get(0)));
+                                hourItem.setVisbilityString(getVisString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("gust")) {
-                                dayItem.setGustSpeedString(getWindString(parameter.getValues().get(0)));
+                                hourItem.setGustSpeedString(getWindString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("r")) {
-                                dayItem.setHumidityString(String.valueOf(Math.round(parameter.getValues().get(0))) + "%");
+                                hourItem.setHumidityString(String.valueOf(Math.round(parameter.getValues().get(0))) + "%");
                                 humidity = (int)  Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("pmean")) {
-                                dayItem.setRainAmountString(getPrecipitationString(parameter.getValues().get(0)));
+                                hourItem.setRainAmountString(getPrecipitationString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("tcc_mean")) {
-                                dayItem.setCloudCoverString(String.valueOf(Math.round((parameter.getValues().get(0) / 8) * 100)) + "%");
+                                hourItem.setCloudCoverString(String.valueOf(Math.round((parameter.getValues().get(0) / 8) * 100)) + "%");
                             }
                             if (parameter.getName().equals("msl")) {
-                                dayItem.setPressureString(getPressureString(parameter.getValues().get(0)));
+                                hourItem.setPressureString(getPressureString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("wd")) {
                                 int wdInt = (int) Math.round(parameter.getValues().get(0));
@@ -111,30 +117,38 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                                 else if (isBetween(wdInt, 247.5f, 292.5f )) currentWindDirection = WindDirection.W;
                                 else if (isBetween(wdInt, 292.5f, 337.5f )) currentWindDirection = WindDirection.NW;
 
-                                dayItem.setWindDirection(currentWindDirection);
+                                hourItem.setWindDirection(currentWindDirection);
                             }
 
                             if (parameter.getName().equals("Wsymb2")) {
                                 String symbol = new SMHIWeatherSymbol().getSymbolList().get((int)Math.round(parameter.getValues().get(0)) - 1);
-                                dayItem.setWsymb2String(symbol);
+                                hourItem.setWsymb2String(symbol);
                                 if (sameDay) {
-                                    dayItem.setWsymb2Drawable(getWeatherIconToday(parameter, timeOfDay));
+                                    hourItem.setWsymb2Drawable(getWeatherIconToday(parameter, timeOfDay));
                                 } else {
-                                    dayItem.setWsymb2Drawable(getWeatherIcon(parameter));
+                                    hourItem.setWsymb2Drawable(getWeatherIconToday(parameter, TimeOfDay.DAY));
                                 }
                             }
                         }
+                        hourItem.setFeelsLikeString(String.valueOf(getFeelsLikeTemperature(temperatureC, humidity, windSpeedMS)) + "°");
+                        hourItem.setDayString(capitalizeFirstLetter(dateFormatDay.format(date)));
+                        hourItem.setHourString(getClockString(timeSeries2.getHourString()));
+                        SimpleDateFormat hourFormat = new SimpleDateFormat("H:mm");
+                        try {
+                            Date hourDate = hourFormat.parse(hourItem.getHourString());
+                            hourItem.setDate(hourDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        hourList.add(hourItem);
                     }
                 }
-                dayItem.setFeelsLikeString(String.valueOf(getFeelsLikeTemperature(temperatureC, humidity, windSpeedMS)) + "°");
+                dayItem.setHourList(hourList);
                 dayList.add(dayItem);
             }
         }
-        ListIterator<DayItem> iter = dayList.listIterator();
-        while(iter.hasNext()){
-            if(iter.next().getTemperatureString() == null){
-                iter.remove();
-            }
+        if (Calendar.getInstance().getTime().getTime() - dayList.get(0).getHourList().get(0).getDate().getTime() > 30 * 60 * 1000) {
+            dayList.get(0).getHourList().remove(0);
         }
         return dayList;
     }
@@ -146,6 +160,26 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
         delegate.onFinishedFormatDays(result);
     }
 
+    private String getClockString(String hourString) {
+        String clockFormat = sharedPreferences.getString("hour", "24h");
+        String clockString;
+
+        if (clockFormat.equals("12h")) {
+            SimpleDateFormat hourFormat = new SimpleDateFormat("H:mm");
+            Date date;
+            try {
+                date = hourFormat.parse(hourString);
+                SimpleDateFormat hourFormat12 = new SimpleDateFormat("K:mm");
+                clockString = hourFormat12.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                clockString = hourString;
+            }
+        } else {
+            clockString = hourString;
+        }
+        return clockString;
+    }
 
     private String getTemperatureString(double temperature) {
         String temperatureString;
@@ -303,98 +337,6 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                 } else {
                     drawableInt = (R.drawable.wi_night_alt_cloudy);
                 }
-                break;
-            case 7:
-                drawableInt = (R.drawable.wi_fog);
-                break;
-            case 8:
-                drawableInt = (R.drawable.wi_showers);
-                break;
-            case 9:
-                drawableInt = (R.drawable.wi_showers);
-                break;
-            case 10:
-                drawableInt = (R.drawable.wi_showers);
-                break;
-            case 11:
-                drawableInt = (R.drawable.wi_thunderstorm);
-                break;
-            case 12:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 13:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 14:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 15:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            case 16:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            case 17:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            case 18:
-                drawableInt = (R.drawable.wi_rain);
-                break;
-            case 19:
-                drawableInt = (R.drawable.wi_rain);
-                break;
-            case 20:
-                drawableInt = (R.drawable.wi_rain);
-                break;
-            case 21:
-                drawableInt = (R.drawable.wi_lightning);
-                break;
-            case 22:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 23:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 24:
-                drawableInt = (R.drawable.wi_sleet);
-                break;
-            case 25:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            case 26:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            case 27:
-                drawableInt = (R.drawable.wi_snow);
-                break;
-            default:
-                drawableInt = (R.drawable.wi_cloudy);
-        }
-        return drawableInt;
-    }
-
-    private int getWeatherIcon(RetroParameter parameter) {
-
-        int symbolInt = (int) Math.round(parameter.getValues().get(0));
-        int drawableInt;
-        switch (symbolInt) {
-            case 1:
-                drawableInt = (R.drawable.wi_day_sunny);
-                break;
-            case 2:
-                drawableInt = (R.drawable.wi_day_sunny);
-                break;
-            case 3:
-                drawableInt = (R.drawable.wi_day_cloudy);
-                break;
-            case 4:
-                drawableInt = (R.drawable.wi_day_cloudy);
-                break;
-            case 5:
-                drawableInt = (R.drawable.wi_cloudy);
-                break;
-            case 6:
-                drawableInt = (R.drawable.wi_cloudy);
                 break;
             case 7:
                 drawableInt = (R.drawable.wi_fog);

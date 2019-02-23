@@ -40,4 +40,7 @@ public class MainModel {
             return TimeOfDay.DAY;
         }
     }
+    public Calendar[] getSunriseSunset(Coordinate coordinate, Calendar calendar) {
+        return ca.rmen.sunrisesunset.SunriseSunset.getSunriseSunset(Calendar.getInstance(), coordinate.getLat(), coordinate.getLon());
+    }
 }

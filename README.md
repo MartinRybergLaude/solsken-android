@@ -8,3 +8,4 @@ The design pattern of this project is attempting to conform with the MVP design 
 * [Retrofit](https://square.github.io/retrofit/)
 * [SunriseSunset](https://github.com/caarmen/SunriseSunset)
 * [Gson](https://github.com/google/gson)
+* [Weather Icons](https://github.com/erikflowers/weather-icons)

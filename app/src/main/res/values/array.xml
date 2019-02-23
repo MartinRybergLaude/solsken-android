@@ -67,4 +67,13 @@
         <item>cm</item>
         <item>in</item>
     </string-array>
+
+    <string-array name="hour_format">
+        <item>24h</item>
+        <item>12h</item>
+    </string-array>
+    <string-array name="hour_format_values">
+        <item>24h</item>
+        <item>12h</item>
+    </string-array>
 </resources>

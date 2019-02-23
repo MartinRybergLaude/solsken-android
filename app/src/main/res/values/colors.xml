@@ -3,14 +3,14 @@
     <color name="dayColor1">#0072ff</color>
     <color name="dayColor2">#4d97ff</color>
 
-    <color name="dayPrimary">#3F51B5</color>
-    <color name="daySecondary">#303F9F</color>
+    <color name="dayPrimary">#0072ff</color>
+    <color name="daySecondary">#0568E2</color>
 
     <color name="sunriseColor1">#ff9966</color>
     <color name="sunriseColor2">#ff5e62</color>
 
     <color name="sunrisePrimary">#ff5e62</color>
-    <color name="sunriseSecondary">#e25f41</color>
+    <color name="sunriseSecondary">#EC595B</color>
 
     <color name="nightColor1">#4117b0</color>
     <color name="nightColor2">#9730dc</color>

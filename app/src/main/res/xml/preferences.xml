@@ -54,5 +54,12 @@
             android:defaultValue="km"
             android:entries="@array/visibility_units"
             android:entryValues="@array/visibility_units_values" />
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/hour_format"
+            android:key="hour"
+            android:defaultValue="24h"
+            android:entries="@array/hour_format"
+            android:entryValues="@array/hour_format_values" />
     </PreferenceCategory>
 </PreferenceScreen>

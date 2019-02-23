@@ -27,7 +27,7 @@
                   android:background="@drawable/sheet_handle"/>
 
               <androidx.recyclerview.widget.RecyclerView
-                  android:id="@+id/recycler_view"
+                  android:id="@+id/recycler_view_days"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:layout_marginBottom="16dp"

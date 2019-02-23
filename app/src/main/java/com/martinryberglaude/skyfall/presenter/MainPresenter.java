@@ -3,9 +3,7 @@ package com.martinryberglaude.skyfall.presenter;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
-import com.martinryberglaude.skyfall.data.ListItem;
 import com.martinryberglaude.skyfall.model.FormatDaysAsyncTaskModel;
-import com.martinryberglaude.skyfall.model.FormatHoursAsyncTaskModel;
 import com.martinryberglaude.skyfall.model.MainModel;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
 

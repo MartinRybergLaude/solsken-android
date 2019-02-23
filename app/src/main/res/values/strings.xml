@@ -47,5 +47,6 @@
     <string name="units">Enheter</string>
     <string name="temperature">Temperatur</string>
     <string name="wind">Vind</string>
+    <string name="hour_format">Klockformat</string>
 
 </resources>

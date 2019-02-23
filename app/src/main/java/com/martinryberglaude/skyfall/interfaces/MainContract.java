@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.DayItem;
+import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.data.ListItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
@@ -48,17 +49,17 @@ public interface MainContract {
         void getLocation(OnFinishedListerner onFinishedListerner, Context context);
     }
 
-    interface FormatHourWeatherIntractor {
-        interface OnFinishedListener {
-            void onFinishedFormatHours(List<ListItem> itemList);
-            void onFailureFormatHours();
-        }
-    }
-
     interface FormatDayWeatherIntractor {
         interface OnFinishedListener {
             void onFinishedFormatDays(List<DayItem> dayList);
             void onFailureFormatDays();
         }
     }
+    interface DayItemClickListener {
+        void onItemClick(DayItem dayItem);
+    }
+    interface HourItemOnClickListener {
+        void onItemClick (HourItem hourItem);
+    }
+
 }

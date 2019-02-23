@@ -23,6 +23,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
         ListPreference preference4 = findPreference("vis");
         ListPreference preference5 = findPreference("pressure");
         ListPreference preference6 = findPreference("temperature");
+        ListPreference preference7 = findPreference("hour");
 
         preference.setSummary(preference.getEntry());
         preference2.setSummary(preference2.getEntry());
@@ -30,6 +31,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
         preference4.setSummary(preference4.getEntry());
         preference5.setSummary(preference5.getEntry());
         preference6.setSummary(preference6.getEntry());
+        preference7.setSummary(preference7.getEntry());
     }
 
     @Override
@@ -57,7 +59,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
             pref.setSummary(listPref.getEntry());
         }
 
-        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis")) {
+        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis") || key.equals("hour")) {
             sharedPreferences.edit().putBoolean("requiresRefresh", true).commit();
         }
 

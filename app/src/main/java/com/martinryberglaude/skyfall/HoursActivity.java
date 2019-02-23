@@ -1,54 +1,82 @@
 package com.martinryberglaude.skyfall;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
-import com.martinryberglaude.skyfall.view.MainActivity;
-import com.martinryberglaude.skyfall.view.MainPreferenceFragment;
+import android.widget.TextView;
 
-import java.util.List;
+import com.martinryberglaude.skyfall.data.DayItem;
+import com.martinryberglaude.skyfall.data.HourItem;
+import com.martinryberglaude.skyfall.interfaces.MainContract;
+import com.martinryberglaude.skyfall.view.RecyclerViewAdapterHours;
 
-public class SettingsActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class HoursActivity extends AppCompatActivity implements MainContract.HourItemOnClickListener {
+
+    private RecyclerView recyclerView;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyTheme();
-        setContentView(R.layout.preference_layout);
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainPreferenceFragment()).commit();
-        Toolbar toolbar = findViewById(R.id.toolbar_prefs);
+        setContentView(R.layout.activity_hours);
+
+        DayItem dayItem = (DayItem) getIntent().getSerializableExtra("day");
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleBackPress();
+                    finish();
                 }
             });
         }
+        TextView toolbarTitle = findViewById(R.id.title_day);
+
+        Calendar currentCal = Calendar.getInstance();
+        Calendar tomorrowCal = Calendar.getInstance();
+        tomorrowCal.add(Calendar.DAY_OF_MONTH, 1);
+        currentCal.setTime(dayItem.getDate());
+        boolean sameDay = currentCal.get(Calendar.DAY_OF_YEAR) == Calendar.getInstance().get(Calendar.DAY_OF_YEAR) &&
+                currentCal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR);
+
+        boolean nextDay = currentCal.get(Calendar.DAY_OF_YEAR) == tomorrowCal.get(Calendar.DAY_OF_YEAR) &&
+                currentCal.get(Calendar.YEAR) == tomorrowCal.get(Calendar.YEAR);
+
+        if (sameDay) {
+            toolbarTitle.setText(R.string.today);
+        } else if (nextDay) {
+            toolbarTitle.setText(R.string.tomorrow);
+        } else {
+            toolbarTitle.setText(dayItem.getDayString());
+        }
+        recyclerView = findViewById(R.id.recycler_view_hours);
+        recyclerView.setLayoutManager(new LinearLayoutManager(HoursActivity.this));
+        initRecyclerView(dayItem);
+    }
+
+    public void initRecyclerView(DayItem dayItem) {
+        RecyclerViewAdapterHours adapter = new RecyclerViewAdapterHours(HoursActivity.this, dayItem.getHourList(), HoursActivity.this);
+        adapter.setHasStableIds(true);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setDrawingCacheEnabled(true);
+        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void onBackPressed() {
-        handleBackPress();
-    }
+    public void onItemClick(HourItem hourItem) {
 
-    private void handleBackPress() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean requiresRefresh = preferences.getBoolean("requiresRefresh", false);
-        if (requiresRefresh) {
-            preferences.edit().putBoolean("requiresRefresh", false).commit();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            finish();
-            startActivity(intent);
-        } else {
-            finish();
-        }
     }
 
     private void applyTheme() {

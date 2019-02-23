@@ -9,17 +9,17 @@ import android.widget.TextView;
 
 import com.martinryberglaude.skyfall.R;
 import com.martinryberglaude.skyfall.data.DayItem;
-import com.martinryberglaude.skyfall.interfaces.RecyclerItemClickListener;
+import com.martinryberglaude.skyfall.interfaces.MainContract;
 
 import java.util.Calendar;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<DayItem> dayList;
     private LayoutInflater inflater;
-    private RecyclerItemClickListener recyclerItemClickListener;
+    private MainContract.DayItemClickListener itemListener;
 
     // stores and recycles views as they are scrolled off screen
     public class DayViewHolder extends RecyclerView.ViewHolder  {
@@ -37,15 +37,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public RecyclerViewAdapter(Context context, List<DayItem> dayList) {
+    public RecyclerViewAdapterDays(Context context, List<DayItem> dayList, MainContract.DayItemClickListener itemListemer) {
         this.inflater = LayoutInflater.from(context);
         this.dayList = dayList;
+        this.itemListener = itemListemer;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View itemView = inflater.inflate(R.layout.recyclerview_day_row, parent, false);
+        View itemView = inflater.inflate(R.layout.recyclerview_row, parent, false);
         return new DayViewHolder(itemView);
     }
 
@@ -55,7 +56,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             DayItem dayItem =  dayList.get(position);
             DayViewHolder holder = (DayViewHolder) viewHolder;
 
-            holder.tTextView.setText(dayItem.getTemperatureString());
+            holder.tTextView.setText(dayItem.getHourList().get(0).getTemperatureString());
 
             Calendar currentCal = Calendar.getInstance();
             Calendar tomorrowCal = Calendar.getInstance();
@@ -74,13 +75,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 holder.dayTextView.setText(dayItem.getDayString());
             }
-            holder.wsymb2TextView.setText(dayItem.getWsymb2String());
-            holder.wsymb2ImageView.setImageResource(dayItem.getWsymb2Drawable());
+            holder.wsymb2TextView.setText(dayItem.getHourList().get(0).getWsymb2String());
+            holder.wsymb2ImageView.setImageResource(dayItem.getHourList().get(0).getWsymb2Drawable());
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recyclerItemClickListener.onItemClick(dayList.get(position));
+                    itemListener.onItemClick(dayList.get(position));
                 }
             });
     }

@@ -33,6 +33,7 @@ public class RetroTimeSeries {
         return validTime.split("T")[0];
     }
     public String getHourString() {
-        return validTime.split("T")[1];
+        String longHourString = validTime.split("T") [1];
+        return longHourString.substring(0, 5);
     }
 }

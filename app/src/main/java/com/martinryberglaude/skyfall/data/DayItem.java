@@ -1,46 +1,35 @@
 package com.martinryberglaude.skyfall.data;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
-public class DayItem {
-    private String temperatureString;
-    private String dayString;
-    private String windSpeedString;
-    @WindDirection.Direction int windDirection;
-    private String wsymb2String;
-    private String pressureString;
-    private String rainAmountString;
-    private String visbilityString;
-    private String humidityString;
-    private String gustSpeedString;
-    private String cloudCoverString;
-    private String feelsLikeString;
+public class DayItem implements Serializable {
     private Date date;
+    private String dayString;
+    private List<HourItem> hourList;
+
     private int wsymb2Drawable;
+    private String wsymb2String;
+    private String temperatureString;
 
+    private String sunriseString;
+    private String sunsetString;
 
-    public @WindDirection.Direction int getWindDirection() {
-        return windDirection;
+    public Date getDate() {
+        return date;
     }
 
-    public void setWindDirection(@WindDirection.Direction int windDirection) {
-        this.windDirection = windDirection;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public int getWsymb2Drawable() {
-        return wsymb2Drawable;
+    public List<HourItem> getHourList() {
+        return hourList;
     }
 
-    public void setWsymb2Drawable(int wsymb2Drawable) {
-        this.wsymb2Drawable = wsymb2Drawable;
-    }
-
-    public String getTemperatureString() {
-        return temperatureString;
-    }
-
-    public void setTemperatureString(String temperatureString) {
-        this.temperatureString = temperatureString;
+    public void setHourList(List<HourItem> hourList) {
+        this.hourList = hourList;
     }
 
     public String getDayString() {
@@ -51,12 +40,12 @@ public class DayItem {
         this.dayString = dayString;
     }
 
-    public String getWindSpeedString() {
-        return windSpeedString;
+    public int getWsymb2Drawable() {
+        return wsymb2Drawable;
     }
 
-    public void setWindSpeedString(String windSpeedString) {
-        this.windSpeedString = windSpeedString;
+    public void setWsymb2Drawable(int wsymb2Drawable) {
+        this.wsymb2Drawable = wsymb2Drawable;
     }
 
     public String getWsymb2String() {
@@ -67,67 +56,27 @@ public class DayItem {
         this.wsymb2String = wsymb2String;
     }
 
-    public Date getDate() {
-        return date;
+    public String getTemperatureString() {
+        return temperatureString;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setTemperatureString(String temperatureString) {
+        this.temperatureString = temperatureString;
     }
 
-    public String getPressureString() {
-        return pressureString;
+    public String getSunriseString() {
+        return sunriseString;
     }
 
-    public void setPressureString(String pressureString) {
-        this.pressureString = pressureString;
+    public void setSunriseString(String sunriseString) {
+        this.sunriseString = sunriseString;
     }
 
-    public String getRainAmountString() {
-        return rainAmountString;
+    public String getSunsetString() {
+        return sunsetString;
     }
 
-    public void setRainAmountString(String rainAmountString) {
-        this.rainAmountString = rainAmountString;
-    }
-
-    public String getVisbilityString() {
-        return visbilityString;
-    }
-
-    public void setVisbilityString(String visbilityString) {
-        this.visbilityString = visbilityString;
-    }
-
-    public String getHumidityString() {
-        return humidityString;
-    }
-
-    public void setHumidityString(String humidityString) {
-        this.humidityString = humidityString;
-    }
-
-    public String getGustSpeedString() {
-        return gustSpeedString;
-    }
-
-    public void setGustSpeedString(String gustSpeedString) {
-        this.gustSpeedString = gustSpeedString;
-    }
-
-    public String getCloudCoverString() {
-        return cloudCoverString;
-    }
-
-    public void setCloudCoverString(String cloudCoverString) {
-        this.cloudCoverString = cloudCoverString;
-    }
-
-    public String getFeelsLikeString() {
-        return feelsLikeString;
-    }
-
-    public void setFeelsLikeString(String feelsLikeString) {
-        this.feelsLikeString = feelsLikeString;
+    public void setSunsetString(String sunsetString) {
+        this.sunsetString = sunsetString;
     }
 }
