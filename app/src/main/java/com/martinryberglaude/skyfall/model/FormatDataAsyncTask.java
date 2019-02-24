@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.martinryberglaude.skyfall.R;
+import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
@@ -30,7 +31,7 @@ import java.util.Locale;
 
 import retrofit2.Response;
 
-public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
+public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
 
     public MainContract.FormatDayWeatherIntractor.OnFinishedListener delegate = null;
     private SharedPreferences sharedPreferences;
@@ -43,6 +44,8 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
         Response<RetroWeatherData> response = (Response<RetroWeatherData>) params[0];
         TimeOfDay timeOfDay = (TimeOfDay) params[1];
         sharedPreferences = (SharedPreferences) params[2];
+        Coordinate coordinate = (Coordinate) params[3];
+
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
@@ -144,6 +147,14 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
                     }
                 }
                 dayItem.setHourList(hourList);
+                // Sets sunrise and sunset strings to dayItem
+                Calendar dayCal = Calendar.getInstance();
+                dayCal.setTime(dayItem.getDate());
+                String[] sunriseSunsetString = getSunriseSunsetStrings(coordinate, dayCal);
+                dayItem.setSunriseString(sunriseSunsetString[0]);
+                dayItem.setSunsetString(sunriseSunsetString[1]);
+
+                // Add dayItem to the list
                 dayList.add(dayItem);
             }
         }
@@ -169,7 +180,7 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
             Date date;
             try {
                 date = hourFormat.parse(hourString);
-                SimpleDateFormat hourFormat12 = new SimpleDateFormat("K:mm");
+                SimpleDateFormat hourFormat12 = new SimpleDateFormat("K:mm a", Locale.getDefault());
                 clockString = hourFormat12.format(date);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -423,6 +434,14 @@ public class FormatDaysAsyncTaskModel extends AsyncTask<Object, Integer, List<Da
         } else {
             return temperatureC;
         }
+    }
+    public String[] getSunriseSunsetStrings(Coordinate coordinate, Calendar calendar) {
+        Calendar[] calendars = ca.rmen.sunrisesunset.SunriseSunset.getSunriseSunset(calendar, coordinate.getLat(), coordinate.getLon());
+        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+        String sunriseString = getClockString(hourFormat.format(calendars[0].getTime()));
+        String sunsetString = getClockString(hourFormat.format(calendars[1].getTime()));
+
+        return new String[] {sunriseString, sunsetString};
     }
 }
 

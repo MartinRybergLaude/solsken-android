@@ -45,13 +45,33 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/text_sunrise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textSecondary"
+            android:textStyle="bold"
+            android:text="06:38"/>
+        <TextView
+            android:id="@+id/text_sunset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textSecondary"
+            android:text="06:38"/>
+    </LinearLayout>
+
     <TextView
         android:gravity="right"
         android:text="5°"
         android:id="@+id/text_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="8dp"
         app:layout_constraintRight_toLeftOf="@+id/wsymb2_img"
         android:padding="10dp"
         android:textSize="18sp"

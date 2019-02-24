@@ -26,6 +26,8 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
         TextView tTextView;
         TextView wsymb2TextView;
         TextView dayTextView;
+        TextView sunriseTextView;
+        TextView sunsetTextView;
         ImageView wsymb2ImageView;
 
         DayViewHolder(View itemView) {
@@ -33,6 +35,8 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
             tTextView = itemView.findViewById(R.id.text_temperature);
             wsymb2TextView = itemView.findViewById(R.id.text_wsymb2);
             dayTextView = itemView.findViewById(R.id.text_day);
+            sunriseTextView = itemView.findViewById(R.id.text_sunrise);
+            sunsetTextView = itemView.findViewById(R.id.text_sunset);
             wsymb2ImageView = itemView.findViewById(R.id.wsymb2_img);
         }
     }
@@ -57,6 +61,8 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
             DayViewHolder holder = (DayViewHolder) viewHolder;
 
             holder.tTextView.setText(dayItem.getHourList().get(0).getTemperatureString());
+            holder.sunriseTextView.setText(dayItem.getSunriseString());
+            holder.sunsetTextView.setText(dayItem.getSunsetString());
 
             Calendar currentCal = Calendar.getInstance();
             Calendar tomorrowCal = Calendar.getInstance();
@@ -90,5 +96,10 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public int getItemCount() {
         return dayList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }

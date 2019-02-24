@@ -1,27 +1,34 @@
 package com.martinryberglaude.skyfall;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
+import com.martinryberglaude.skyfall.view.MainActivity;
 import com.martinryberglaude.skyfall.view.RecyclerViewAdapterHours;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 public class HoursActivity extends AppCompatActivity implements MainContract.HourItemOnClickListener {
 
     private RecyclerView recyclerView;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +37,9 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
         setContentView(R.layout.activity_hours);
 
         DayItem dayItem = (DayItem) getIntent().getSerializableExtra("day");
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar_hrs);
+        applyToolbarTheme();
+
         if (toolbar != null) {
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -76,7 +85,9 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
 
     @Override
     public void onItemClick(HourItem hourItem) {
-
+        Intent intent = new Intent(HoursActivity.this, DetailsActivity.class);
+        intent.putExtra("hour", (Serializable) hourItem);
+        startActivity(intent);
     }
 
     private void applyTheme() {
@@ -113,6 +124,7 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
                     break;
                 default:
                     setTheme(R.style.AppThemeDay);
+                    break;
             }
         } else {
             switch (colorTheme) {
@@ -143,7 +155,16 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
                     break;
                 default:
                     setTheme(R.style.DarkThemeDay);
+                    break;
             }
         }
+    }
+
+    private void applyToolbarTheme() {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = this.getTheme();
+        theme.resolveAttribute(R.attr.primaryColor, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        toolbar.setBackgroundColor(color);
     }
 }

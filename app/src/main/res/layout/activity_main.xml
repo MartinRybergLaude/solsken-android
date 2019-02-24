@@ -29,7 +29,8 @@
                     android:id="@+id/title_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="48dp"
                     android:textColor="?attr/textColorPrimaryInverse"
                     android:text="Stockholm"
                     android:textSize="20sp"
@@ -49,7 +50,8 @@
                     android:id="@+id/title_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_centerHorizontal="false"
+                    android:layout_marginLeft="40dp"
                     android:layout_marginTop="8dp"
                     android:text="5°"
                     android:textColor="@color/white"
@@ -61,9 +63,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/title_temperature"
-                    android:layout_centerHorizontal="true"
+                    android:layout_centerHorizontal="false"
+                    android:layout_marginLeft="40dp"
                     android:orientation="horizontal"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
                     android:layout_marginTop="0dp">
                     <ImageView
                         android:id="@+id/wi_icon"
@@ -84,7 +87,8 @@
                 </LinearLayout>
 
                 <TableLayout
-                    android:layout_marginTop="40dp"
+                    android:id="@+id/table"
+                    android:layout_marginTop="24dp"
                     android:layout_below="@+id/layout_wsymb2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -371,6 +375,46 @@
                         </LinearLayout>
                     </TableRow>
                 </TableLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/table"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/text_sunrise"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
+                        android:text="06:36"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_wi_direction_up"
+                        android:tint="@color/white"/>
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_wi_horizon_alt"
+                        android:tint="@color/white"/>
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:rotation="180"
+                        android:src="@drawable/ic_wi_direction_up"
+                        android:tint="@color/white"/>
+                    <TextView
+                        android:id="@+id/text_sunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
+                        android:text="18:58"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+                </LinearLayout>
             </RelativeLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>

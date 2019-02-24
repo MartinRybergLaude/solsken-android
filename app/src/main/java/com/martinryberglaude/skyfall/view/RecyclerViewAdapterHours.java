@@ -24,6 +24,8 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
         TextView tTextView;
         TextView wsymb2TextView;
         TextView hourTextView;
+        TextView sunriseTextView;
+        TextView sunsetTextView;
         ImageView wsymb2ImageView;
 
         HourViewHolder(View itemView) {
@@ -31,6 +33,8 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
             tTextView = itemView.findViewById(R.id.text_temperature);
             wsymb2TextView = itemView.findViewById(R.id.text_wsymb2);
             hourTextView = itemView.findViewById(R.id.text_day);
+            sunriseTextView = itemView.findViewById(R.id.text_sunrise);
+            sunsetTextView = itemView.findViewById(R.id.text_sunset);
             wsymb2ImageView = itemView.findViewById(R.id.wsymb2_img);
         }
     }
@@ -55,6 +59,8 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
         RecyclerViewAdapterHours.HourViewHolder holder = (RecyclerViewAdapterHours.HourViewHolder) viewHolder;
 
         holder.tTextView.setText(hourItem.getTemperatureString());
+        holder.sunriseTextView.setText("");
+        holder.sunsetTextView.setText("");
         holder.hourTextView.setText(hourItem.getHourString());
         holder.wsymb2TextView.setText(hourItem.getWsymb2String());
         holder.wsymb2ImageView.setImageResource(hourItem.getWsymb2Drawable());
@@ -71,5 +77,14 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemCount() {
         return hourList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 }

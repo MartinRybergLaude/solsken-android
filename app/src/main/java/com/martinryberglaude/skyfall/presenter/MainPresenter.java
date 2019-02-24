@@ -3,7 +3,7 @@ package com.martinryberglaude.skyfall.presenter;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
-import com.martinryberglaude.skyfall.model.FormatDaysAsyncTaskModel;
+import com.martinryberglaude.skyfall.model.FormatDataAsyncTask;
 import com.martinryberglaude.skyfall.model.MainModel;
 import com.martinryberglaude.skyfall.network.RetroWeatherData;
 
@@ -51,9 +51,9 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
-      FormatDaysAsyncTaskModel formatAsyncTask = new FormatDaysAsyncTaskModel();
+      FormatDataAsyncTask formatAsyncTask = new FormatDataAsyncTask();
       formatAsyncTask.delegate = this;
-      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences());
+      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences(), view.getCurrentCoordinate());
     }
 
     @Override

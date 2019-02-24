@@ -30,6 +30,6 @@
     <color name="textPrimaryInverse">#fff</color>
     <color name="textSecondaryInverse">#eaeaea</color>
 
-    <color name="textPrimary">#000</color>
+    <color name="textPrimary">#202020</color>
     <color name="textSecondary">#8c8c8c</color>
 </resources>

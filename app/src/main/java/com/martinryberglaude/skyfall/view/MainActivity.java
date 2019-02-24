@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
     private MainPresenter mainPresenter;
-    private ActionBar actionBar;
+    private Toolbar toolbar;
     private Window window;
 
     private TextView temperatureText;
@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private TextView icGustSpeedText;
     private TextView icCloudCoverText;
     private TextView icFeelsLikeText;
+    private TextView sunriseText;
+    private TextView sunsetText;
 
     private TextView cityText;
 
@@ -140,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         icGustSpeedText = findViewById(R.id.ic_gust_speed);
         icCloudCoverText = findViewById(R.id.ic_cloud_cover);
         icFeelsLikeText = findViewById(R.id.ic_feels_like);
+        sunriseText = findViewById(R.id.text_sunrise);
+        sunsetText = findViewById(R.id.text_sunset);
 
         btnSettings = findViewById(R.id.btn_settings);
         pullToRefresh = findViewById(R.id.refresh);
@@ -151,10 +155,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         fadeView.getBackground().setAlpha(0);
         toolbarShadow.getBackground().setAlpha(0);
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
+        toolbar = findViewById(R.id.toolbar);
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     sharedPreferences.edit().putString("time", "sunset").putString("themeActual","sunset").apply();
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
                     window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.sunriseColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
                     statusBarColor = getResources().getColor(R.color.sunriseColor1);
                     statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
                     toolbarColor = getResources().getColor(R.color.sunrisePrimary);
@@ -219,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     sharedPreferences.edit().putString("time", "night").putString("themeActual","night").apply();
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
                     window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.nightColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
                     statusBarColor = getResources().getColor(R.color.nightColor1);
                     statusBarColorDark = getResources().getColor(R.color.nightSecondary);
                     toolbarColor = getResources().getColor(R.color.nightPrimary);
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     sharedPreferences.edit().putString("time", "day").putString("themeActual","day").apply();
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
                     window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dayColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
                     statusBarColor = getResources().getColor(R.color.dayColor1);
                     statusBarColorDark = getResources().getColor(R.color.daySecondary);
                     toolbarColor = getResources().getColor(R.color.dayPrimary);
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case "sunset":
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
                     window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.sunriseColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
                     statusBarColor = getResources().getColor(R.color.sunriseColor1);
                     statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
                     toolbarColor = getResources().getColor(R.color.sunrisePrimary);
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case "night":
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
                     window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.nightColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
                     statusBarColor = getResources().getColor(R.color.nightColor1);
                     statusBarColorDark = getResources().getColor(R.color.nightSecondary);
                     toolbarColor = getResources().getColor(R.color.nightPrimary);
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case "day":
                     pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
                     window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
-                    actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dayColor1)));
+                    toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
                     statusBarColor = getResources().getColor(R.color.dayColor1);
                     statusBarColorDark = getResources().getColor(R.color.daySecondary);
                     toolbarColor = getResources().getColor(R.color.dayPrimary);
@@ -292,6 +293,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 icGustSpeedText.setText(hourItem.getGustSpeedString());
                 icCloudCoverText.setText(hourItem.getCloudCoverString());
                 icFeelsLikeText.setText(hourItem.getFeelsLikeString());
+                sunriseText.setText(dayItem.getSunriseString());
+                sunsetText.setText(dayItem.getSunsetString());
 
                 if (initRecyclerview) {
                     recyclerViewList.addAll(dayList);
