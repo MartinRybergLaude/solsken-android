@@ -6,11 +6,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.martinryberglaude.skyfall.data.HourItem;
@@ -29,6 +31,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView icGustSpeedText;
     private TextView icCloudCoverText;
     private TextView icFeelsLikeText;
+    private RelativeLayout weatherCard;
 
     private HourItem hourItem;
     @Override
@@ -52,6 +55,15 @@ public class DetailsActivity extends AppCompatActivity {
                     finish();
                 }
             });
+        }
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getTheme();
+        theme.resolveAttribute(R.attr.primaryColor, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        weatherCard = findViewById(R.id.weather_card);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            weatherCard.setOutlineAmbientShadowColor(color);
+            weatherCard.setOutlineSpotShadowColor(color);
         }
 
         windIcon = findViewById(R.id.ic_wind_icon);

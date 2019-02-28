@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -16,6 +15,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private MainPresenter mainPresenter;
     private Toolbar toolbar;
     private Window window;
+    private FrameLayout mainView;
 
     private TextView temperatureText;
     private TextView wsymb2Text;
@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private BottomSheetBehavior sheetBehavior;
     private RelativeLayout sheetLayout;
     private RelativeLayout fadeView;
-    private View toolbarShadow;
     private List<DayItem> recyclerViewList = new ArrayList<>();
 
     private int statusBarColor;
@@ -150,12 +149,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         cityText = findViewById(R.id.title_city);
         sheetLayout = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(sheetLayout);
-        toolbarShadow = findViewById(R.id.shadow);
         fadeView = findViewById(R.id.fade_view);
         fadeView.getBackground().setAlpha(0);
-        toolbarShadow.getBackground().setAlpha(0);
 
         toolbar = findViewById(R.id.toolbar);
+        mainView = findViewById(R.id.main_view);
+
+        toolbar.animate().alpha(0.0f).setDuration(0);
+        mainView.animate().alpha(0.0f).setDuration(0);
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -171,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 window.setStatusBarColor(blendedColorStatusBar);
                 toolbar.setBackgroundColor(blendedColorToolbar);
                 fadeView.getBackground().setAlpha(Math.round(slideOffset * 255));
-                toolbarShadow.getBackground().setAlpha(Math.round(slideOffset * 255));
             }
         });
 
@@ -189,7 +189,21 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mainPresenter.updateLocationAndUI();
+                SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                // Check if content was refreshed less than five minutes ago
+                if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
+                    // Actually refresh
+                    mainPresenter.updateLocationAndUI();
+                } else {
+                    // Fake a refresh
+                    pullToRefresh.setRefreshing(true);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            pullToRefresh.setRefreshing(false);
+                        }
+                    }, 500);
+                }
             }
         });
 
@@ -209,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case SUNSET:
                 case SUNRISE:
                     sharedPreferences.edit().putString("time", "sunset").putString("themeActual","sunset").apply();
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
                     window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
                     statusBarColor = getResources().getColor(R.color.sunriseColor1);
@@ -218,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     break;
                 case NIGHT:
                     sharedPreferences.edit().putString("time", "night").putString("themeActual","night").apply();
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
                     window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
                     statusBarColor = getResources().getColor(R.color.nightColor1);
@@ -227,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     break;
                 case DAY:
                     sharedPreferences.edit().putString("time", "day").putString("themeActual","day").apply();
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
                     window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
                     statusBarColor = getResources().getColor(R.color.dayColor1);
@@ -239,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             // Is sunset
             switch (theme) {
                 case "sunset":
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
                     window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
                     statusBarColor = getResources().getColor(R.color.sunriseColor1);
@@ -248,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     break;
                 // Is night
                 case "night":
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
                     window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
                     statusBarColor = getResources().getColor(R.color.nightColor1);
@@ -257,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     break;
                 // Is day
                 case "day":
-                    pullToRefresh.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
+                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
                     window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
                     toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
                     statusBarColor = getResources().getColor(R.color.dayColor1);
@@ -296,6 +310,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 sunriseText.setText(dayItem.getSunriseString());
                 sunsetText.setText(dayItem.getSunsetString());
 
+                toolbar.animate().alpha(1.0f).setDuration(200);
+                mainView.animate().alpha(1.0f).setDuration(200);
+
                 if (initRecyclerview) {
                     recyclerViewList.addAll(dayList);
                     adapter = new RecyclerViewAdapterDays(MainActivity.this, recyclerViewList, MainActivity.this);
@@ -312,6 +329,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         }, 200);
+
+        SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.edit().putLong("cacheTime", System.currentTimeMillis()).commit();
     }
 
     @Override
@@ -436,6 +456,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Intent intent = new Intent(MainActivity.this, HoursActivity.class);
         intent.putExtra("day", (Serializable) dayItem);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
+            mainPresenter.updateLocationAndUI();
+        }
     }
 }
 

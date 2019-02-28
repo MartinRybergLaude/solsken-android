@@ -54,14 +54,14 @@
             android:id="@+id/text_sunrise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textSecondary"
+            android:textColor="?attr/textColorSecondary"
             android:textStyle="bold"
             android:text="06:38"/>
         <TextView
             android:id="@+id/text_sunset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textSecondary"
+            android:textColor="?attr/textColorSecondary"
             android:text="06:38"/>
     </LinearLayout>
 

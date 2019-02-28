@@ -15,21 +15,21 @@
     <color name="nightColor1">#4117b0</color>
     <color name="nightColor2">#9730dc</color>
 
-    <color name="nightPrimary">#673AB7</color>
-    <color name="nightSecondary">#512DA8</color>
+    <color name="nightPrimary">#5B19DA</color>
+    <color name="nightSecondary">#5516CC</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="lightGray">#f0f4fd</color>
-    <color name="darkGray">#202020</color>
+    <color name="darkGray">#0F0F0F</color>
 
     <color name="transparentWhite">#40ffffff</color>
 
     <color name="background">#5683ff </color>
 
     <color name="textPrimaryInverse">#fff</color>
-    <color name="textSecondaryInverse">#eaeaea</color>
+    <color name="textSecondaryInverse">#DDDDDD</color>
 
-    <color name="textPrimary">#202020</color>
-    <color name="textSecondary">#8c8c8c</color>
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#3F3F3F</color>
 </resources>

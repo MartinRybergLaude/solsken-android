@@ -36,13 +36,4 @@
         </LinearLayout>
   </androidx.core.widget.NestedScrollView>
 
-
-
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shape_gradient_top_shadow"
-        android:layout_alignParentTop="true" />
-
 </RelativeLayout>

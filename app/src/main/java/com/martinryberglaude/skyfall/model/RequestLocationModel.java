@@ -46,14 +46,14 @@ public class RequestLocationModel implements MainContract.RequestLocationIntract
         c.setCostAllowed(true);
         c.setPowerRequirement(Criteria.POWER_LOW);
         String provider = locationManager.getBestProvider(c, true);
-        Location lastKnownLocation = locationManager.getLastKnownLocation(provider);
-
-        Log.d("LASTLOCATION", String.valueOf(locationAgeMinutes(lastKnownLocation)) + "min");
-        Log.d("LASTLOCATION", String.valueOf(locationAgeSeconds(lastKnownLocation)) + "s");
-        Log.d("LASTLOCATION", String.valueOf(locationAgeMillis(lastKnownLocation)) + "ms");
+        Location lastKnownLocation;
+        lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
         // Check if last known location was recorded less than two minutes ago
         if (lastKnownLocation != null && locationAgeMillis(lastKnownLocation) < TWO_MINUTES) {
+            Log.d("LASTLOCATION", String.valueOf(locationAgeMinutes(lastKnownLocation)) + "min");
+            Log.d("LASTLOCATION", String.valueOf(locationAgeSeconds(lastKnownLocation)) + "s");
+            Log.d("LASTLOCATION", String.valueOf(locationAgeMillis(lastKnownLocation)) + "ms");
             onFinishedListener.onFinishedRetrieveLocation(new Coordinate(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude()));
             // Last known location was too old, retreieve new location
         } else {
