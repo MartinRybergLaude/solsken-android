@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RetroTimeSeries {
+public class SMHIRetroTimeSeries {
     @SerializedName("validTime")
     @Expose
     private String validTime;
     @SerializedName("parameters")
     @Expose
-    private List<RetroParameter> parameters = null;
+    private List<SMHIRetroParameter> parameters = null;
 
     public String getValidTime() {
         return validTime;
@@ -21,11 +21,11 @@ public class RetroTimeSeries {
         this.validTime = validTime;
     }
 
-    public List<RetroParameter> getParameters() {
+    public List<SMHIRetroParameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<RetroParameter> parameters) {
+    public void setParameters(List<SMHIRetroParameter> parameters) {
         this.parameters = parameters;
     }
 

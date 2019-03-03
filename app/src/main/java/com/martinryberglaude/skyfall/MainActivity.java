@@ -1,4 +1,4 @@
-package com.martinryberglaude.skyfall.view;
+package com.martinryberglaude.skyfall;
 
 import android.Manifest;
 import android.content.Context;
@@ -13,7 +13,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Layout;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -23,19 +28,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.martinryberglaude.skyfall.HoursActivity;
-import com.martinryberglaude.skyfall.PermissionActivity;
-import com.martinryberglaude.skyfall.SettingsActivity;
+import com.google.android.material.navigation.NavigationView;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
+import com.martinryberglaude.skyfall.data.LocationItem;
 import com.martinryberglaude.skyfall.data.WindDirection;
+import com.martinryberglaude.skyfall.database.Locations;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
-import com.martinryberglaude.skyfall.R;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.model.RequestLocationModel;
 import com.martinryberglaude.skyfall.model.RequestWeatherModel;
+import com.martinryberglaude.skyfall.model.RetrieveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.skyfall.presenter.MainPresenter;
+import com.martinryberglaude.skyfall.view.RecyclerViewAdapterDays;
+import com.mikepenz.fastadapter.IItem;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -50,7 +61,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MainActivity extends AppCompatActivity implements MainContract.View, MainContract.RequestLocationIntractor.OnFinishedListerner, MainContract.DayItemClickListener {
+public class MainActivity extends AppCompatActivity implements MainContract.View,
+        MainContract.RequestLocationIntractor.OnFinishedListerner,
+        MainContract.DayItemClickListener,
+        MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener {
 
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
@@ -58,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private Toolbar toolbar;
     private Window window;
     private FrameLayout mainView;
+    private Drawer drawer;
 
     private TextView temperatureText;
     private TextView wsymb2Text;
@@ -79,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private TextView cityText;
 
     private ImageButton btnSettings;
+    private ImageButton btnSearch;
+    private ImageButton btnMenu;
     private SwipeRefreshLayout pullToRefresh;
     private BottomSheetBehavior sheetBehavior;
     private RelativeLayout sheetLayout;
@@ -91,6 +108,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private boolean automaticTheme = true;
     private String theme;
 
+    private List<Locations> locList = new ArrayList<>();
+    private boolean autoLocation = true;
+    private Locations selectedLocation;
+
     public Coordinate getCurrentCoordinate() {
         return currentCoordinate;
     }
@@ -100,16 +121,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        // Sets theming things
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         theme = sharedPreferences.getString("theme", "auto");
-        if (!darkTheme) {
-            setTheme(R.style.AppThemeDay);
-        } else {
-            setTheme(R.style.DarkThemeDay);
-        }
+        applyTheme();
         if (!theme.equals("auto")) automaticTheme = false;
 
         setContentView(R.layout.activity_main);
@@ -144,7 +159,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         sunriseText = findViewById(R.id.text_sunrise);
         sunsetText = findViewById(R.id.text_sunset);
 
+        btnMenu = findViewById(R.id.btn_drawer);
         btnSettings = findViewById(R.id.btn_settings);
+
         pullToRefresh = findViewById(R.id.refresh);
         cityText = findViewById(R.id.title_city);
         sheetLayout = findViewById(R.id.bottom_sheet);
@@ -214,7 +231,70 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 startActivity(intent);
             }
         });
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withHeader(R.layout.nav_header)
+                .withTranslucentStatusBar(false)
+                .withDisplayBelowStatusBar(false)
+                .withDrawerGravity(Gravity.START)
+                .withActionBarDrawerToggle(false)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        switch ((int) drawerItem.getIdentifier()) {
+                            case -10:
+                                autoLocation = true;
+                                mainPresenter.updateLocationAndUI();
+                                break;
+                            default:
+                                for (Locations location : locList) {
+                                    if (drawerItem.getIdentifier() == location.getLocationId()) {
+                                        autoLocation = false;
+                                        selectedLocation = location;
+                                        mainPresenter.updateLocationAndUI();
+                                    }
+                                }
+                        }
+                        return false;
+                    }
+                })
+                .build();
+
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer();
+            }
+        });
+
+        btnSearch = drawer.getHeader().findViewById(R.id.btn_search);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+    private void updateDrawerItems() {
+        RetrieveDatabaseLocationsAsyncTask retrieveTask = new RetrieveDatabaseLocationsAsyncTask(this);
+        retrieveTask.delegate = this;
+        retrieveTask.execute();
+    }
+
+    private void reloadNavigationDrawer() {
+        drawer.removeAllItems();
+
+        drawer.addItem(new PrimaryDrawerItem().withIdentifier(-10).withName(getString(R.string.current_location)).withIcon(R.drawable.ic_my_location).withIconTintingEnabled(true));
+
+        for (Locations location : locList) {
+            drawer.addItem(new PrimaryDrawerItem().withIdentifier(location.getLocationId()).withName(location.getLocationName()).withIcon(R.drawable.ic_location).withIconTintingEnabled(true));
+        }
+        drawer.setSelection(-10);
+    }
+
     @Override
     public void setColorTheme(TimeOfDay timeOfDay) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -341,18 +421,22 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
     @Override
     public String requestAdressString(Coordinate coordinate) {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
-            String city = addresses.get(0).getLocality();
-            String knownName = addresses.get(0).getFeatureName();
-            if (city == null) return knownName;
-            else return city;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (autoLocation) {
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
+                String city = addresses.get(0).getLocality();
+                String knownName = addresses.get(0).getFeatureName();
+                if (city == null) return knownName;
+                else return city;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return selectedLocation.getLocationName();
         }
     }
 
@@ -373,7 +457,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     // Get location asynchronously, has to be called from activity as it needs context
     @Override
     public void updateLocationAndUI() {
-        getLocationIntractor.getLocation(this,this);
+        if (autoLocation) {
+            getLocationIntractor.getLocation(this,this);
+        } else {
+            this.currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
+            mainPresenter.loadColorTheme();
+            mainPresenter.requestWeatherData();
+        }
     }
 
     @Override
@@ -465,6 +555,89 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
             mainPresenter.updateLocationAndUI();
         }
+        updateDrawerItems();
+    }
+
+    private void applyTheme() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String colorTheme = sharedPreferences.getString("theme", "auto");
+        String colorThemeActual = sharedPreferences.getString("themeActual", "day");
+        boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
+        if (!darkTheme) {
+            switch (colorTheme) {
+                case "auto":
+                    switch (colorThemeActual) {
+                        case "day":
+                            setTheme(R.style.AppThemeDay);
+                            break;
+                        case "sunset":
+                            setTheme(R.style.AppThemeSunrise);
+                            break;
+                        case "night":
+                            setTheme(R.style.AppThemeNight);
+                            break;
+                        default:
+                            setTheme(R.style.AppThemeDay);
+                            break;
+                    }
+                    break;
+                case "day":
+                    setTheme(R.style.AppThemeDay);
+                    break;
+                case "sunset":
+                    setTheme(R.style.AppThemeSunrise);
+                    break;
+                case "night":
+                    setTheme(R.style.AppThemeNight);
+                    break;
+                default:
+                    setTheme(R.style.AppThemeDay);
+                    break;
+            }
+        } else {
+            switch (colorTheme) {
+                case "auto":
+                    switch (colorThemeActual) {
+                        case "day":
+                            setTheme(R.style.DarkThemeDay);
+                            break;
+                        case "sunset":
+                            setTheme(R.style.DarkThemeSunrise);
+                            break;
+                        case "night":
+                            setTheme(R.style.DarkThemeNight);
+                            break;
+                        default:
+                            setTheme(R.style.DarkThemeDay);
+                            break;
+                    }
+                    break;
+                case "day":
+                    setTheme(R.style.DarkThemeDay);
+                    break;
+                case "sunset":
+                    setTheme(R.style.DarkThemeSunrise);
+                    break;
+                case "night":
+                    setTheme(R.style.DarkThemeNight);
+                    break;
+                default:
+                    setTheme(R.style.DarkThemeDay);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onFinishedFormatDatabaseLocations(List<Locations> locationList) {
+        locList.clear();
+        locList.addAll(locationList);
+        reloadNavigationDrawer();
+    }
+
+    @Override
+    public void onFailureFormatDatabaseLocations() {
+        showToast(getResources().getString(R.string.database_error));
     }
 }
 

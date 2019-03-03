@@ -6,9 +6,10 @@ import android.content.SharedPreferences;
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
-import com.martinryberglaude.skyfall.data.ListItem;
+import com.martinryberglaude.skyfall.data.LocationItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
-import com.martinryberglaude.skyfall.network.RetroWeatherData;
+import com.martinryberglaude.skyfall.database.Locations;
+import com.martinryberglaude.skyfall.network.SMHIRetroWeatherData;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface MainContract {
 
     interface RequestWeatherIntractor {
         interface OnFinishedListerner {
-            void onFinishedRetrieveData(Response<RetroWeatherData> response);
+            void onFinishedRetrieveData(Response<SMHIRetroWeatherData> response);
             void onFailureRetrieveData(Throwable t);
         }
         void getWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
@@ -53,6 +54,12 @@ public interface MainContract {
         interface OnFinishedListener {
             void onFinishedFormatDays(List<DayItem> dayList);
             void onFailureFormatDays();
+        }
+    }
+    interface RetrieveDatabaseLocationsIntractor {
+        interface OnFinishedListener {
+            void onFinishedFormatDatabaseLocations(List<Locations> locationList);
+            void onFailureFormatDatabaseLocations();
         }
     }
     interface DayItemClickListener {

@@ -1,11 +1,13 @@
 package com.martinryberglaude.skyfall.presenter;
 
 import com.martinryberglaude.skyfall.data.DayItem;
+import com.martinryberglaude.skyfall.data.LocationItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
-import com.martinryberglaude.skyfall.model.FormatDataAsyncTask;
+import com.martinryberglaude.skyfall.model.FormatSMHIDataAsyncTask;
 import com.martinryberglaude.skyfall.model.MainModel;
-import com.martinryberglaude.skyfall.network.RetroWeatherData;
+import com.martinryberglaude.skyfall.model.RetrieveDatabaseLocationsAsyncTask;
+import com.martinryberglaude.skyfall.network.SMHIRetroWeatherData;
 
 import java.util.List;
 
@@ -50,8 +52,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     }
 
     @Override
-    public void onFinishedRetrieveData(Response<RetroWeatherData> response) {
-      FormatDataAsyncTask formatAsyncTask = new FormatDataAsyncTask();
+    public void onFinishedRetrieveData(Response<SMHIRetroWeatherData> response) {
+      FormatSMHIDataAsyncTask formatAsyncTask = new FormatSMHIDataAsyncTask();
       formatAsyncTask.delegate = this;
       formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences(), view.getCurrentCoordinate());
     }

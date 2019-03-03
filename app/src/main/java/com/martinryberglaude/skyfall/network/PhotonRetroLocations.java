@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RetroGeometry {
+public class PhotonRetroLocations {
     @SerializedName("type")
     @Expose
     private String type;
-    @SerializedName("coordinates")
+    @SerializedName("features")
     @Expose
-    private List<List<Double>> coordinates = null;
+    private List<PhotonRetroFeature> features = null;
 
     public String getType() {
         return type;
@@ -21,12 +21,11 @@ public class RetroGeometry {
         this.type = type;
     }
 
-    public List<List<Double>> getCoordinates() {
-        return coordinates;
+    public List<PhotonRetroFeature> getFeatures() {
+        return features;
     }
 
-    public void setCoordinates(List<List<Double>> coordinates) {
-        this.coordinates = coordinates;
+    public void setFeatures(List<PhotonRetroFeature> features) {
+        this.features = features;
     }
-
 }

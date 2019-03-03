@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class RetroWeatherData {
+public class SMHIRetroWeatherData {
 
     @SerializedName("approvedTime")
     @Expose
@@ -15,10 +15,10 @@ public class RetroWeatherData {
     private String referenceTime;
     @SerializedName("geometry")
     @Expose
-    private RetroGeometry geometry;
+    private SMHIRetroGeometry geometry;
     @SerializedName("timeSeries")
     @Expose
-    private List<RetroTimeSeries> timeSeries = null;
+    private List<SMHIRetroTimeSeries> timeSeries = null;
 
     public String getApprovedTime() {
         return approvedTime;
@@ -36,19 +36,19 @@ public class RetroWeatherData {
         this.referenceTime = referenceTime;
     }
 
-    public RetroGeometry getGeometry() {
+    public SMHIRetroGeometry getGeometry() {
         return geometry;
     }
 
-    public void setGeometry(RetroGeometry geometry) {
+    public void setGeometry(SMHIRetroGeometry geometry) {
         this.geometry = geometry;
     }
 
-    public List<RetroTimeSeries> getTimeSeries() {
+    public List<SMHIRetroTimeSeries> getTimeSeries() {
         return timeSeries;
     }
 
-    public void setTimeSeries(List<RetroTimeSeries> timeSeries) {
+    public void setTimeSeries(List<SMHIRetroTimeSeries> timeSeries) {
         this.timeSeries = timeSeries;
     }
 

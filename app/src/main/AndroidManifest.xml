@@ -15,14 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeDay">
-        <activity android:name=".DetailsActivity">
-
-        </activity>
-        <activity android:name=".HoursActivity">
-
-        </activity>
+        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".DetailsActivity" />
+        <activity android:name=".HoursActivity" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,14 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PermissionActivity">
-
-        </activity>
+        <activity android:name=".PermissionActivity" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-
-        </activity>
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
-import com.martinryberglaude.skyfall.view.MainActivity;
 import com.martinryberglaude.skyfall.view.RecyclerViewAdapterHours;
 
 import java.io.Serializable;

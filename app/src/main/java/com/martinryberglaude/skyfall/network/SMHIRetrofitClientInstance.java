@@ -3,7 +3,7 @@ package com.martinryberglaude.skyfall.network;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RetrofitClientInstance {
+public class SMHIRetrofitClientInstance {
 
     private static Retrofit retrofit;
     private static final String BASE_URL = "https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/";

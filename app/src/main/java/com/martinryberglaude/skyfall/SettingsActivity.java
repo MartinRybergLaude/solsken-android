@@ -9,13 +9,10 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import com.martinryberglaude.skyfall.view.MainActivity;
-import com.martinryberglaude.skyfall.view.MainPreferenceFragment;
 
-import java.util.List;
+import com.martinryberglaude.skyfall.view.MainPreferenceFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -5,18 +5,21 @@
 
     <color name="dayPrimary">#0072ff</color>
     <color name="daySecondary">#0568E2</color>
+    <color name="dayBGColored">#220072ff</color>
 
     <color name="sunriseColor1">#ff9966</color>
     <color name="sunriseColor2">#ff5e62</color>
 
     <color name="sunrisePrimary">#ff5e62</color>
     <color name="sunriseSecondary">#EC595B</color>
+    <color name="sunriseBGColored">#22ff5e62</color>
 
     <color name="nightColor1">#4117b0</color>
     <color name="nightColor2">#9730dc</color>
 
     <color name="nightPrimary">#5B19DA</color>
     <color name="nightSecondary">#5516CC</color>
+    <color name="nightBGColored">#225B19DA</color>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
@@ -24,6 +27,7 @@
     <color name="darkGray">#0F0F0F</color>
 
     <color name="transparentWhite">#40ffffff</color>
+    <color name="transparent">#00ffffff</color>
 
     <color name="background">#5683ff </color>
 

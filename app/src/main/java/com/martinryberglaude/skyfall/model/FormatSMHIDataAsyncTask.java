@@ -2,7 +2,6 @@ package com.martinryberglaude.skyfall.model;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.martinryberglaude.skyfall.R;
 import com.martinryberglaude.skyfall.data.Coordinate;
@@ -11,9 +10,9 @@ import com.martinryberglaude.skyfall.data.HourItem;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.WindDirection;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
-import com.martinryberglaude.skyfall.network.RetroParameter;
-import com.martinryberglaude.skyfall.network.RetroTimeSeries;
-import com.martinryberglaude.skyfall.network.RetroWeatherData;
+import com.martinryberglaude.skyfall.network.SMHIRetroParameter;
+import com.martinryberglaude.skyfall.network.SMHIRetroTimeSeries;
+import com.martinryberglaude.skyfall.network.SMHIRetroWeatherData;
 import com.martinryberglaude.skyfall.utils_smhi.SMHIWeatherSymbol;
 
 import java.math.RoundingMode;
@@ -24,14 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import retrofit2.Response;
 
-public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
+public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
 
     public MainContract.FormatDayWeatherIntractor.OnFinishedListener delegate = null;
     private SharedPreferences sharedPreferences;
@@ -41,7 +38,7 @@ public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem
     @Override
     protected List<DayItem> doInBackground(Object... params) {
 
-        Response<RetroWeatherData> response = (Response<RetroWeatherData>) params[0];
+        Response<SMHIRetroWeatherData> response = (Response<SMHIRetroWeatherData>) params[0];
         TimeOfDay timeOfDay = (TimeOfDay) params[1];
         sharedPreferences = (SharedPreferences) params[2];
         Coordinate coordinate = (Coordinate) params[3];
@@ -50,7 +47,7 @@ public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem
         List<String> dateList = new ArrayList<>();
         String currentDate;
 
-        for (RetroTimeSeries timeSeries : response.body().getTimeSeries()) {
+        for (SMHIRetroTimeSeries timeSeries : response.body().getTimeSeries()) {
             currentDate = timeSeries.getDateString();
             int temperatureC = 0;
             int windSpeedMS = 0;
@@ -77,10 +74,10 @@ public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem
                         cal.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR);
 
                 List<HourItem> hourList = new ArrayList<>();
-                for (RetroTimeSeries timeSeries2 : response.body().getTimeSeries()) {
+                for (SMHIRetroTimeSeries timeSeries2 : response.body().getTimeSeries()) {
                     if (timeSeries2.getDateString().equals(currentDate)) {
                         HourItem hourItem = new HourItem();
-                        for (RetroParameter parameter : timeSeries2.getParameters()) {
+                        for (SMHIRetroParameter parameter : timeSeries2.getParameters()) {
                             if (parameter.getName().equals("t")) {
                                 hourItem.setTemperatureString(getTemperatureString(parameter.getValues().get(0)));
                                 temperatureC = (int) Math.round(parameter.getValues().get(0));
@@ -306,7 +303,7 @@ public class FormatDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
-    private int getWeatherIconToday(RetroParameter parameter, TimeOfDay timeOfDay) {
+    private int getWeatherIconToday(SMHIRetroParameter parameter, TimeOfDay timeOfDay) {
 
         int symbolInt = (int) Math.round(parameter.getValues().get(0));
         int drawableInt;

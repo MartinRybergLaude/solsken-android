@@ -10,5 +10,6 @@
 
     <attr name="backgroundPrimary" format="reference" />
     <attr name="backgroundSecondary" format="reference" />
+    <attr name="backgroundColored" format="reference" />
 
 </resources>
