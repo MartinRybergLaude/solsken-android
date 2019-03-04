@@ -46,7 +46,9 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
-
+        if (response.body() == null) {
+            return null;
+        }
         for (SMHIRetroTimeSeries timeSeries : response.body().getTimeSeries()) {
             currentDate = timeSeries.getDateString();
             int temperatureC = 0;
@@ -165,7 +167,11 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
     @Override
     protected void onPostExecute(List<DayItem> result) {
         super.onPostExecute(result);
-        delegate.onFinishedFormatDays(result);
+        if (result != null) {
+            delegate.onFinishedFormatDays(result);
+        } else {
+            delegate.onFailureFormatDays();
+        }
     }
 
     private String getClockString(String hourString) {

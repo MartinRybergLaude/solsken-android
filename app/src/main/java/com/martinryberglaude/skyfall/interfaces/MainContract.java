@@ -62,6 +62,12 @@ public interface MainContract {
             void onFailureFormatDatabaseLocations();
         }
     }
+    interface RemoveDatabaseLocationsIntractor {
+        interface OnFinishedListener {
+            void onFinishedRemoveDatabaseLocations(long identifier);
+            void onFailureRemoveDatabaseLocations();
+        }
+    }
     interface DayItemClickListener {
         void onItemClick(DayItem dayItem);
     }

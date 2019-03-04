@@ -2,6 +2,7 @@ package com.martinryberglaude.skyfall;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,12 +14,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.text.Layout;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -28,21 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.navigation.NavigationView;
 import com.martinryberglaude.skyfall.data.DayItem;
 import com.martinryberglaude.skyfall.data.HourItem;
-import com.martinryberglaude.skyfall.data.LocationItem;
 import com.martinryberglaude.skyfall.data.WindDirection;
 import com.martinryberglaude.skyfall.database.Locations;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
 import com.martinryberglaude.skyfall.data.TimeOfDay;
 import com.martinryberglaude.skyfall.data.Coordinate;
+import com.martinryberglaude.skyfall.model.RemoveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.skyfall.model.RequestLocationModel;
 import com.martinryberglaude.skyfall.model.RequestWeatherModel;
 import com.martinryberglaude.skyfall.model.RetrieveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.skyfall.presenter.MainPresenter;
 import com.martinryberglaude.skyfall.view.RecyclerViewAdapterDays;
-import com.mikepenz.fastadapter.IItem;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -54,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -64,7 +60,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 public class MainActivity extends AppCompatActivity implements MainContract.View,
         MainContract.RequestLocationIntractor.OnFinishedListerner,
         MainContract.DayItemClickListener,
-        MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener {
+        MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener,
+        MainContract.RemoveDatabaseLocationsIntractor.OnFinishedListener{
 
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
@@ -259,6 +256,31 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                         return false;
                     }
                 })
+                .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(View view, int position, IDrawerItem drawerItem) {
+                        switch ((int) drawerItem.getIdentifier()) {
+                            case -10:
+                                break;
+                            default:
+                                for (final Locations location : locList) {
+                                    if (drawerItem.getIdentifier() == location.getLocationId()) {
+                                        new AlertDialog.Builder(MainActivity.this)
+                                                .setTitle(getString(R.string.remove_location_title))
+                                                .setMessage(getString(R.string.remove_location_body))
+                                                .setPositiveButton(getString(R.string.remove_location_confirm), new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        removeDrawerMenuItem(location);
+                                                    }
+                                                })
+                                                .setNegativeButton(getString(R.string.remove_location_cancel), null)
+                                                .show();
+                                    }
+                                }
+                        }
+                        return false;
+                    }
+                })
                 .build();
 
         btnMenu.setOnClickListener(new View.OnClickListener() {
@@ -283,8 +305,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         retrieveTask.delegate = this;
         retrieveTask.execute();
     }
-
-    private void reloadNavigationDrawer() {
+    private void removeDrawerMenuItem(Locations location) {
+        RemoveDatabaseLocationsAsyncTask removeTask = new RemoveDatabaseLocationsAsyncTask(this, location);
+        removeTask.delegate = this;
+        removeTask.execute();
+    }
+    private void getDrawerMenuItems() {
         drawer.removeAllItems();
 
         drawer.addItem(new PrimaryDrawerItem().withIdentifier(-10).withName(getString(R.string.current_location)).withIcon(R.drawable.ic_my_location).withIconTintingEnabled(true));
@@ -632,12 +658,24 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onFinishedFormatDatabaseLocations(List<Locations> locationList) {
         locList.clear();
         locList.addAll(locationList);
-        reloadNavigationDrawer();
+        getDrawerMenuItems();
     }
 
     @Override
     public void onFailureFormatDatabaseLocations() {
         showToast(getResources().getString(R.string.database_error));
+    }
+
+    @Override
+    public void onFinishedRemoveDatabaseLocations(long identifier) {
+        // Remove visible drawer item
+        drawer.removeItem(identifier);
+        drawer.setSelection(-10);
+    }
+
+    @Override
+    public void onFailureRemoveDatabaseLocations() {
+        showToast(getString(R.string.database_remove_error));
     }
 }
 

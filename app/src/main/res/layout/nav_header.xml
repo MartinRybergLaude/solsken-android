@@ -16,7 +16,7 @@
             android:text="@string/places"
             android:textStyle="bold"
             android:textSize="18dp"
-            android:textColor="?attr/textColorPrimary"/>
+            android:textColor="?attr/colorPrimary"/>
         <ImageButton
             android:id="@+id/btn_search"
             android:layout_alignParentRight="true"

@@ -11,6 +11,12 @@
     <string name="weather_error">Vädret kunde inte laddas in!</string>
     <string name="search_error">Platser kunde inte laddas in!</string>
     <string name="database_error">Dina platser kunde inte laddas in!</string>
+    <string name="database_remove_error">Kunde inte ta bort plats!</string>
+
+    <string name="remove_location_title">Ta bort plats?</string>
+    <string name="remove_location_body">Det här tar bort den här platsen från listan. Du kan alltid lägga till den igen.</string>
+    <string name="remove_location_confirm">Ta bort</string>
+    <string name="remove_location_cancel">Avbryt</string>
 
     <string name="today">Idag</string>
     <string name="tomorrow">Imorgon</string>
