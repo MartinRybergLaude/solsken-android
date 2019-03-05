@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private List<Locations> locList = new ArrayList<>();
     private boolean autoLocation = true;
     private Locations selectedLocation;
+    private int selectedDrawerPosition;
 
     public Coordinate getCurrentCoordinate() {
         return currentCoordinate;
@@ -238,13 +239,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch ((int) drawerItem.getIdentifier()) {
                             case -10:
+                                selectedDrawerPosition = -10;
                                 sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                 autoLocation = true;
                                 mainPresenter.updateLocationAndUI();
                                 break;
                             case -20:
                                 Intent intent= new Intent(MainActivity.this, SettingsActivity.class);
-                                startActivity(intent);
+                                startActivityForResult(intent, 2);
                                 return true;
                             default:
                                 for (Locations location : locList) {
@@ -252,6 +254,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         autoLocation = false;
                                         selectedLocation = location;
+                                        selectedDrawerPosition = location.getLocationId();
                                         mainPresenter.updateLocationAndUI();
                                     }
                                 }
@@ -587,9 +590,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            updateDrawerItems();
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        switch (requestCode) {
+            case 1:
+                updateDrawerItems();
+                drawer.setSelection(selectedDrawerPosition);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                break;
+            case 2:
+                 drawer.setSelection(selectedDrawerPosition);
+                break;
         }
     }
 
