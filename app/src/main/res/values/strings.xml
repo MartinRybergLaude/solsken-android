@@ -3,18 +3,19 @@
     <string name="app_name">Skyfall</string>
 
     <!-- Strings related to Permissions -->
-    <string name="permission_error">Något gick fel! Försök igen.</string>
     <string name="permission_welcome">Hej!</string>
     <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
     <string name="permission_button">Godkänn</string>
 
+    <string name="permission_error">Något gick fel! Försök igen.</string>
     <string name="weather_error">Vädret kunde inte laddas in!</string>
     <string name="search_error">Platser kunde inte laddas in!</string>
+    <string name="location_not_supported_error">Denna plats stöds tyvärr inte!</string>
     <string name="database_error">Dina platser kunde inte laddas in!</string>
     <string name="database_remove_error">Kunde inte ta bort plats!</string>
 
     <string name="remove_location_title">Ta bort plats?</string>
-    <string name="remove_location_body">Det här tar bort den här platsen från listan. Du kan alltid lägga till den igen.</string>
+    <string name="remove_location_body">Detta tar bort den här platsen från listan. Du kan alltid lägga till den igen.</string>
     <string name="remove_location_confirm">Ta bort</string>
     <string name="remove_location_cancel">Avbryt</string>
 
@@ -62,7 +63,7 @@
 
     <string name="search_location_hint">Sök en plats...</string>
     <string name="no_location_title">Oops!</string>
-    <string name="no_location_body">Kunde inte hitta någon plats med det namnet</string>
+    <string name="no_location_body">Kunde inte hitta någon plats med det namnet. Kom ihåg att endast Skandinavien och Finland stöds.</string>
     <string name="search_location_title">Sök en plats</string>
     <string name="search_location_body">Hitta en plats med hjälp av sökmotorn</string>
 

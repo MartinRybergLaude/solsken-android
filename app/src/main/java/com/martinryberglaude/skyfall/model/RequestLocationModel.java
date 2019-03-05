@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.interfaces.MainContract;
@@ -51,9 +50,6 @@ public class RequestLocationModel implements MainContract.RequestLocationIntract
 
         // Check if last known location was recorded less than two minutes ago
         if (lastKnownLocation != null && locationAgeMillis(lastKnownLocation) < TWO_MINUTES) {
-            Log.d("LASTLOCATION", String.valueOf(locationAgeMinutes(lastKnownLocation)) + "min");
-            Log.d("LASTLOCATION", String.valueOf(locationAgeSeconds(lastKnownLocation)) + "s");
-            Log.d("LASTLOCATION", String.valueOf(locationAgeMillis(lastKnownLocation)) + "ms");
             onFinishedListener.onFinishedRetrieveLocation(new Coordinate(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude()));
             // Last known location was too old, retreieve new location
         } else {

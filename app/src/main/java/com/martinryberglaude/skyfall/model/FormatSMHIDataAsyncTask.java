@@ -135,9 +135,9 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                         hourItem.setFeelsLikeString(String.valueOf(getFeelsLikeTemperature(temperatureC, humidity, windSpeedMS)) + "°");
                         hourItem.setDayString(capitalizeFirstLetter(dateFormatDay.format(date)));
                         hourItem.setHourString(getClockString(timeSeries2.getHourString()));
-                        SimpleDateFormat hourFormat = new SimpleDateFormat("H:mm");
+                        SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");
                         try {
-                            Date hourDate = hourFormat.parse(hourItem.getHourString());
+                            Date hourDate = hourFormat.parse(timeSeries2.getValidTime());
                             hourItem.setDate(hourDate);
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -158,7 +158,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
             }
         }
         if (Calendar.getInstance().getTime().getTime() - dayList.get(0).getHourList().get(0).getDate().getTime() > 30 * 60 * 1000) {
-            dayList.get(0).getHourList().remove(0);
+           dayList.get(0).getHourList().remove(0);
         }
         return dayList;
     }

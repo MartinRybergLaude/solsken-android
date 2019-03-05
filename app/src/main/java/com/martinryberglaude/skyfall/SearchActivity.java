@@ -19,12 +19,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.martinryberglaude.skyfall.data.Coordinate;
 import com.martinryberglaude.skyfall.data.LocationItem;
 import com.martinryberglaude.skyfall.database.LocationDatabase;
 import com.martinryberglaude.skyfall.database.Locations;
@@ -271,8 +273,9 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     }
     private void showToast(String message) {
-        Toast.makeText(SearchActivity.this, message,
-                Toast.LENGTH_LONG).show();
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 0);
+        toast.show();
     }
 
     @Override
@@ -293,6 +296,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             public void run() {
                 Locations location = new Locations();
                 location.setLocationName(locationItem.getCityString());
+                location.setLocationCountry(locationItem.getCountryString());
                 location.setLocationLat(locationItem.getLat());
                 location.setLocationLon(locationItem.getLon());
                 locationDatabase.daoAccess().insertSingleLocation(location);

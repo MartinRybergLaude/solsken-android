@@ -1,5 +1,7 @@
 package com.martinryberglaude.skyfall.data;
 
+import java.util.Objects;
+
 public class LocationItem {
     private String cityString;
     private String countryString;
@@ -37,5 +39,19 @@ public class LocationItem {
 
     public void setLat(double lat) {
         this.lat = lat;
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof LocationItem))return false;
+        if (((LocationItem) other).getCityString().equals(this.cityString) && ((LocationItem) other).getCountryString().equals(this.countryString)) return true;
+        else return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cityString, countryString);
     }
 }

@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -157,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         sunsetText = findViewById(R.id.text_sunset);
 
         btnMenu = findViewById(R.id.btn_drawer);
-        btnSettings = findViewById(R.id.btn_settings);
 
         pullToRefresh = findViewById(R.id.refresh);
         cityText = findViewById(R.id.title_city);
@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(View bottomSheet, int newState) {
-
             }
 
             @Override
@@ -220,14 +219,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         });
-
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
+        PrimaryDrawerItem settingaItem = new PrimaryDrawerItem().withName(getString(R.string.settings)).withIcon(R.drawable.ic_settings).withIconTintingEnabled(true).withIdentifier(-20);
+        List<IDrawerItem> drawerItems = new ArrayList<>();
+        drawerItems.add(settingaItem);
         drawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
@@ -235,6 +229,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 .withTranslucentStatusBar(false)
                 .withDisplayBelowStatusBar(false)
                 .withDrawerGravity(Gravity.START)
+                .withStickyDrawerItems(drawerItems)
+                .withStickyFooterShadow(false)
+                .withStickyFooterDivider(true)
                 .withActionBarDrawerToggle(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -244,6 +241,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                 autoLocation = true;
                                 mainPresenter.updateLocationAndUI();
                                 break;
+                            case -20:
+                                Intent intent= new Intent(MainActivity.this, SettingsActivity.class);
+                                startActivity(intent);
+                                return true;
                             default:
                                 for (Locations location : locList) {
                                     if (drawerItem.getIdentifier() == location.getLocationId()) {
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     }
                 })
                 .build();
-
+        updateDrawerItems();
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -296,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void onClick(View v) {
                 Intent intent= new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
     }
@@ -581,7 +582,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
             mainPresenter.updateLocationAndUI();
         }
-        updateDrawerItems();
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            updateDrawerItems();
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
     }
 
     private void applyTheme() {
