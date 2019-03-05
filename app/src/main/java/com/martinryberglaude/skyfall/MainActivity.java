@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch ((int) drawerItem.getIdentifier()) {
                             case -10:
+                                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                 autoLocation = true;
                                 mainPresenter.updateLocationAndUI();
                                 break;
@@ -248,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                             default:
                                 for (Locations location : locList) {
                                     if (drawerItem.getIdentifier() == location.getLocationId()) {
+                                        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         autoLocation = false;
                                         selectedLocation = location;
                                         mainPresenter.updateLocationAndUI();
