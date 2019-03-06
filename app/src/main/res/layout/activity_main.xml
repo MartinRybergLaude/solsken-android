@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,7 +17,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="?android:attr/actionBarSize"
                 android:background="?attr/primaryColor"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_alignParentTop="true"
                 app:elevation="0dp">
                 <ImageButton
                     android:id="@+id/btn_drawer"
@@ -36,8 +36,36 @@
                     android:textSize="20sp"
                     android:textStyle="bold"/>
             </androidx.appcompat.widget.Toolbar>
+        <TextView
+            android:id="@+id/error_title"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="140dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="?attr/textColorPrimary"
+            android:text="@string/general_error_title"/>
+        <TextView
+            android:id="@+id/error_body"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/error_title"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:textColor="?attr/textColorSecondary"
+            android:text="@string/failed_load_location_error"/>
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
+            android:layout_below="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <FrameLayout
@@ -432,7 +460,7 @@
                 </RelativeLayout>
             </FrameLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-    </LinearLayout>
+    </RelativeLayout>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -145,6 +145,42 @@
         <item name="material_drawer_legacy_style">false</item>
     </style>
 
+    <style name="AppThemeAurora" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/auroraPrimary</item>
+        <item name="secondaryColor">@color/auroraSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimary</item>
+        <item name="textColorSecondary">@color/textSecondary</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/white</item>
+        <item name="backgroundSecondary">@color/lightGray</item>
+        <item name="backgroundColored">@color/auroraBGColored</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <item name="colorPrimary">@color/auroraPrimary</item>
+        <item name="colorPrimaryDark">@color/auroraSecondary</item>
+        <item name="colorAccent">@color/auroraPrimary</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/white</item>
+        <item name="material_drawer_primary_text">@color/textPrimary</item>
+        <item name="material_drawer_primary_icon">@color/textPrimary</item>
+        <item name="material_drawer_secondary_text">@color/textSecondary</item>
+        <item name="material_drawer_hint_text">@color/textSecondary</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/auroraBGColored</item>
+        <item name="material_drawer_selected_text">@color/auroraPrimary</item>
+        <item name="material_drawer_header_selection_text">@color/textPrimary</item>
+        <item name="material_drawer_header_selection_subtext">@color/textSecondary</item>
+        <item name="material_drawer_legacy_style">false</item>
+    </style>
+
     <style name="DarkThemeDay" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="primaryColor">@color/dayPrimary</item>
@@ -248,6 +284,41 @@
         <item name="material_drawer_divider">@color/material_drawer_divider</item>
         <item name="material_drawer_selected">@color/nightBGColored</item>
         <item name="material_drawer_selected_text">@color/nightPrimary</item>
+        <item name="material_drawer_header_selection_text">@color/textPrimaryInverse</item>
+        <item name="material_drawer_header_selection_subtext">@color/textSecondaryInverse</item>
+        <item name="material_drawer_legacy_style">false</item>
+    </style>
+    <style name="DarkThemeAurora" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="primaryColor">@color/auroraPrimary</item>
+        <item name="secondaryColor">@color/auroraSecondary</item>
+
+        <item name="textColorPrimary">@color/textPrimaryInverse</item>
+        <item name="textColorSecondary">@color/textSecondaryInverse</item>
+        <item name="textColorPrimaryInverse">@color/textPrimaryInverse</item>
+        <item name="textColorSecondaryInverse">@color/textSecondaryInverse</item>
+
+        <item name="backgroundPrimary">@color/black</item>
+        <item name="backgroundSecondary">@color/darkGray</item>
+        <item name="backgroundColored">@color/nightBGColored</item>
+
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/black</item>
+
+        <item name="colorPrimary">@color/auroraPrimary</item>
+        <item name="colorPrimaryDark">@color/auroraSecondary</item>
+        <item name="colorAccent">@color/auroraPrimary</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/black</item>
+        <item name="material_drawer_primary_text">@color/textPrimaryInverse</item>
+        <item name="material_drawer_primary_icon">@color/textPrimaryInverse</item>
+        <item name="material_drawer_secondary_text">@color/textSecondaryInverse</item>
+        <item name="material_drawer_hint_text">@color/textSecondaryInverse</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/auroraBGColored</item>
+        <item name="material_drawer_selected_text">@color/auroraPrimary</item>
         <item name="material_drawer_header_selection_text">@color/textPrimaryInverse</item>
         <item name="material_drawer_header_selection_subtext">@color/textSecondaryInverse</item>
         <item name="material_drawer_legacy_style">false</item>

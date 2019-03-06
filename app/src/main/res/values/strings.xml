@@ -1,12 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="app_name">Skyfall</string>
+    <string name="app_name">Solsken</string>
 
     <!-- Strings related to Permissions -->
     <string name="permission_welcome">Hej!</string>
     <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
     <string name="permission_button">Godkänn</string>
 
+    <string name="general_error_title">Något gick fel!</string>
+    <string name="failed_load_location_error">Kunde inte ladda in den här platsen.</string>
     <string name="permission_error">Något gick fel! Försök igen.</string>
     <string name="weather_error">Vädret kunde inte laddas in!</string>
     <string name="search_error">Platser kunde inte laddas in!</string>
@@ -55,6 +57,7 @@
     <string name="blue">Himmel</string>
     <string name="orange">Solnedgång</string>
     <string name="purple">Skymning</string>
+    <string name="green">Norrsken</string>
 
     <string name="units">Enheter</string>
     <string name="temperature">Temperatur</string>

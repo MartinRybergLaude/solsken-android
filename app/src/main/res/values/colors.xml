@@ -21,6 +21,13 @@
     <color name="nightSecondary">#5516CC</color>
     <color name="nightBGColored">#225B19DA</color>
 
+    <color name="auroraColor1">#1D976C</color>
+    <color name="auroraColor2">#1AB47D</color>
+
+    <color name="auroraPrimary">#1AB47D</color>
+    <color name="auroraSecondary">#1B9C6F</color>
+    <color name="auroraBGColored">#221AB47D</color>
+
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="lightGray">#f0f4fd</color>

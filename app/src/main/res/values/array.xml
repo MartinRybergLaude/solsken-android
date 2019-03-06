@@ -5,12 +5,14 @@
         <item>@string/blue</item>
         <item>@string/orange</item>
         <item>@string/purple</item>
+        <item>@string/green</item>
     </string-array>
     <string-array name="background_values">
         <item>auto</item>
         <item>day</item>
         <item>sunset</item>
         <item>night</item>
+        <item>aurora</item>
     </string-array>
 
     <string-array name="temperature_units">
