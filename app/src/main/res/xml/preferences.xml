@@ -1,6 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
+        android:title="@string/data"
+        app:iconSpaceReserved="false">
+        <ListPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/data_source"
+            android:key="data_src"
+            android:defaultValue="smhi"
+            android:entries="@array/data_srcs"
+            android:entryValues="@array/data_values"/>
+    </PreferenceCategory>
+    <PreferenceCategory
         android:title="@string/theme"
         app:iconSpaceReserved="false">
             <SwitchPreference
@@ -12,7 +23,7 @@
             app:iconSpaceReserved="false"
             android:title="@string/color_theme"
             android:key="theme"
-            android:defaultValue="auto"
+            android:defaultValue="day"
             android:entries="@array/backgrounds"
             android:entryValues="@array/background_values"/>
     </PreferenceCategory>

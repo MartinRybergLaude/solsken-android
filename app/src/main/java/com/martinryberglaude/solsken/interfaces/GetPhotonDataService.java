@@ -1,6 +1,6 @@
 package com.martinryberglaude.solsken.interfaces;
 
-import com.martinryberglaude.solsken.network.PhotonRetroLocations;
+import com.martinryberglaude.solsken.networkPHOTON.PhotonRetroLocations;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

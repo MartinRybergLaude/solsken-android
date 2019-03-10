@@ -10,10 +10,10 @@ import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.interfaces.MainContract;
-import com.martinryberglaude.solsken.network.SMHIRetroParameter;
-import com.martinryberglaude.solsken.network.SMHIRetroTimeSeries;
-import com.martinryberglaude.solsken.network.SMHIRetroWeatherData;
-import com.martinryberglaude.solsken.utils_smhi.SMHIWeatherSymbol;
+import com.martinryberglaude.solsken.networkSMHI.SMHIRetroParameter;
+import com.martinryberglaude.solsken.networkSMHI.SMHIRetroTimeSeries;
+import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
+import com.martinryberglaude.solsken.utils_weather.SMHIWeatherSymbol;
 
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -22,18 +22,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Response;
 
-public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatDayWeatherIntractor {
+public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatSMHIWeatherIntractor {
 
-    public MainContract.FormatDayWeatherIntractor.OnFinishedListener delegate = null;
+    public MainContract.FormatSMHIWeatherIntractor.OnFinishedListener delegate = null;
     private SharedPreferences sharedPreferences;
-    private Calendar sunsrise;
-    private Calendar sunset;
 
     @Override
     protected List<DayItem> doInBackground(Object... params) {
@@ -89,7 +88,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                                 windSpeedMS = (int) Math.round(parameter.getValues().get(0));
                             }
                             if (parameter.getName().equals("vis")) {
-                                hourItem.setVisbilityString(getVisString(parameter.getValues().get(0)));
+                                hourItem.setVisibilityString(getVisString(parameter.getValues().get(0)));
                             }
                             if (parameter.getName().equals("gust")) {
                                 hourItem.setGustSpeedString(getWindString(parameter.getValues().get(0)));
@@ -153,6 +152,18 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                 dayItem.setSunriseString(sunriseSunsetString[0]);
                 dayItem.setSunsetString(sunriseSunsetString[1]);
 
+                // Find hihest and lowest temperature within the day
+                List<Integer> dayTemperaturesSet = new ArrayList<>();
+                for (HourItem hour : dayItem.getHourList()) {
+                    String[] parts = hour.getTemperatureString().split("°");
+                    dayTemperaturesSet.add(Integer.parseInt(parts[0]));
+                }
+                Collections.sort(dayTemperaturesSet);
+                dayItem.setTemperatureHighString(dayTemperaturesSet.get(dayTemperaturesSet.size() - 1).toString() + "°");
+                dayItem.setTemperatureLowString(dayTemperaturesSet.get(0).toString() + "°");
+
+                dayItem.setWsymb2Drawable(dayItem.getHourList().get(dayItem.getHourList().size() / 2).getWsymb2Drawable());
+                dayItem.setWsymb2String(dayItem.getHourList().get(dayItem.getHourList().size() / 2).getWsymb2String());
                 // Add dayItem to the list
                 dayList.add(dayItem);
             }
@@ -168,9 +179,9 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
     protected void onPostExecute(List<DayItem> result) {
         super.onPostExecute(result);
         if (result != null) {
-            delegate.onFinishedFormatDays(result);
+            delegate.onFinishedFormatSMHIDays(result);
         } else {
-            delegate.onFailureFormatDays();
+            delegate.onFailureFormatSMHIDays();
         }
     }
 
@@ -438,7 +449,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
             return temperatureC;
         }
     }
-    public String[] getSunriseSunsetStrings(Coordinate coordinate, Calendar calendar) {
+    private String[] getSunriseSunsetStrings(Coordinate coordinate, Calendar calendar) {
         Calendar[] calendars = ca.rmen.sunrisesunset.SunriseSunset.getSunriseSunset(calendar, coordinate.getLat(), coordinate.getLon());
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
         String sunriseString = getClockString(hourFormat.format(calendars[0].getTime()));

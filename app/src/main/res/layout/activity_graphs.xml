@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".GraphsActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_ghs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/actionBarSize"
+        android:background="?attr/primaryColor"
+        android:clipToPadding="false"
+        android:elevation="4dp">
+        <TextView
+            android:id="@+id/title_ghs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_below="@id/toolbar_ghs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp">
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart_temperature"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="24dp" />
+    </RelativeLayout>
+</RelativeLayout>

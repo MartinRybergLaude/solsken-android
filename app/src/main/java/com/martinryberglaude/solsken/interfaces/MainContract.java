@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
-import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.database.Locations;
-import com.martinryberglaude.solsken.network.SMHIRetroWeatherData;
+import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
+import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface MainContract {
 
     interface  View {
         void updateWeatherUI(List<DayItem> itemList, String city, boolean initRecyclerview);
-        void setColorTheme(TimeOfDay timeOfDay);
+        void setColorTheme();
         void showToast(String message);
         void showLocationError();
         String requestAdressString(Coordinate coordinate);
@@ -32,16 +32,25 @@ public interface MainContract {
         void updateLocationAndUI();
         TimeOfDay getTimeOfDay();
         void loadColorTheme();
-        void requestWeatherData();
+        void requestWeatherData(boolean smhi);
     }
 
-    interface RequestWeatherIntractor {
+    interface RequestSMHIWeatherIntractor {
         interface OnFinishedListerner {
-            void onFinishedRetrieveData(Response<SMHIRetroWeatherData> response);
-            void onFailureRetrieveData(Throwable t);
+            void onFinishedRetrieveSMHIData(Response<SMHIRetroWeatherData> response);
+            void onFailureRetrieveSMHIData(Throwable t);
         }
-        void getWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
+        void getSMHIWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
     }
+
+    interface RequestYRWeatherIntractor {
+        interface OnFinishedListerner {
+            void onFinishedRetrieveYRData(Response<YRRetroWeatherData> response);
+            void onFailureRetrieveYRData(Throwable t);
+        }
+        void getYRWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
+    }
+
     interface RequestLocationIntractor {
         interface OnFinishedListerner {
             void onFinishedRetrieveLocation(Coordinate coordinate);
@@ -50,10 +59,17 @@ public interface MainContract {
         void getLocation(OnFinishedListerner onFinishedListerner, Context context);
     }
 
-    interface FormatDayWeatherIntractor {
+    interface FormatSMHIWeatherIntractor {
         interface OnFinishedListener {
-            void onFinishedFormatDays(List<DayItem> dayList);
-            void onFailureFormatDays();
+            void onFinishedFormatSMHIDays(List<DayItem> dayList);
+            void onFailureFormatSMHIDays();
+        }
+    }
+
+    interface FormatYRWeatherIntractor {
+        interface OnFinishedListener {
+            void onFinishedFormatYRDays(List<DayItem> dayList);
+            void onFailureFormatYRDays();
         }
     }
     interface RetrieveDatabaseLocationsIntractor {
@@ -70,9 +86,6 @@ public interface MainContract {
     }
     interface DayItemClickListener {
         void onItemClick(DayItem dayItem);
-    }
-    interface HourItemOnClickListener {
-        void onItemClick (HourItem hourItem);
     }
 
 }

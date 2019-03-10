@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +24,7 @@ import com.martinryberglaude.solsken.view.RecyclerViewAdapterHours;
 import java.io.Serializable;
 import java.util.Calendar;
 
-public class HoursActivity extends AppCompatActivity implements MainContract.HourItemOnClickListener {
+public class HoursActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private Toolbar toolbar;
@@ -72,7 +73,7 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
     }
 
     public void initRecyclerView(DayItem dayItem) {
-        RecyclerViewAdapterHours adapter = new RecyclerViewAdapterHours(HoursActivity.this, dayItem.getHourList(), HoursActivity.this);
+        RecyclerViewAdapterHours adapter = new RecyclerViewAdapterHours(HoursActivity.this, dayItem.getHourList());
         adapter.setHasStableIds(true);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(20);
@@ -81,36 +82,12 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public void onItemClick(HourItem hourItem) {
-        Intent intent = new Intent(HoursActivity.this, DetailsActivity.class);
-        intent.putExtra("hour", (Serializable) hourItem);
-        startActivity(intent);
-    }
-
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String colorTheme = sharedPreferences.getString("theme", "auto");
-        String colorThemeActual = sharedPreferences.getString("themeActual", "day");
+        String colorTheme = sharedPreferences.getString("theme", "day");
         boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         if (!darkTheme) {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.AppThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.AppThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.AppThemeDay);
                     break;
@@ -129,22 +106,6 @@ public class HoursActivity extends AppCompatActivity implements MainContract.Hou
             }
         } else {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.DarkThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.DarkThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.DarkThemeDay);
                     break;

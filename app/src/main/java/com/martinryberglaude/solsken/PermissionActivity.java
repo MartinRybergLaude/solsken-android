@@ -5,8 +5,14 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +24,7 @@ public class PermissionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.blueGray));
         setContentView(R.layout.activity_permission);
         Button button = findViewById(R.id.button_accept);
         TextView welcomeText = findViewById(R.id.text_welcome);
@@ -29,6 +36,22 @@ public class PermissionActivity extends AppCompatActivity {
                 requestPermission();
             }
         });
+
+        ImageView sunImg = findViewById(R.id.img_sun);
+        ImageView cloudImg = findViewById(R.id.img_cloud1);
+        final ImageView cloud2Img = findViewById(R.id.img_cloud2);
+
+        cloudImg.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.side_to_side) );
+        cloud2Img.setVisibility(View.INVISIBLE);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cloud2Img.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.side_to_side) );
+                cloud2Img.setVisibility(View.VISIBLE);
+            }
+        }, 600);
+
     }
     @TargetApi(23)
     private void requestPermission() {

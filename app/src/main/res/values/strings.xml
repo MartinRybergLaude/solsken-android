@@ -3,7 +3,7 @@
     <string name="app_name">Solsken</string>
 
     <!-- Strings related to Permissions -->
-    <string name="permission_welcome">Hej!</string>
+    <string name="permission_welcome">Välkommen!</string>
     <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
     <string name="permission_button">Godkänn</string>
 
@@ -21,11 +21,23 @@
     <string name="remove_location_confirm">Ta bort</string>
     <string name="remove_location_cancel">Avbryt</string>
 
+    <string name="item_map">Karta</string>
+    <string name="item_stats">Diagram</string>
+    <string name="item_warnings">Varningar</string>
+
     <string name="today">Idag</string>
     <string name="tomorrow">Imorgon</string>
     <string name="places">Platser</string>
     <string name="current_location">Nuvarande plats</string>
     <string name="search_hint">Sök platser...</string>
+
+    <string name="day_mon">Mån</string>
+    <string name="day_tue">Tis</string>
+    <string name="day_wed">Ons</string>
+    <string name="day_thu">Tor</string>
+    <string name="day_fri">Fre</string>
+    <string name="day_sat">Lör</string>
+    <string name="day_sun">Sön</string>
 
     <string name="north" tools:ignore="ExtraTranslation">Nord</string>
     <string name="northeast">Nordöst</string>
@@ -47,10 +59,12 @@
     <!-- Strings related to Settings -->
     <string name="settings">Inställningar</string>
     <string name="title_activity_settings">Settings</string>
+
+    <string name="data">Data</string>
+    <string name="data_source">Välj datakälla</string>
+
     <string name="theme">Tema</string>
-
     <string name="dark_theme">Mörkt tema</string>
-
     <string name="color_theme">Välj färgtema</string>
 
     <string name="auto">Automatisk (baserad på tid)</string>

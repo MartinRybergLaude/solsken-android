@@ -16,13 +16,14 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
-        ListPreference preference = findPreference("theme");
-        ListPreference preference2 = findPreference("wind");
-        ListPreference preference3 = findPreference("rain");
-        ListPreference preference4 = findPreference("vis");
-        ListPreference preference5 = findPreference("pressure");
-        ListPreference preference6 = findPreference("temperature");
-        ListPreference preference7 = findPreference("hour");
+        ListPreference preference = findPreference("data_src");
+        ListPreference preference2 = findPreference("theme");
+        ListPreference preference3 = findPreference("wind");
+        ListPreference preference4 = findPreference("rain");
+        ListPreference preference5 = findPreference("vis");
+        ListPreference preference6 = findPreference("pressure");
+        ListPreference preference7 = findPreference("temperature");
+        ListPreference preference8 = findPreference("hour");
 
         preference.setSummary(preference.getEntry());
         preference2.setSummary(preference2.getEntry());
@@ -31,6 +32,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
         preference5.setSummary(preference5.getEntry());
         preference6.setSummary(preference6.getEntry());
         preference7.setSummary(preference7.getEntry());
+        preference8.setSummary(preference8.getEntry());
     }
 
     @Override
@@ -58,7 +60,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
             pref.setSummary(listPref.getEntry());
         }
 
-        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis") || key.equals("hour")) {
+        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis") || key.equals("hour") || key.equals("data_src")) {
             sharedPreferences.edit().putBoolean("requiresRefresh", true).commit();
         }
 

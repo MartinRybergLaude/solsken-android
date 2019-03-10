@@ -32,6 +32,7 @@
     <color name="black">#000</color>
     <color name="lightGray">#f0f4fd</color>
     <color name="darkGray">#0F0F0F</color>
+    <color name="blueGray">#303049</color>
 
     <color name="transparentWhite">#40ffffff</color>
     <color name="transparent">#00ffffff</color>

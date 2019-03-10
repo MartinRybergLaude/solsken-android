@@ -24,6 +24,7 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
     // stores and recycles views as they are scrolled off screen
     public class DayViewHolder extends RecyclerView.ViewHolder  {
         TextView tTextView;
+        TextView tLowTextView;
         TextView wsymb2TextView;
         TextView dayTextView;
         TextView sunriseTextView;
@@ -33,6 +34,7 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
         DayViewHolder(View itemView) {
             super(itemView);
             tTextView = itemView.findViewById(R.id.text_temperature);
+            tLowTextView = itemView.findViewById(R.id.text_temperature_low);
             wsymb2TextView = itemView.findViewById(R.id.text_wsymb2);
             dayTextView = itemView.findViewById(R.id.text_day);
             sunriseTextView = itemView.findViewById(R.id.text_sunrise);
@@ -50,7 +52,7 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View itemView = inflater.inflate(R.layout.recyclerview_row, parent, false);
+        View itemView = inflater.inflate(R.layout.recyclerview_day_row, parent, false);
         return new DayViewHolder(itemView);
     }
 
@@ -60,7 +62,8 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
             DayItem dayItem =  dayList.get(position);
             DayViewHolder holder = (DayViewHolder) viewHolder;
 
-            holder.tTextView.setText(dayItem.getHourList().get(0).getTemperatureString());
+            holder.tTextView.setText(dayItem.getTemperatureHighString());
+            holder.tLowTextView.setText(dayItem.getTemperatureLowString());
             holder.sunriseTextView.setText(dayItem.getSunriseString());
             holder.sunsetTextView.setText(dayItem.getSunsetString());
 
@@ -81,8 +84,8 @@ public class RecyclerViewAdapterDays extends RecyclerView.Adapter<RecyclerView.V
             } else {
                 holder.dayTextView.setText(dayItem.getDayString());
             }
-            holder.wsymb2TextView.setText(dayItem.getHourList().get(0).getWsymb2String());
-            holder.wsymb2ImageView.setImageResource(dayItem.getHourList().get(0).getWsymb2Drawable());
+            holder.wsymb2TextView.setText(dayItem.getWsymb2String());
+            holder.wsymb2ImageView.setImageResource(dayItem.getWsymb2Drawable());
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

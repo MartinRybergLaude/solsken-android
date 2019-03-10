@@ -31,8 +31,8 @@ import com.martinryberglaude.solsken.database.Locations;
 import com.martinryberglaude.solsken.interfaces.GetPhotonDataService;
 import com.martinryberglaude.solsken.interfaces.SearchContract;
 import com.martinryberglaude.solsken.model.FormatPhotonDataAsyncTask;
-import com.martinryberglaude.solsken.network.PhotonRetroLocations;
-import com.martinryberglaude.solsken.network.PhotonRetrofitClientInstance;
+import com.martinryberglaude.solsken.networkPHOTON.PhotonRetroLocations;
+import com.martinryberglaude.solsken.networkPHOTON.PhotonRetrofitClientInstance;
 import com.martinryberglaude.solsken.view.RecyclerViewAdapterLocations;
 
 import java.util.ArrayList;
@@ -136,27 +136,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String colorTheme = sharedPreferences.getString("theme", "auto");
-        String colorThemeActual = sharedPreferences.getString("themeActual", "day");
+        String colorTheme = sharedPreferences.getString("theme", "day");
         boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         if (!darkTheme) {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.AppThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.AppThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.AppThemeDay);
                     break;
@@ -175,22 +158,6 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             }
         } else {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.DarkThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.DarkThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.DarkThemeDay);
                     break;

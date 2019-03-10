@@ -23,6 +23,8 @@
         <item name="colorPrimaryDark">@color/daySecondary</item>
         <item name="colorAccent">@color/dayPrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/white</item>
         <item name="material_drawer_primary_text">@color/textPrimary</item>
@@ -58,6 +60,8 @@
         <item name="colorPrimary">@color/dayPrimary</item>
         <item name="colorPrimaryDark">@color/daySecondary</item>
         <item name="colorAccent">@color/dayPrimary</item>
+
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/white</item>
@@ -95,6 +99,8 @@
         <item name="colorPrimaryDark">@color/sunriseSecondary</item>
         <item name="colorAccent">@color/sunrisePrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/white</item>
         <item name="material_drawer_primary_text">@color/textPrimary</item>
@@ -130,6 +136,8 @@
         <item name="colorPrimary">@color/nightPrimary</item>
         <item name="colorPrimaryDark">@color/nightSecondary</item>
         <item name="colorAccent">@color/nightPrimary</item>
+
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/white</item>
@@ -167,6 +175,8 @@
         <item name="colorPrimaryDark">@color/auroraSecondary</item>
         <item name="colorAccent">@color/auroraPrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/white</item>
         <item name="material_drawer_primary_text">@color/textPrimary</item>
@@ -202,6 +212,8 @@
         <item name="colorPrimary">@color/dayPrimary</item>
         <item name="colorPrimaryDark">@color/daySecondary</item>
         <item name="colorAccent">@color/dayPrimary</item>
+
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/black</item>
@@ -239,6 +251,8 @@
         <item name="colorPrimaryDark">@color/sunriseSecondary</item>
         <item name="colorAccent">@color/sunrisePrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/black</item>
         <item name="material_drawer_primary_text">@color/textPrimaryInverse</item>
@@ -275,6 +289,8 @@
         <item name="colorPrimaryDark">@color/nightSecondary</item>
         <item name="colorAccent">@color/nightPrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/black</item>
         <item name="material_drawer_primary_text">@color/textPrimaryInverse</item>
@@ -310,6 +326,8 @@
         <item name="colorPrimaryDark">@color/auroraSecondary</item>
         <item name="colorAccent">@color/auroraPrimary</item>
 
+        <item name="actionOverflowButtonStyle">@style/MyOverflowButtonStyle</item>
+
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/black</item>
         <item name="material_drawer_primary_text">@color/textPrimaryInverse</item>
@@ -322,6 +340,10 @@
         <item name="material_drawer_header_selection_text">@color/textPrimaryInverse</item>
         <item name="material_drawer_header_selection_subtext">@color/textSecondaryInverse</item>
         <item name="material_drawer_legacy_style">false</item>
+    </style>
+
+    <style name="MyOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">#fff</item>
     </style>
 
 </resources>

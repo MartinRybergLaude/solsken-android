@@ -11,7 +11,8 @@ public class DayItem implements Serializable {
 
     private int wsymb2Drawable;
     private String wsymb2String;
-    private String temperatureString;
+    private String temperatureHighString;
+    private String temperatureLowString;
 
     private String sunriseString;
     private String sunsetString;
@@ -56,12 +57,20 @@ public class DayItem implements Serializable {
         this.wsymb2String = wsymb2String;
     }
 
-    public String getTemperatureString() {
-        return temperatureString;
+    public String getTemperatureHighString() {
+        return temperatureHighString;
     }
 
-    public void setTemperatureString(String temperatureString) {
-        this.temperatureString = temperatureString;
+    public void setTemperatureHighString(String temperatureHighString) {
+        this.temperatureHighString = temperatureHighString;
+    }
+
+    public String getTemperatureLowString() {
+        return temperatureLowString;
+    }
+
+    public void setTemperatureLowString(String temperatureLowString) {
+        this.temperatureLowString = temperatureLowString;
     }
 
     public String getSunriseString() {
@@ -79,4 +88,5 @@ public class DayItem implements Serializable {
     public void setSunsetString(String sunsetString) {
         this.sunsetString = sunsetString;
     }
+
 }

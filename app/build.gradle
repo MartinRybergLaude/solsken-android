@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.martinryberglaude.skyfall"
+        applicationId "com.martinryberglaude.solsken"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -20,6 +20,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation 'ca.rmen:lib-sunrise-sunset:1.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

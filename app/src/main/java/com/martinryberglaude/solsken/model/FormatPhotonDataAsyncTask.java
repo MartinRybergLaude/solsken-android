@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.LocationItem;
 import com.martinryberglaude.solsken.interfaces.SearchContract;
-import com.martinryberglaude.solsken.network.PhotonRetroFeature;
-import com.martinryberglaude.solsken.network.PhotonRetroLocations;
+import com.martinryberglaude.solsken.networkPHOTON.PhotonRetroFeature;
+import com.martinryberglaude.solsken.networkPHOTON.PhotonRetroLocations;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

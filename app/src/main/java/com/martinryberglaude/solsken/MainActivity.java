@@ -1,6 +1,7 @@
 package com.martinryberglaude.solsken;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -30,13 +33,14 @@ import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.database.Locations;
 import com.martinryberglaude.solsken.interfaces.MainContract;
-import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.model.RemoveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.solsken.model.RequestLocationModel;
-import com.martinryberglaude.solsken.model.RequestWeatherModel;
+import com.martinryberglaude.solsken.model.RequestSMHIWeatherModel;
+import com.martinryberglaude.solsken.model.RequestYRWeatherModel;
 import com.martinryberglaude.solsken.model.RetrieveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.solsken.presenter.MainPresenter;
+import com.martinryberglaude.solsken.utils.OnSwipeTouchListener;
 import com.martinryberglaude.solsken.view.RecyclerViewAdapterDays;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -91,8 +95,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private TextView cityText;
     private TextView locationErrorTitle;
     private TextView locationErrorBody;
-    private ImageButton btnSearch;
-    private ImageButton btnMenu;
+
     private SwipeRefreshLayout pullToRefresh;
     private BottomSheetBehavior sheetBehavior;
     private RelativeLayout sheetLayout;
@@ -102,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private int statusBarColor;
     private int statusBarColorDark;
     private int toolbarColor;
-    private boolean automaticTheme = true;
     private String theme;
 
     private List<Locations> locList = new ArrayList<>();
@@ -116,14 +118,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private Coordinate currentCoordinate;
     private MainContract.RequestLocationIntractor getLocationIntractor;
 
+    private List<DayItem> currentDayList;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Sets theming things
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        theme = sharedPreferences.getString("theme", "auto");
+        theme = sharedPreferences.getString("theme", "day");
         applyTheme();
-        if (!theme.equals("auto")) automaticTheme = false;
 
         setContentView(R.layout.activity_main);
 
@@ -160,8 +164,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         locationErrorTitle = findViewById(R.id.error_title);
         locationErrorBody = findViewById(R.id.error_body);
 
-        btnMenu = findViewById(R.id.btn_drawer);
-
         pullToRefresh = findViewById(R.id.refresh);
         cityText = findViewById(R.id.title_city);
         sheetLayout = findViewById(R.id.bottom_sheet);
@@ -170,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         fadeView.getBackground().setAlpha(0);
 
         toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         mainView = findViewById(R.id.main_view);
 
         toolbar.animate().alpha(0.0f).setDuration(0);
@@ -199,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         getLocationIntractor = new RequestLocationModel(locationManager);
-        mainPresenter = new MainPresenter(this, new RequestWeatherModel(), getResources().getString(R.string.weather_error));
+        mainPresenter = new MainPresenter(this, new RequestSMHIWeatherModel(), new RequestYRWeatherModel(), getResources().getString(R.string.weather_error));
         mainPresenter.updateLocationAndUI();
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -291,6 +295,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 })
                 .build();
         updateDrawerItems();
+
+        ImageButton btnMenu = findViewById(R.id.btn_drawer);
+
         btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,13 +305,22 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         });
 
-        btnSearch = drawer.getHeader().findViewById(R.id.btn_search);
+        ImageButton btnSearch = drawer.getHeader().findViewById(R.id.btn_search);
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent= new Intent(MainActivity.this, SearchActivity.class);
                 startActivityForResult(intent, 1);
+            }
+        });
+
+        fadeView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeTop() {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+            public void onSwipeRight() {
+                drawer.openDrawer();
             }
         });
     }
@@ -330,77 +346,43 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void setColorTheme(TimeOfDay timeOfDay) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (automaticTheme) {
-            switch (timeOfDay) {
-                case SUNSET:
-                case SUNRISE:
-                    sharedPreferences.edit().putString("time", "sunset").putString("themeActual","sunset").apply();
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
-                    window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
-                    statusBarColor = getResources().getColor(R.color.sunriseColor1);
-                    statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
-                    toolbarColor = getResources().getColor(R.color.sunrisePrimary);
-                    break;
-                case NIGHT:
-                    sharedPreferences.edit().putString("time", "night").putString("themeActual","night").apply();
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
-                    window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
-                    statusBarColor = getResources().getColor(R.color.nightColor1);
-                    statusBarColorDark = getResources().getColor(R.color.nightSecondary);
-                    toolbarColor = getResources().getColor(R.color.nightPrimary);
-                    break;
-                case DAY:
-                    sharedPreferences.edit().putString("time", "day").putString("themeActual","day").apply();
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
-                    window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
-                    statusBarColor = getResources().getColor(R.color.dayColor1);
-                    statusBarColorDark = getResources().getColor(R.color.daySecondary);
-                    toolbarColor = getResources().getColor(R.color.dayPrimary);
-                    break;
-            }
-        } else {
-            // Is sunset
-            switch (theme) {
-                case "sunset":
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
-                    window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
-                    statusBarColor = getResources().getColor(R.color.sunriseColor1);
-                    statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
-                    toolbarColor = getResources().getColor(R.color.sunrisePrimary);
-                    break;
-                // Is night
-                case "night":
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
-                    window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
-                    statusBarColor = getResources().getColor(R.color.nightColor1);
-                    statusBarColorDark = getResources().getColor(R.color.nightSecondary);
-                    toolbarColor = getResources().getColor(R.color.nightPrimary);
-                    break;
-                // Is day
-                case "day":
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
-                    window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
-                    statusBarColor = getResources().getColor(R.color.dayColor1);
-                    statusBarColorDark = getResources().getColor(R.color.daySecondary);
-                    toolbarColor = getResources().getColor(R.color.dayPrimary);
-                    break;
-                case "aurora":
-                    mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_aurora));
-                    window.setStatusBarColor(getResources().getColor(R.color.auroraColor1));
-                    toolbar.setBackgroundColor(getResources().getColor(R.color.auroraColor1));
-                    statusBarColor = getResources().getColor(R.color.auroraColor1);
-                    statusBarColorDark = getResources().getColor(R.color.auroraSecondary);
-                    toolbarColor = getResources().getColor(R.color.auroraPrimary);
-                    break;
-            }
+    public void setColorTheme() {
+        // Is sunset
+        switch (theme) {
+            case "sunset":
+                mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
+                window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
+                toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
+                statusBarColor = getResources().getColor(R.color.sunriseColor1);
+                statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
+                toolbarColor = getResources().getColor(R.color.sunrisePrimary);
+                break;
+            // Is night
+            case "night":
+                mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
+                window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
+                toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
+                statusBarColor = getResources().getColor(R.color.nightColor1);
+                statusBarColorDark = getResources().getColor(R.color.nightSecondary);
+                toolbarColor = getResources().getColor(R.color.nightPrimary);
+                break;
+            // Is day
+            case "day":
+                mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
+                window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
+                toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
+                statusBarColor = getResources().getColor(R.color.dayColor1);
+                statusBarColorDark = getResources().getColor(R.color.daySecondary);
+                toolbarColor = getResources().getColor(R.color.dayPrimary);
+                break;
+            case "aurora":
+                mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_aurora));
+                window.setStatusBarColor(getResources().getColor(R.color.auroraColor1));
+                toolbar.setBackgroundColor(getResources().getColor(R.color.auroraColor1));
+                statusBarColor = getResources().getColor(R.color.auroraColor1);
+                statusBarColorDark = getResources().getColor(R.color.auroraSecondary);
+                toolbarColor = getResources().getColor(R.color.auroraPrimary);
+                break;
         }
         fadeView.setBackgroundColor(toolbarColor);
         fadeView.getBackground().setAlpha(0);
@@ -408,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void updateWeatherUI(final List<DayItem> dayList, final String city, final boolean initRecyclerview) {
+        currentDayList = new ArrayList<>(dayList);
         // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -429,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 icWindSpeedText.setText(hourItem.getWindSpeedString());
                 icPressureText.setText(hourItem.getPressureString());
                 icRainAmount.setText(hourItem.getRainAmountString());
-                icVisibilityText.setText(hourItem.getVisbilityString());
+                icVisibilityText.setText(hourItem.getVisibilityString());
                 icHumidityText.setText(hourItem.getHumidityString());
                 icGustSpeedText.setText(hourItem.getGustSpeedString());
                 icCloudCoverText.setText(hourItem.getCloudCoverString());
@@ -509,7 +492,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         } else {
             this.currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
             mainPresenter.loadColorTheme();
-            mainPresenter.requestWeatherData();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String dataSource = prefs.getString("data_src", "smhi");
+            if (dataSource.equals("smhi")) {
+                mainPresenter.requestWeatherData(true);
+            } else {
+                mainPresenter.requestWeatherData(false);
+            }
         }
     }
 
@@ -524,7 +513,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
         this.currentCoordinate = coordinate;
         mainPresenter.loadColorTheme();
-        mainPresenter.requestWeatherData();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String dataSource = prefs.getString("data_src", "smhi");
+        if (dataSource.equals("smhi")) {
+            mainPresenter.requestWeatherData(true);
+        } else {
+            mainPresenter.requestWeatherData(false);
+        }
     }
 
     @Override
@@ -628,27 +623,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String colorTheme = sharedPreferences.getString("theme", "auto");
-        String colorThemeActual = sharedPreferences.getString("themeActual", "day");
+        String colorTheme = sharedPreferences.getString("theme", "day");
         boolean darkTheme = sharedPreferences.getBoolean("dark_theme", false);
         if (!darkTheme) {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.AppThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.AppThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.AppThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.AppThemeDay);
                     break;
@@ -667,22 +645,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         } else {
             switch (colorTheme) {
-                case "auto":
-                    switch (colorThemeActual) {
-                        case "day":
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                        case "sunset":
-                            setTheme(R.style.DarkThemeSunrise);
-                            break;
-                        case "night":
-                            setTheme(R.style.DarkThemeNight);
-                            break;
-                        default:
-                            setTheme(R.style.DarkThemeDay);
-                            break;
-                    }
-                    break;
                 case "day":
                     setTheme(R.style.DarkThemeDay);
                     break;
@@ -700,6 +662,26 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     break;
             }
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_stats:
+                Intent intent= new Intent(MainActivity.this, GraphsActivity.class);
+                intent.putExtra("dayList", (Serializable) currentDayList);
+                startActivity(intent);
+                break;
+            case R.id.menu_map:
+                Intent intent2 = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent2);
+                break;
+        }
+        return true;
     }
 
     @Override

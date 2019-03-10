@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="data_srcs">
+        <item>SMHI</item>
+        <item>YR.no</item>
+    </string-array>
+    <string-array name="data_values">
+        <item>smhi</item>
+        <item>yr</item>
+    </string-array>
+
     <string-array name="backgrounds">
-        <item>@string/auto</item>
         <item>@string/blue</item>
         <item>@string/orange</item>
         <item>@string/purple</item>
         <item>@string/green</item>
     </string-array>
     <string-array name="background_values">
-        <item>auto</item>
         <item>day</item>
         <item>sunset</item>
         <item>night</item>
