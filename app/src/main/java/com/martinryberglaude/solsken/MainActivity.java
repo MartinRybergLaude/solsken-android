@@ -487,19 +487,32 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     // Get location asynchronously, has to be called from activity as it needs context
     @Override
     public void updateLocationAndUI() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 0) < 60 * 60 * 1000;
+
         if (autoLocation) {
             getLocationIntractor.getLocation(this,this);
         } else {
-            this.currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
-            mainPresenter.loadColorTheme();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String dataSource = prefs.getString("data_src", "smhi");
-            if (dataSource.equals("smhi")) {
-                mainPresenter.requestWeatherData(true);
-            } else {
-                mainPresenter.requestWeatherData(false);
+            // Use cached data
+            if (isWithinTimeLimit) {
+                loadCachedData();
+            }
+            // Do not use cached data
+            else {
+                this.currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
+                mainPresenter.loadColorTheme();
+                String dataSource = prefs.getString("data_src", "smhi");
+                if (dataSource.equals("smhi")) {
+                    mainPresenter.requestWeatherData(true);
+                } else {
+                    mainPresenter.requestWeatherData(false);
+                }
             }
         }
+    }
+
+    private void loadCachedData() {
+        String id = requestAdressString(currentCoordinate);
     }
 
     @Override
@@ -511,14 +524,21 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     // When location has been retrieved, launch all other tasks.
     @Override
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
-        this.currentCoordinate = coordinate;
-        mainPresenter.loadColorTheme();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String dataSource = prefs.getString("data_src", "smhi");
-        if (dataSource.equals("smhi")) {
-            mainPresenter.requestWeatherData(true);
+        boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 0) < 60 * 60 * 1000;
+        // Confirmed new location
+        if (!requestAdressString(coordinate).equals(requestAdressString(currentCoordinate)) || !isWithinTimeLimit) {
+            this.currentCoordinate = coordinate;
+            mainPresenter.loadColorTheme();
+            String dataSource = prefs.getString("data_src", "smhi");
+            if (dataSource.equals("smhi")) {
+                mainPresenter.requestWeatherData(true);
+            } else {
+                mainPresenter.requestWeatherData(false);
+            }
+        // Old location, use cached data
         } else {
-            mainPresenter.requestWeatherData(false);
+            loadCachedData();
         }
     }
 

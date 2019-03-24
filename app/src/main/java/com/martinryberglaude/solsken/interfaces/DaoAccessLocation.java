@@ -11,7 +11,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 @Dao
-public interface DaoAccess {
+public interface DaoAccessLocation {
 
     @Insert
     void insertSingleLocation (Locations locations);
