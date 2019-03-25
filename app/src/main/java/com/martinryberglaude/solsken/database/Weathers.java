@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
 public class Weathers {
     @NonNull
     @PrimaryKey
-    private double weatherId;
+    private String weatherId;
     private List<DayItem> dayList;
 
     public Weathers() {
@@ -20,11 +20,11 @@ public class Weathers {
     }
 
     @NonNull
-    public double getWeatherId() {
+    public String getWeatherId() {
         return weatherId;
     }
 
-    public void setWeatherId(double weatherId) {
+    public void setWeatherId(String weatherId) {
         this.weatherId = weatherId;
     }
 

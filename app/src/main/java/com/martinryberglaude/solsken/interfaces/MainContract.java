@@ -7,6 +7,7 @@ import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.database.Locations;
+import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
 import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
 
@@ -26,6 +27,7 @@ public interface MainContract {
         Coordinate getCurrentCoordinate();
         void updateLocationAndUI();
         SharedPreferences getSharedPreferences();
+        void setIsStart(boolean b);
     }
 
     interface Presenter {
@@ -74,14 +76,26 @@ public interface MainContract {
     }
     interface RetrieveDatabaseLocationsIntractor {
         interface OnFinishedListener {
-            void onFinishedFormatDatabaseLocations(List<Locations> locationList);
-            void onFailureFormatDatabaseLocations();
+            void onFinishedRetrieveDatabaseLocations(List<Locations> locationList);
+            void onFailureRetrieveDatabaseLocations();
         }
     }
     interface RemoveDatabaseLocationsIntractor {
         interface OnFinishedListener {
             void onFinishedRemoveDatabaseLocations(long identifier);
             void onFailureRemoveDatabaseLocations();
+        }
+    }
+    interface RetrieveDatabaseWeathersIntractor {
+        interface OnFinishedListener {
+            void onFinishedRetrieveDatabaseWeathers(Weathers result);
+            void onFailureRetrieveDatabaseWeathers();
+        }
+    }
+    interface RemoveDatabaseWeathersIntractor {
+        interface OnFinishedListener {
+            void onFinishedRemoveDatabaseWeathers(String identifier);
+            void onFailureRemoveDatabaseWeathers();
         }
     }
     interface DayItemClickListener {

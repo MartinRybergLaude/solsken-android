@@ -39,6 +39,6 @@ public class RetrieveDatabaseLocationsAsyncTask extends AsyncTask<Object, Intege
     @Override
     protected void onPostExecute(List<Locations> result) {
         super.onPostExecute(result);
-        delegate.onFinishedFormatDatabaseLocations(result);
+        delegate.onFinishedRetrieveDatabaseLocations(result);
     }
 }

@@ -16,7 +16,7 @@ public interface DaoAccessWeather {
     @Insert
     void insertSingleWeather (Weathers weathers);
     @Query("SELECT * FROM Weathers WHERE weatherId = :weatherId")
-    Locations fetchWeathersById (int weatherId);
+    Weathers fetchWeathersById (String weatherId);
 
     @Query("SELECT * FROM Weathers")
     List<Weathers> fetchAllWeathers();

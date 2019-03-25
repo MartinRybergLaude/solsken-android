@@ -1,11 +1,14 @@
 package com.martinryberglaude.solsken.presenter;
 
 import com.martinryberglaude.solsken.data.DayItem;
+import com.martinryberglaude.solsken.database.Locations;
+import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.model.FormatSMHIDataAsyncTask;
 import com.martinryberglaude.solsken.model.FormatYRDataAsyncTask;
 import com.martinryberglaude.solsken.model.MainModel;
+import com.martinryberglaude.solsken.model.RetrieveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
 import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
 
@@ -76,6 +79,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
         if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
         else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);
         isStart = false;
+        view.setIsStart(false);
     }
 
     @Override

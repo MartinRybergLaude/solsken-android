@@ -32,6 +32,7 @@ import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.database.Locations;
+import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.model.RemoveDatabaseLocationsAsyncTask;
@@ -39,6 +40,7 @@ import com.martinryberglaude.solsken.model.RequestLocationModel;
 import com.martinryberglaude.solsken.model.RequestSMHIWeatherModel;
 import com.martinryberglaude.solsken.model.RequestYRWeatherModel;
 import com.martinryberglaude.solsken.model.RetrieveDatabaseLocationsAsyncTask;
+import com.martinryberglaude.solsken.model.RetrieveDatabaseWeathersAsyncTask;
 import com.martinryberglaude.solsken.presenter.MainPresenter;
 import com.martinryberglaude.solsken.utils.OnSwipeTouchListener;
 import com.martinryberglaude.solsken.view.RecyclerViewAdapterDays;
@@ -65,7 +67,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         MainContract.RequestLocationIntractor.OnFinishedListerner,
         MainContract.DayItemClickListener,
         MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener,
-        MainContract.RemoveDatabaseLocationsIntractor.OnFinishedListener{
+        MainContract.RemoveDatabaseLocationsIntractor.OnFinishedListener,
+        MainContract.RetrieveDatabaseWeathersIntractor.OnFinishedListener,
+        MainContract.RemoveDatabaseWeathersIntractor.OnFinishedListener{
 
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private Window window;
     private FrameLayout mainView;
     private Drawer drawer;
+    private boolean isStart = true;
 
     private TextView temperatureText;
     private TextView wsymb2Text;
@@ -512,13 +517,24 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     private void loadCachedData() {
-        String id = requestAdressString(currentCoordinate);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String provider = prefs.getString("data_src","smhi");
+        String id = requestAdressString(currentCoordinate) + provider;
+
+        RetrieveDatabaseWeathersAsyncTask retrieveTask = new RetrieveDatabaseWeathersAsyncTask(this, id);
+        retrieveTask.delegate = this;
+        retrieveTask.execute();
     }
 
     @Override
     public SharedPreferences getSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPreferences;
+    }
+
+    @Override
+    public void setIsStart(boolean b) {
+        isStart = b;
     }
 
     // When location has been retrieved, launch all other tasks.
@@ -705,14 +721,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void onFinishedFormatDatabaseLocations(List<Locations> locationList) {
+    public void onFinishedRetrieveDatabaseLocations(List<Locations> locationList) {
         locList.clear();
         locList.addAll(locationList);
         getDrawerMenuItems();
     }
 
     @Override
-    public void onFailureFormatDatabaseLocations() {
+    public void onFailureRetrieveDatabaseLocations() {
         showToast(getResources().getString(R.string.database_error));
     }
 
@@ -726,6 +742,29 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void onFailureRemoveDatabaseLocations() {
         showToast(getString(R.string.database_remove_error));
+    }
+
+    @Override
+    public void onFinishedRetrieveDatabaseWeathers(Weathers result) {
+        showRefresh(false);
+        if (isStart) updateWeatherUI(result.getDayList(), requestAdressString(getCurrentCoordinate()), true);
+        else updateWeatherUI(result.getDayList(), requestAdressString(getCurrentCoordinate()), false);
+        isStart = false;
+    }
+
+    @Override
+    public void onFailureRetrieveDatabaseWeathers() {
+
+    }
+
+    @Override
+    public void onFinishedRemoveDatabaseWeathers(String identifier) {
+
+    }
+
+    @Override
+    public void onFailureRemoveDatabaseWeathers() {
+
     }
 }
 
