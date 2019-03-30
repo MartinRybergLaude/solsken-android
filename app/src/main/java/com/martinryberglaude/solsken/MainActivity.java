@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +32,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.WindDirection;
+import com.martinryberglaude.solsken.database.LocationDatabase;
 import com.martinryberglaude.solsken.database.Locations;
+import com.martinryberglaude.solsken.database.WeatherDatabase;
 import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.data.Coordinate;
@@ -61,6 +64,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View,
@@ -124,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private MainContract.RequestLocationIntractor getLocationIntractor;
 
     private List<DayItem> currentDayList;
+    private WeatherDatabase weatherDatabase;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -184,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         toolbar.animate().alpha(0.0f).setDuration(0);
         mainView.animate().alpha(0.0f).setDuration(0);
 
+        weatherDatabase = Room.databaseBuilder(getApplicationContext(),
+                WeatherDatabase.class, "weathers_db")
+                .fallbackToDestructiveMigration()
+                .build();
+
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(View bottomSheet, int newState) {
@@ -216,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             public void onRefresh() {
                 SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 // Check if content was refreshed less than five minutes ago
-                if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
+                if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > 1000 * 60 * 5) {
                     // Actually refresh
                     mainPresenter.updateLocationAndUI();
                 } else {
@@ -396,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void updateWeatherUI(final List<DayItem> dayList, final String city, final boolean initRecyclerview) {
         currentDayList = new ArrayList<>(dayList);
+
         // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -409,7 +420,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 DayItem dayItem = dayList.get(0);
                 HourItem hourItem = dayItem.getHourList().get(0);
                 cityText.setText(city);
-
                 wsymb2Text.setText(hourItem.getWsymb2String());
                 temperatureText.setText(hourItem.getTemperatureString());
                 wsymb2Icon.setImageResource(hourItem.getWsymb2Drawable());
@@ -446,7 +456,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }, 200);
 
         SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        preferences.edit().putLong("cacheTime", System.currentTimeMillis()).commit();
+        preferences.edit().putLong("reloadTime", System.currentTimeMillis()).commit();
     }
 
     @Override
@@ -489,17 +499,28 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    private boolean cacheExists;
     // Get location asynchronously, has to be called from activity as it needs context
     @Override
     public void updateLocationAndUI() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 0) < 60 * 60 * 1000;
+        boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < 60 * 60 * 1000;
+        final String provider = prefs.getString("data_src", "smhi");
 
         if (autoLocation) {
             getLocationIntractor.getLocation(this,this);
         } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + provider) != null) {
+                        setCacheExists(true);
+                    }
+                }
+            }).start();
+
             // Use cached data
-            if (isWithinTimeLimit) {
+            if (isWithinTimeLimit && cacheExists) {
                 loadCachedData();
             }
             // Do not use cached data
@@ -514,6 +535,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         }
+    }
+    private void setCacheExists(boolean b) {
+        cacheExists = b;
     }
 
     private void loadCachedData() {
@@ -542,6 +566,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 0) < 60 * 60 * 1000;
+
+        if (currentCoordinate == null) {
+            this.currentCoordinate = coordinate;
+        }
         // Confirmed new location
         if (!requestAdressString(coordinate).equals(requestAdressString(currentCoordinate)) || !isWithinTimeLimit) {
             this.currentCoordinate = coordinate;
@@ -556,6 +584,38 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         } else {
             loadCachedData();
         }
+    }
+    @Override
+    public void resetWeathers() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (System.currentTimeMillis() - prefs.getLong("cacheTime", 0) > 60 * 60 * 1000) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
+                            WeatherDatabase.class, "weathers_db")
+                            .fallbackToDestructiveMigration()
+                            .build();
+                    weatherDatabase.daoAccess().deleteAllWeathers();
+                    prefs.edit().putLong("cacheTime", System.currentTimeMillis()).commit();
+                }
+            }).start();
+        }
+    }
+
+    @Override
+    public void addWeather(final List<DayItem> dayList) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String id = requestAdressString(currentCoordinate) + prefs.getString("data_src", "smhi");
+                Weathers weathers = new Weathers();
+                weathers.setWeatherId(id);
+                weathers.setDayList(dayList);
+                weatherDatabase.daoAccess().insertSingleWeather(weathers);
+            }
+        }).start();
     }
 
     @Override
@@ -639,7 +699,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onResume() {
         super.onResume();
         SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        if (System.currentTimeMillis() - preferences.getLong("cacheTime", 0) > 1000 * 60 * 5) {
+        if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > 1000 * 60 * 5) {
             mainPresenter.updateLocationAndUI();
         }
     }

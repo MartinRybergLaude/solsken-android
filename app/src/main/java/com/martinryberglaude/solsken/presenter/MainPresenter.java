@@ -75,6 +75,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedFormatSMHIDays(List<DayItem> dayList) {
+        view.resetWeathers();
+        view.addWeather(dayList);
         view.showRefresh(false);
         if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
         else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);
@@ -105,6 +107,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedFormatYRDays(List<DayItem> dayList) {
+        view.resetWeathers();
+        view.addWeather(dayList);
         view.showRefresh(false);
         if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
         else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);

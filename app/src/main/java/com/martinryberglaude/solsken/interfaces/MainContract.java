@@ -28,6 +28,8 @@ public interface MainContract {
         void updateLocationAndUI();
         SharedPreferences getSharedPreferences();
         void setIsStart(boolean b);
+        void resetWeathers();
+        void addWeather(List<DayItem> dayList);
     }
 
     interface Presenter {
