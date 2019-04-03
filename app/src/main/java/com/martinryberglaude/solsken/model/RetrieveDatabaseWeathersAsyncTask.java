@@ -32,6 +32,7 @@ public class RetrieveDatabaseWeathersAsyncTask extends AsyncTask<Object, Integer
                 .fallbackToDestructiveMigration()
                 .build();
         Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(id);
+        weatherDatabase.close();
 
         return weathers;
     }

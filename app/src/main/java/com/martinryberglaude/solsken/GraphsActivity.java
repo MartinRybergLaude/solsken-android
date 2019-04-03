@@ -39,7 +39,7 @@ public class GraphsActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar_ghs);
         applyToolbarTheme();
         TextView toolbarTitle = findViewById(R.id.title_ghs);
-        toolbarTitle.setText("Diagram");
+        toolbarTitle.setText(getString(R.string.diagram));
         if (toolbar != null) {
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {

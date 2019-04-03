@@ -33,6 +33,7 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
         preference6.setSummary(preference6.getEntry());
         preference7.setSummary(preference7.getEntry());
         preference8.setSummary(preference8.getEntry());
+
     }
 
     @Override

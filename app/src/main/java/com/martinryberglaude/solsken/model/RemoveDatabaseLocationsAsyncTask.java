@@ -32,6 +32,7 @@ public class RemoveDatabaseLocationsAsyncTask extends AsyncTask<Void, Boolean, L
                     .fallbackToDestructiveMigration()
                     .build();
             locationDatabase.daoAccess().deleteLocation(location);
+            locationDatabase.close();
             return (long) location.getLocationId();
         } catch (Exception e) {
             return null;

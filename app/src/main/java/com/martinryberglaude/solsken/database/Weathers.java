@@ -14,6 +14,7 @@ public class Weathers {
     @PrimaryKey
     private String weatherId;
     private List<DayItem> dayList;
+    private long expirationTime;
 
     public Weathers() {
 
@@ -34,5 +35,13 @@ public class Weathers {
 
     public void setDayList(List<DayItem> dayList) {
         this.dayList = dayList;
+    }
+
+    public long getExpirationTime() {
+        return expirationTime;
+    }
+
+    public void setExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
     }
 }

@@ -78,6 +78,20 @@
     <string name="wind">Vind</string>
     <string name="hour_format">Klockformat</string>
 
+    <string name="diagram">Diagram</string>
+    <string name="about">Om</string>
+    <string name="developer">Utvecklare</string>
+    <string name="developer_name">Martin Ryberg Laude</string>
+    <string name="developer_location">Stockholm, Sweden</string>
+    <string name="developer_website">Besök webbsida</string>
+    <string name="developer_website_url">martinryberglaude.com</string>
+    <string name="developer_twitter">Min twitter</string>
+    <string name="developer_twitter_name">\u0040martini_rl</string>
+    <string name="developer_instagram">Min instagram</string>
+    <string name="developer_instagram_name">\u0040martinryberglaude</string>
+    <string name="licenses">Licenser</string>
+    <string name="license">Licens</string>
+
     <string name="search_location_hint">Sök en plats...</string>
     <string name="no_location_title">Oops!</string>
     <string name="no_location_body">Kunde inte hitta någon plats med det namnet. Kom ihåg att endast Skandinavien och Finland stöds.</string>

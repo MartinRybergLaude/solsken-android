@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeDay">
-        <activity android:name=".MapActivity"></activity>
+        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".MapActivity" />
         <activity android:name=".GraphsActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".HoursActivity" />

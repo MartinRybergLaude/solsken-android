@@ -31,7 +31,7 @@ public class RetrieveDatabaseLocationsAsyncTask extends AsyncTask<Object, Intege
                 .fallbackToDestructiveMigration()
                 .build();
         List<Locations> allLocations = locationDatabase.daoAccess().fetchAllLocations();
-
+        locationDatabase.close();
         return allLocations;
     }
 

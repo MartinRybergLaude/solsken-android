@@ -97,8 +97,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="0dp"
                             android:text="5°"
+                            android:includeFontPadding="false"
                             android:textColor="@color/white"
                             android:textSize="80sp"
                             android:textStyle="bold"/>
@@ -132,7 +133,7 @@
 
                     <TableLayout
                         android:id="@+id/table"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_above="@+id/sunrise_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -424,7 +425,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="230dp"
+                        android:layout_marginBottom="220dp"
                         android:orientation="horizontal"
                         android:gravity="center">
                         <TextView

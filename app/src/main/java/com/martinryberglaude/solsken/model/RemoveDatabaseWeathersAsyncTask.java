@@ -10,6 +10,8 @@ import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.room.Room;
 
@@ -18,12 +20,12 @@ public class RemoveDatabaseWeathersAsyncTask extends AsyncTask<Void, Boolean, St
     public OnFinishedListener delegate = null;
     private static final String DATABASE_NAME = "weathers_db";
     private WeatherDatabase weatherDatabase;
-    private Weathers weather;
+    private List<Weathers> weathers;
     private WeakReference<Context> contextRef;
 
-    public RemoveDatabaseWeathersAsyncTask(Context context, Weathers weather) {
+    public RemoveDatabaseWeathersAsyncTask(Context context, List<Weathers> weathers) {
         this.contextRef = new WeakReference<>(context);
-        this.weather = weather;
+        this.weathers = new ArrayList<>(weathers);
     }
 
     @Override
@@ -33,8 +35,11 @@ public class RemoveDatabaseWeathersAsyncTask extends AsyncTask<Void, Boolean, St
                     WeatherDatabase.class, DATABASE_NAME)
                     .fallbackToDestructiveMigration()
                     .build();
-            weatherDatabase.daoAccess().deleteWeather(weather);
-            return (String) weather.getWeatherId();
+            for (Weathers weather : weathers) {
+                weatherDatabase.daoAccess().deleteWeather(weather);
+            }
+            weatherDatabase.close();
+            return (String) weathers.get(0).getWeatherId();
         } catch (Exception e) {
             return null;
         }
