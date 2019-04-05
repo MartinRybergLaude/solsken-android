@@ -25,7 +25,6 @@ public class RequestYRWeatherModel implements MainContract.RequestYRWeatherIntra
         call.enqueue(new Callback<YRRetroWeatherData>() {
             @Override
             public void onResponse(Call<YRRetroWeatherData> call, Response<YRRetroWeatherData> response) {
-
                 onFinishedListerner.onFinishedRetrieveYRData(response);
             }
             @Override

@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +63,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
+    private NestedScrollView recyclerScrollView;
     private MainPresenter mainPresenter;
     private Toolbar toolbar;
     private Window window;
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
         window = getWindow();
         recyclerView = findViewById(R.id.recycler_view_days);
+        recyclerScrollView = findViewById(R.id.recycler_scroll_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 
         temperatureText = findViewById(R.id.title_temperature);
@@ -514,19 +518,18 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private boolean cacheExists = false;
     // Get location asynchronously, has to be called from activity as it needs context
     @Override
     public void updateLocationAndUI() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("cacheExists", false).commit();
         final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
         final String provider = prefs.getString("data_src", "smhi");
-        setCacheExists(false);
         if (autoLocation) {
             getLocationIntractor.getLocation(this,this);
         } else {
             currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
-            new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     if (isWithinTimeLimit) {
@@ -536,16 +539,21 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                 .build();
                         Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + provider);
                         if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
-                            setCacheExists(true);
+                            prefs.edit().putBoolean("cacheExists", true).commit();
                         }
                         weatherDatabase.close();
                     }
                 }
-            }).start();
-
+            });
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             // Use cached data
-            if (cacheExists) {
-                setCacheExists(false);
+            if (prefs.getBoolean("cacheExists", false)) {
+                prefs.edit().putBoolean("cacheExists", false).commit();
                 loadCachedData();
             }
             // Do not use cached data
@@ -559,9 +567,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         }
-    }
-    private void setCacheExists(boolean b) {
-        cacheExists = b;
     }
 
     private void loadCachedData() {
@@ -587,46 +592,39 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     // When location has been retrieved, launch all other tasks.
     @Override
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 0) < cacheTotalValidTime;
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("cacheExists", false).commit();
+        final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
         final String dataSource = prefs.getString("data_src", "smhi");
-        setCacheExists(false);
-        if (currentCoordinate == null) {
-            this.currentCoordinate = coordinate;
-        }
-
-        if (isWithinTimeLimit) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+        this.currentCoordinate = coordinate;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(isWithinTimeLimit) {
                     WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
                             WeatherDatabase.class, "weathers_db")
                             .fallbackToDestructiveMigration()
                             .build();
                     Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + dataSource);
                     if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
-                        setCacheExists(true);
+                        prefs.edit().putBoolean("cacheExists", true).commit();
                     }
                     weatherDatabase.close();
                 }
-            }).start();
-            // Found cached data, load it
-            if (cacheExists) {
-                setCacheExists(false);
-                loadCachedData();
-            } else {
-                // No cached data, load new data.
-                this.currentCoordinate = coordinate;
-                mainPresenter.loadColorTheme();
-
-                if (dataSource.equals("smhi")) {
-                    mainPresenter.requestWeatherData(true);
-                } else {
-                    mainPresenter.requestWeatherData(false);
-                }
             }
-        // Time ran out, load new data.
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // Found cached data, load it
+        if (prefs.getBoolean("cacheExists", false)) {
+            prefs.edit().putBoolean("cacheExists", false).commit();
+            loadCachedData();
         } else {
+            // No cached data, load new data.
             this.currentCoordinate = coordinate;
             mainPresenter.loadColorTheme();
 
@@ -637,6 +635,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         }
     }
+
     @Override
     public void resetWeathers() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -750,6 +749,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void onBackPressed() {
         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            recyclerScrollView.fullScroll(View.FOCUS_UP);
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
         else {

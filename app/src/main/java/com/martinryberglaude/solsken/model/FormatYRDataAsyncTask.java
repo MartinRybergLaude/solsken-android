@@ -2,7 +2,6 @@ package com.martinryberglaude.solsken.model;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.data.Coordinate;
@@ -42,14 +41,12 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
     protected List<DayItem> doInBackground(Object... params) {
 
         Response<YRRetroWeatherData> response = (Response<YRRetroWeatherData>) params[0];
-        TimeOfDay timeOfDay = (TimeOfDay) params[1];
-        sharedPreferences = (SharedPreferences) params[2];
-        Coordinate coordinate = (Coordinate) params[3];
+        sharedPreferences = (SharedPreferences) params[1];
+        Coordinate coordinate = (Coordinate) params[2];
 
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
-        String currentHour;
         if (response.body() == null) {
             return null;
         }
@@ -88,10 +85,16 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
                         Time timeNext = response.body().getProduct().getTime().get(i + 1);
 
                         HourItem hourItem = new HourItem();
+                        SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");
+                        try {
+                            Date hourDate = hourFormat.parse(time2.getTo());
+                            hourItem.setDate(hourDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
 
                         if (time2.getLocation().getTemperature() != null) {
                             hourItem.setTemperatureString(getTemperatureString(Double.parseDouble(time2.getLocation().getTemperature().getValue())));
-                            Log.d("TEMP", hourItem.getTemperatureString());
                             temperatureC = (int) Math.round(Double.parseDouble(time2.getLocation().getTemperature().getValue()));
                         }
                         if (time2.getLocation().getWindSpeed() != null) {
@@ -132,26 +135,17 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
                         if (timeNext.getLocation().getSymbol() != null) {
                             String symbol = new YRWeatherSymbol().getSymbolString(Integer.parseInt(timeNext.getLocation().getSymbol().getNumber()));
                             hourItem.setWsymb2String(symbol);
-                            if (sameDay) {
-                                hourItem.setWsymb2Drawable(getWeatherIconToday(timeNext.getLocation().getSymbol(), timeOfDay));
-                            } else {
-                                hourItem.setWsymb2Drawable(getWeatherIconToday(timeNext.getLocation().getSymbol(), TimeOfDay.DAY));
-                            }
+                            Calendar hourCal = Calendar.getInstance();
+                            hourCal.setTime(hourItem.getDate());
+                            hourItem.setWsymb2Drawable(getWeatherIconToday(timeNext.getLocation().getSymbol(), coordinate, hourCal));
                         }
                         hourItem.setFeelsLikeString(String.valueOf(getFeelsLikeTemperature(temperatureC, humidity, windSpeedMS)) + "°");
                         hourItem.setDayString(capitalizeFirstLetter(dateFormatDay.format(date)));
                         hourItem.setHourString(getClockString(time2.getHourString()));
-                        SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");
-                        try {
-                            Date hourDate = hourFormat.parse(time2.getTo());
-                            hourItem.setDate(hourDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+
                         hourList.add(hourItem);
 
                         if (isFirst) {
-                            //i = i - 1;
                             isFirst = false;
                         }
                     }
@@ -171,7 +165,6 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
                 dayItem.setSunsetString(sunriseSunsetString[1]);
 
                 // Add dayItem to the list
-                Log.d("daylist", String.valueOf(dayList.size()));
                 dayList.add(dayItem);
             }
         }
@@ -349,7 +342,8 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
-    private int getWeatherIconToday(Symbol symbol, TimeOfDay timeOfDay) {
+    private int getWeatherIconToday(Symbol symbol, Coordinate coordinate, Calendar calendar) {
+        TimeOfDay timeOfDay = getTimeOfDay(coordinate, calendar);
         int drawableInt;
         switch (Integer.parseInt(symbol.getNumber())) {
             case 1:
@@ -525,5 +519,13 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
         String sunsetString = getClockString(hourFormat.format(calendars[1].getTime()));
 
         return new String[] {sunriseString, sunsetString};
+    }
+    private TimeOfDay getTimeOfDay(Coordinate coordinate, Calendar current) {
+        if (!ca.rmen.sunrisesunset.SunriseSunset.isDay(current, coordinate.getLat(), coordinate.getLon())) {
+            return TimeOfDay.NIGHT;
+        }
+        else {
+            return TimeOfDay.DAY;
+        }
     }
 }

@@ -1,14 +1,9 @@
 package com.martinryberglaude.solsken.presenter;
 
 import com.martinryberglaude.solsken.data.DayItem;
-import com.martinryberglaude.solsken.database.Locations;
-import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
-import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.model.FormatSMHIDataAsyncTask;
 import com.martinryberglaude.solsken.model.FormatYRDataAsyncTask;
-import com.martinryberglaude.solsken.model.MainModel;
-import com.martinryberglaude.solsken.model.RetrieveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
 import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
 
@@ -22,7 +17,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     private MainContract.View view;
     private MainContract.RequestSMHIWeatherIntractor getSMHIWeatherIntractor;
     private MainContract.RequestYRWeatherIntractor getYRWeatherIntractor;
-    private MainModel model;
     private String weatherErrorString;
 
     private boolean isStart = true;
@@ -32,18 +26,12 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
         this.getSMHIWeatherIntractor = getSMHIWeatherIntractor;
         this.getYRWeatherIntractor = getYRWeatherIntractor;
         this.weatherErrorString = weatherErrorString;
-        model = new MainModel();
     }
 
     @Override
     public void updateLocationAndUI() {
         view.showRefresh(true);
         view.updateLocationAndUI();
-    }
-
-    @Override
-    public TimeOfDay getTimeOfDay() {
-        return model.getTimeOfDay(view.getCurrentCoordinate());
     }
 
     @Override
@@ -64,7 +52,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFinishedRetrieveSMHIData(Response<SMHIRetroWeatherData> response) {
       FormatSMHIDataAsyncTask formatAsyncTask = new FormatSMHIDataAsyncTask();
       formatAsyncTask.delegate = this;
-      formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences(), view.getCurrentCoordinate());
+      formatAsyncTask.execute(response, view.getSharedPreferences(), view.getCurrentCoordinate());
     }
 
     @Override
@@ -95,7 +83,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFinishedRetrieveYRData(Response<YRRetroWeatherData> response) {
         FormatYRDataAsyncTask formatAsyncTask = new FormatYRDataAsyncTask();
         formatAsyncTask.delegate = this;
-        formatAsyncTask.execute(response, model.getTimeOfDay(view.getCurrentCoordinate()), view.getSharedPreferences(), view.getCurrentCoordinate());
+        formatAsyncTask.execute(response, view.getSharedPreferences(), view.getCurrentCoordinate());
     }
 
     @Override

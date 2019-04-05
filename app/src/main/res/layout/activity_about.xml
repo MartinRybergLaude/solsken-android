@@ -100,6 +100,7 @@
                         android:layout_centerVertical="true"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:tint="?attr/primaryColor"
                         android:src="@drawable/ic_account_circle"/>
                     <TextView
                         android:layout_toRightOf="@+id/img_account"
@@ -135,6 +136,7 @@
                         android:layout_centerVertical="true"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:tint="?attr/primaryColor"
                         android:src="@drawable/ic_public"/>
                     <TextView
                         android:layout_toRightOf="@+id/img_web"
@@ -170,6 +172,7 @@
                         android:layout_centerVertical="true"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:tint="?attr/primaryColor"
                         android:src="@drawable/ic_twitter"/>
                     <TextView
                         android:layout_toRightOf="@+id/img_twitter"
@@ -204,6 +207,7 @@
                         android:layout_centerVertical="true"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:tint="?attr/primaryColor"
                         android:src="@drawable/ic_instagram"/>
                     <TextView
                         android:layout_toRightOf="@+id/img_instagram"
@@ -368,6 +372,58 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="GNU LGPL 2.1"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/lib_smhi"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SMHI"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Creative Commons Erkännande 4.0"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/lib_yr"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="YR.no"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Creative Commons 4.0 International"
                         android:textSize="12sp"
                         android:textColor="?attr/textColorSecondary"/>
                 </RelativeLayout>

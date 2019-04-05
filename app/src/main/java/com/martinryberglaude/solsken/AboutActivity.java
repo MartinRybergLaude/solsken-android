@@ -25,7 +25,7 @@ import android.widget.TextView;
 public class AboutActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private String licenseRetrofit = "Copyright 2013 Square, Inc. \n\n Licensed under the Apache License, Version 2.0 (the \"License\"); " +
+    private String licenseRetrofit = "Copyright 2013 Square, Inc. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +
             "You may obtain a copy of the License at\n\n" +
             "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
@@ -34,7 +34,7 @@ public class AboutActivity extends AppCompatActivity {
             "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
             "See the License for the specific language governing permissions and " +
             "limitations under the License.";
-    private String licenseGson = "Copyright 2008 Google Inc. \n\n Licensed under the Apache License, Version 2.0 (the \"License\"); " +
+    private String licenseGson = "Copyright 2008 Google Inc. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +
             "You may obtain a copy of the License at\n\n" +
             "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
@@ -43,7 +43,7 @@ public class AboutActivity extends AppCompatActivity {
             "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
             "See the License for the specific language governing permissions and " +
             "limitations under the License.";
-    private String licenseMPAndroidChart = "Copyright 2018 Philipp Jahoda \n\n Licensed under the Apache License, Version 2.0 (the \"License\"); " +
+    private String licenseMPAndroidChart = "Copyright 2018 Philipp Jahoda \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +
             "You may obtain a copy of the License at\n\n" +
             "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
@@ -52,7 +52,7 @@ public class AboutActivity extends AppCompatActivity {
             "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
             "See the License for the specific language governing permissions and " +
             "limitations under the License.";
-    private String licenseMaterialDrawer = "Copyright 2018 Mike Penz \n\n Licensed under the Apache License, Version 2.0 (the \"License\"); " +
+    private String licenseMaterialDrawer = "Copyright 2018 Mike Penz \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +
             "You may obtain a copy of the License at\n\n" +
             "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
@@ -171,22 +171,46 @@ public class AboutActivity extends AppCompatActivity {
                 showLicenseDialog(licenseSunriseSunset);
             }
         });
+        RelativeLayout libSMHI = findViewById(R.id.lib_smhi);
+        libSMHI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://www.smhi.se/klimatdata/oppna-data/information-om-oppna-data/villkor-for-anvandning-1.30622";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+        RelativeLayout libYR = findViewById(R.id.lib_yr);
+        libYR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://www.met.no/en/free-meteorological-data/Licensing-and-crediting";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
     }
 
     private void showLicenseDialog(String licenseText) {
+        int padding = 60;
+        TextView textView = new TextView(this);
+        textView.setTextIsSelectable(true);
+        textView.setEnabled(true);
+        textView.setFocusable(true);
+        textView.setLongClickable(true);
+        textView.setPadding(padding,padding,padding,0);
+        textView.setText(licenseText);
         AlertDialog dialog = new AlertDialog.Builder(AboutActivity.this)
+                .setView(textView)
                 .setTitle(getString(R.string.license))
-                .setMessage(licenseText)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 })
                 .show();
-        TextView textView = dialog.findViewById(android.R.id.message);
-        textView.setScroller(new Scroller(AboutActivity.this));
-        textView.setVerticalScrollBarEnabled(true);
-        textView.setMovementMethod(new ScrollingMovementMethod());
     }
     private void applyTheme() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

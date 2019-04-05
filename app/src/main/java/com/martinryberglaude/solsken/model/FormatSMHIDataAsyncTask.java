@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ca.rmen.sunrisesunset.SunriseSunset;
 import retrofit2.Response;
 
 public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatSMHIWeatherIntractor {
@@ -38,9 +39,8 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
     protected List<DayItem> doInBackground(Object... params) {
 
         Response<SMHIRetroWeatherData> response = (Response<SMHIRetroWeatherData>) params[0];
-        TimeOfDay timeOfDay = (TimeOfDay) params[1];
-        sharedPreferences = (SharedPreferences) params[2];
-        Coordinate coordinate = (Coordinate) params[3];
+        sharedPreferences = (SharedPreferences) params[1];
+        Coordinate coordinate = (Coordinate) params[2];
 
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
@@ -78,6 +78,13 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                 for (SMHIRetroTimeSeries timeSeries2 : response.body().getTimeSeries()) {
                     if (timeSeries2.getDateString().equals(currentDate)) {
                         HourItem hourItem = new HourItem();
+                        SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");
+                        try {
+                            Date hourDate = hourFormat.parse(timeSeries2.getValidTime());
+                            hourItem.setDate(hourDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                         for (SMHIRetroParameter parameter : timeSeries2.getParameters()) {
                             if (parameter.getName().equals("t")) {
                                 hourItem.setTemperatureString(getTemperatureString(parameter.getValues().get(0)));
@@ -120,27 +127,18 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
 
                                 hourItem.setWindDirection(currentWindDirection);
                             }
-
                             if (parameter.getName().equals("Wsymb2")) {
                                 String symbol = new SMHIWeatherSymbol().getSymbolList().get((int)Math.round(parameter.getValues().get(0)) - 1);
                                 hourItem.setWsymb2String(symbol);
-                                if (sameDay) {
-                                    hourItem.setWsymb2Drawable(getWeatherIconToday(parameter, timeOfDay));
-                                } else {
-                                    hourItem.setWsymb2Drawable(getWeatherIconToday(parameter, TimeOfDay.DAY));
-                                }
+                                Calendar hourCal = Calendar.getInstance();
+                                hourCal.setTime(hourItem.getDate());
+                                hourItem.setWsymb2Drawable(getWeatherIconToday(parameter, coordinate, hourCal));
                             }
                         }
                         hourItem.setFeelsLikeString(String.valueOf(getFeelsLikeTemperature(temperatureC, humidity, windSpeedMS)) + "°");
                         hourItem.setDayString(capitalizeFirstLetter(dateFormatDay.format(date)));
                         hourItem.setHourString(getClockString(timeSeries2.getHourString()));
-                        SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");
-                        try {
-                            Date hourDate = hourFormat.parse(timeSeries2.getValidTime());
-                            hourItem.setDate(hourDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+
                         hourList.add(hourItem);
                     }
                 }
@@ -320,8 +318,8 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
-    private int getWeatherIconToday(SMHIRetroParameter parameter, TimeOfDay timeOfDay) {
-
+    private int getWeatherIconToday(SMHIRetroParameter parameter, Coordinate coordinate, Calendar calendar) {
+        TimeOfDay timeOfDay = getTimeOfDay(coordinate, calendar);
         int symbolInt = (int) Math.round(parameter.getValues().get(0));
         int drawableInt;
         switch (symbolInt) {
@@ -456,6 +454,14 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
         String sunsetString = getClockString(hourFormat.format(calendars[1].getTime()));
 
         return new String[] {sunriseString, sunsetString};
+    }
+    private TimeOfDay getTimeOfDay(Coordinate coordinate, Calendar current) {
+        if (!ca.rmen.sunrisesunset.SunriseSunset.isDay(current, coordinate.getLat(), coordinate.getLon())) {
+            return TimeOfDay.NIGHT;
+        }
+        else {
+            return TimeOfDay.DAY;
+        }
     }
 }
 

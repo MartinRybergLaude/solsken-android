@@ -34,7 +34,6 @@ public interface MainContract {
 
     interface Presenter {
         void updateLocationAndUI();
-        TimeOfDay getTimeOfDay();
         void loadColorTheme();
         void requestWeatherData(boolean smhi);
     }
