@@ -65,6 +65,15 @@ public class AboutActivity extends AppCompatActivity {
             "This software uses the SunriseSunset library.\n\n" +
             "Copyright 2017 caarmen\n\n" +
             "The SunriseSunset library is licensed under the GNU Lesser General Public Library, version 2.1. You can find a copy of this license at https://www.gnu.org/licenses/lgpl-2.1.en.html";
+    private String licensePhoton = "Copyright 2019 Komoot. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
+            "you may not use this file except in compliance with the License. " +
+            "You may obtain a copy of the License at\n\n" +
+            "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
+            "Unless required by applicable law or agreed to in writing, software " +
+            "distributed under the License is distributed on an \"AS IS\" BASIS, " +
+            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
+            "See the License for the specific language governing permissions and " +
+            "limitations under the License.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +152,7 @@ public class AboutActivity extends AppCompatActivity {
                 showLicenseDialog(licenseRetrofit);
             }
         });
+
         RelativeLayout libGson = findViewById(R.id.lib_gson);
         libGson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +160,7 @@ public class AboutActivity extends AppCompatActivity {
                 showLicenseDialog(licenseGson);
             }
         });
+
         RelativeLayout libMPAndroidChart = findViewById(R.id.lib_mpandroidchart);
         libMPAndroidChart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,6 +200,13 @@ public class AboutActivity extends AppCompatActivity {
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
+            }
+        });
+        RelativeLayout libPhoton = findViewById(R.id.lib_photon);
+        libPhoton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLicenseDialog(licensePhoton);
             }
         });
     }

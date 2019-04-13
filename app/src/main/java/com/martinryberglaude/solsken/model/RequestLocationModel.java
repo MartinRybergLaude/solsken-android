@@ -51,35 +51,13 @@ public class RequestLocationModel implements MainContract.RequestLocationIntract
         // Check if last known location was recorded less than two minutes ago
         if (lastKnownLocation != null && locationAgeMillis(lastKnownLocation) < TWO_MINUTES) {
             onFinishedListener.onFinishedRetrieveLocation(new Coordinate(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude()));
-            // Last known location was too old, retreieve new location
         } else {
+            // Last known location was too old, retreieve new location
             boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             final Looper looper = null;
-            // Prefer network, doesnt need GPS accuracy
-            if (isNetworkEnabled) {
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-                locationManager.requestSingleUpdate(criteria, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        onFinishedListener.onFinishedRetrieveLocation(new Coordinate(location.getLongitude(), location.getLatitude()));
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                    }
-                }, looper);
-                // No network available, get location through GPS
-            } else if (isGPSEnabled) {
+            // Prefer gps location
+            if (isGPSEnabled) {
                 Criteria criteria = new Criteria();
                 criteria.setAccuracy(Criteria.ACCURACY_FINE);
                 locationManager.requestSingleUpdate(criteria, new LocationListener() {
@@ -100,6 +78,30 @@ public class RequestLocationModel implements MainContract.RequestLocationIntract
                     public void onProviderDisabled(String provider) {
                     }
                 }, looper);
+                // No network available, get location through GPS
+            } else if (isNetworkEnabled) {
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+                locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        onFinishedListener.onFinishedRetrieveLocation(new Coordinate(location.getLongitude(), location.getLatitude()));
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+                    }
+                }, looper);
+            } else {
+                onFinishedListener.onFailureRetrieveLocationn();
             }
         }
     }

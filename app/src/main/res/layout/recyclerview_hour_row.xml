@@ -126,7 +126,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_wi_direction_up"
+                    android:src="@drawable/ic_wi_direction_s"
                     android:tint="?attr/primaryColor"/>
                 <TextView
                     android:id="@+id/ic_wind_speed"

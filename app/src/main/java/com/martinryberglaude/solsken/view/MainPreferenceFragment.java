@@ -3,13 +3,17 @@ package com.martinryberglaude.solsken.view;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.SettingsActivity;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
 
 public class MainPreferenceFragment extends androidx.preference.PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -33,6 +37,32 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
         preference6.setSummary(preference6.getEntry());
         preference7.setSummary(preference7.getEntry());
         preference8.setSummary(preference8.getEntry());
+
+        Preference invalidate = findPreference("invalidate");
+        if (invalidate != null) {
+            invalidate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    prefs.edit().putBoolean("requiresRefresh", true).putBoolean("requiresUIRefresh", true).commit();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.cache_invalidated),
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+        }
+
+        SwitchPreference compassPref = findPreference("relative_wind");
+        PackageManager manager = getContext().getPackageManager();
+        boolean hasAccelerometer = manager.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
+        boolean hasMagnetometer = manager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+
+        if (!hasAccelerometer || !hasMagnetometer) {
+            if (compassPref != null) {
+                compassPref.setEnabled(false);
+                compassPref.setVisible(false);
+            }
+        }
 
     }
 
@@ -60,16 +90,17 @@ public class MainPreferenceFragment extends androidx.preference.PreferenceFragme
             ListPreference listPref = (ListPreference) pref;
             pref.setSummary(listPref.getEntry());
         }
-
-        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis") || key.equals("hour") || key.equals("data_src")) {
-            sharedPreferences.edit().putBoolean("requiresRefresh", true).commit();
+        if (key.equals("temperature") || key.equals("wind") || key.equals("rain") || key.equals("pressure") || key.equals("vis") || key.equals("hour")) {
+            sharedPreferences.edit().putBoolean("requiresRefresh", true).putBoolean("requiresUIRefresh", true).commit();
         }
-
         if (key.equals("theme") || key.equals("dark_theme")) {
-            sharedPreferences.edit().putBoolean("requiresRefresh", true).commit();
+            sharedPreferences.edit().putBoolean("requiresUIRefresh", true).commit();
             Intent intent = new Intent(getContext(), SettingsActivity.class);
             getActivity().finish();
             startActivity(intent);
+        }
+        if (key.equals("data_src")) {
+            sharedPreferences.edit().putBoolean("requiresUIRefresh", true).commit();
         }
     }
 }

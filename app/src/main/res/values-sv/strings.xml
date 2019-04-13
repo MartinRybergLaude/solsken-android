@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Solsken</string>
-    
+
     <string name="permission_welcome">Välkommen!</string>
     <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
     <string name="permission_button">Godkänn</string>
@@ -103,7 +103,7 @@
     <string name="no_location_body">Kunde inte hitta någon plats med det namnet. Kom ihåg att endast Skandinavien och Finland stöds.</string>
     <string name="search_location_title">Sök en plats</string>
     <string name="search_location_body">Hitta en plats med hjälp av sökmotorn</string>
-    
+
     <string name="clear">Klart</string>
     <string name="almost_clear">Nästan klart</string>
     <string name="light_cloudiness">Lätt molnighet</string>
@@ -137,5 +137,4 @@
     <string name="moderate_snow">Måttligt snöfall</string>
     <string name="heavy_snow">Kraftigt snöfall</string>
     <string name="drizzle">Duggregn</string>
-
 </resources>

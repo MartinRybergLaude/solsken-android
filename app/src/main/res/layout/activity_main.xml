@@ -187,7 +187,7 @@
                                     android:layout_gravity="center_horizontal"
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
-                                    android:src="@drawable/ic_wi_direction_up"
+                                    android:src="@drawable/ic_wi_direction_s"
                                     android:tint="@color/white"/>
                                 <TextView
                                     android:id="@+id/ic_wind_speed"
@@ -439,7 +439,7 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_wi_direction_up"
+                            android:src="@drawable/ic_wi_direction_s"
                             android:tint="@color/white"/>
                         <ImageView
                             android:layout_width="48dp"
@@ -450,7 +450,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:rotation="180"
-                            android:src="@drawable/ic_wi_direction_up"
+                            android:src="@drawable/ic_wi_direction_s"
                             android:tint="@color/white"/>
                         <TextView
                             android:id="@+id/text_sunset"

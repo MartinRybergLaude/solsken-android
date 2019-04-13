@@ -1,5 +1,7 @@
 package com.martinryberglaude.solsken.presenter;
 
+import android.content.Context;
+
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.model.FormatSMHIDataAsyncTask;
@@ -63,7 +65,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedFormatSMHIDays(List<DayItem> dayList) {
-        view.resetWeathers();
         view.addWeather(dayList);
         view.showRefresh(false);
         if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
@@ -95,7 +96,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedFormatYRDays(List<DayItem> dayList) {
-        view.resetWeathers();
         view.addWeather(dayList);
         view.showRefresh(false);
         if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);

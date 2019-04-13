@@ -25,7 +25,6 @@ public class RequestSMHIWeatherModel implements MainContract.RequestSMHIWeatherI
         call.enqueue(new Callback<SMHIRetroWeatherData>() {
             @Override
             public void onResponse(Call<SMHIRetroWeatherData> call, Response<SMHIRetroWeatherData> response) {
-
                 onFinishedListerner.onFinishedRetrieveSMHIData(response);
             }
             @Override

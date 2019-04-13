@@ -14,6 +14,8 @@ public class HourItem implements Serializable {
     private String wsymb2String;
     private String pressureString;
     private String rainAmountString;
+    private String rainAmountStringLow;
+    private String rainAmountStringHigh;
     private String visibilityString;
     private String humidityString;
     private String gustSpeedString;
@@ -101,6 +103,22 @@ public class HourItem implements Serializable {
 
     public void setRainAmountString(String rainAmountString) {
         this.rainAmountString = rainAmountString;
+    }
+
+    public String getRainAmountStringLow() {
+        return rainAmountStringLow;
+    }
+
+    public void setRainAmountStringLow(String rainAmountStringLow) {
+        this.rainAmountStringLow = rainAmountStringLow;
+    }
+
+    public String getRainAmountStringHigh() {
+        return rainAmountStringHigh;
+    }
+
+    public void setRainAmountStringHigh(String rainAmountStringHigh) {
+        this.rainAmountStringHigh = rainAmountStringHigh;
     }
 
     public String getVisibilityString() {

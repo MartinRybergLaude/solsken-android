@@ -72,5 +72,22 @@
             android:defaultValue="24h"
             android:entries="@array/hour_format"
             android:entryValues="@array/hour_format_values" />
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:title="@string/relative_wind_title"
+            android:summary="@string/relative_wind_body"
+            android:key="relative_wind"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/other"
+        app:iconSpaceReserved="false">
+        <Preference
+            app:iconSpaceReserved="false"
+            android:title="@string/invalidate_cache_title"
+            android:summary="@string/invalidate_cache"
+            android:key="invalidate">
+        </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

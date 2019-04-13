@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.data.HourItem;
 import com.martinryberglaude.solsken.data.WindDirection;
-import com.martinryberglaude.solsken.interfaces.MainContract;
+
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,7 +93,8 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
             holder.detailsView.setVisibility(View.VISIBLE);
             holder.rainAmountText.setText(hourItem.getRainAmountString());
             holder.windSpeedText.setText(hourItem.getWindSpeedString());
-            setWindDirectionUI(hourItem.getWindDirection(), holder);
+            holder.windDirectionImg.setImageResource(hourItem.getWindDrawable());
+            setWindDirectionText(hourItem.getWindDirection(), holder);
             holder.pressureText.setText(hourItem.getPressureString());
             holder.visibilityText.setText(hourItem.getVisibilityString());
             holder.humidityText.setText(hourItem.getHumidityString());
@@ -108,7 +109,6 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
                 boolean expanded = hourItem.isExpanded();
                 hourItem.setExpanded(!expanded);
                 notifyItemChanged(position);
-                //itemListener.onItemClick(hourList.get(position));
             }
         });
     }
@@ -128,49 +128,41 @@ public class RecyclerViewAdapterHours extends  RecyclerView.Adapter<RecyclerView
         return position;
     }
 
-    private void setWindDirectionUI(@WindDirection.Direction int windDirection, RecyclerViewAdapterHours.HourViewHolder holder) {
+    private void setWindDirectionText(@WindDirection.Direction int windDirection, RecyclerViewAdapterHours.HourViewHolder holder) {
         String windDirectionString;
 
         switch (windDirection) {
             case WindDirection.N:
                 windDirectionString = context.getString(R.string.north);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(180);
                 break;
             case WindDirection.NE:
                 windDirectionString = context.getString(R.string.northeast);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(225);
                 break;
             case WindDirection.E:
                 windDirectionString = context.getString(R.string.east);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(270);
                 break;
             case WindDirection.SE:
                 windDirectionString = context.getString(R.string.southeast);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(315);
                 break;
             case WindDirection.S:
                 windDirectionString = context.getString(R.string.south);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(0);
                 break;
             case WindDirection.SW:
                 windDirectionString = context.getString(R.string.southwest);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(45);
                 break;
             case WindDirection.W:
                 windDirectionString = context.getString(R.string.west);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(90);
                 break;
             case WindDirection.NW:
                 windDirectionString = context.getString(R.string.northwest);
                 holder.windDirectionText.setText(windDirectionString);
-                holder.windDirectionImg.setRotation(135);
                 break;
         }
     }

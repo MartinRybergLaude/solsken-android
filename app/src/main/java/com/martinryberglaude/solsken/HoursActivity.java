@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,12 +12,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.martinryberglaude.solsken.data.DayItem;
-import com.martinryberglaude.solsken.data.HourItem;
-import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.view.RecyclerViewAdapterHours;
 
 import java.io.Serializable;
@@ -28,6 +27,7 @@ public class HoursActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private Toolbar toolbar;
+    private DayItem dayItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +35,10 @@ public class HoursActivity extends AppCompatActivity {
         applyTheme();
         setContentView(R.layout.activity_hours);
 
-        DayItem dayItem = (DayItem) getIntent().getSerializableExtra("day");
+        dayItem = (DayItem) getIntent().getSerializableExtra("day");
         toolbar = findViewById(R.id.toolbar_hrs);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         applyToolbarTheme();
 
         if (toolbar != null) {
@@ -80,6 +82,26 @@ public class HoursActivity extends AppCompatActivity {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (dayItem.getHourList().size() > 2) {
+            getMenuInflater().inflate(R.menu.menu_hours_toolbar, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_stats:
+                Intent intent= new Intent(HoursActivity.this, GraphsActivity.class);
+                intent.putExtra("dayItem", (Serializable) dayItem);
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 
     private void applyTheme() {

@@ -44,9 +44,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void handleBackPress() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean requiresRefresh = preferences.getBoolean("requiresRefresh", false);
-        if (requiresRefresh) {
-            preferences.edit().putBoolean("requiresRefresh", false).commit();
+        boolean requiresUIRefresh = preferences.getBoolean("requiresUIRefresh", false);
+        if (requiresUIRefresh) {
+            preferences.edit().putBoolean("requiresUIRefresh", false).commit();
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             finish();

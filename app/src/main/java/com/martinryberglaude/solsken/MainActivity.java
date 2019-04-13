@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -21,6 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,6 +40,7 @@ import com.martinryberglaude.solsken.database.WeatherDatabase;
 import com.martinryberglaude.solsken.database.Weathers;
 import com.martinryberglaude.solsken.interfaces.MainContract;
 import com.martinryberglaude.solsken.data.Coordinate;
+import com.martinryberglaude.solsken.model.Compass;
 import com.martinryberglaude.solsken.model.RemoveDatabaseLocationsAsyncTask;
 import com.martinryberglaude.solsken.model.RemoveDatabaseWeathersAsyncTask;
 import com.martinryberglaude.solsken.model.RequestLocationModel;
@@ -87,7 +91,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private Drawer drawer;
     private boolean isStart = true;
 
-    private int cacheTotalValidTime = 1000 * 60 * 60 * 6;
+    private Compass compass;
+    private float currentAzimuth;
+
+    private int cacheTotalValidTime = 1000 * 60 * 60 * 12;
     private int cacheValidTime = 1000 * 60 * 60;
     private int reloadValidTime = 1000 * 60 * 5;
 
@@ -223,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         getLocationIntractor = new RequestLocationModel(locationManager);
         mainPresenter = new MainPresenter(this, new RequestSMHIWeatherModel(), new RequestYRWeatherModel(), getResources().getString(R.string.weather_error));
-        mainPresenter.updateLocationAndUI();
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -348,6 +354,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 drawer.openDrawer();
             }
         });
+
+        compass = new Compass(MainActivity.this);
+        Compass.CompassListener cl = getCompassListener();
+        compass.setListener(cl);
     }
     private void updateDrawerItems() {
         RetrieveDatabaseLocationsAsyncTask retrieveTask = new RetrieveDatabaseLocationsAsyncTask(this);
@@ -424,6 +434,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void updateWeatherUI(final List<DayItem> dayList, final String city, final boolean initRecyclerview) {
+        final SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         currentDayList = new ArrayList<>(dayList);
 
         // Wait 200ms for refresh animation to finish
@@ -442,7 +453,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 wsymb2Text.setText(hourItem.getWsymb2String());
                 temperatureText.setText(hourItem.getTemperatureString());
                 wsymb2Icon.setImageResource(hourItem.getWsymb2Drawable());
-                setWindDirectionUI(hourItem.getWindDirection());
+                windIcon.setImageResource(hourItem.getWindDrawable());
+                setWindDirectionText(hourItem.getWindDirection());
                 icWindSpeedText.setText(hourItem.getWindSpeedString());
                 icPressureText.setText(hourItem.getPressureString());
                 icRainAmount.setText(hourItem.getRainAmountString());
@@ -474,10 +486,34 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             }
         }, 200);
 
-        SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         preferences.edit().putLong("reloadTime", System.currentTimeMillis()).commit();
     }
+    private Compass.CompassListener getCompassListener() {
+        return new Compass.CompassListener() {
+            @Override
+            public void onNewAzimuth(final float azimuth) {
+                // UI updates only in UI thread
+                // https://stackoverflow.com/q/11140285/444966
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adjustArrow(azimuth);
+                    }
+                });
+            }
+        };
+    }
+    private void adjustArrow(float azimuth) {
+        Animation an = new RotateAnimation(-currentAzimuth, -azimuth,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f);
+        currentAzimuth = azimuth;
 
+        an.setDuration(500);
+        an.setRepeatCount(0);
+        an.setFillAfter(true);
+        windIcon.startAnimation(an);
+    }
     @Override
     public void showToast(String message) {
         Toast.makeText(MainActivity.this, message,
@@ -492,9 +528,28 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             try {
                 addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
                 String city = addresses.get(0).getLocality();
-                String knownName = addresses.get(0).getFeatureName();
-                if (city == null) return knownName;
-                else return city;
+                String subCity = addresses.get(0).getSubLocality();
+                String subAdminArea = addresses.get(0).getSubAdminArea();
+                String streetAdress = addresses.get(0).getFeatureName();
+                String finalLocality;
+                if (subCity == null) {
+                    if (city == null) {
+                        if (subAdminArea == null) {
+                            if (streetAdress == null) {
+                                finalLocality = "?";
+                            } else {
+                                finalLocality = streetAdress;
+                            }
+                        } else {
+                            finalLocality = subAdminArea;
+                        }
+                    } else {
+                        finalLocality = city;
+                    }
+                } else {
+                    finalLocality = subCity;
+                }
+                return finalLocality;
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -518,39 +573,41 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    // Get location asynchronously, has to be called from activity as it needs context
     @Override
     public void updateLocationAndUI() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean("cacheExists", false).commit();
-        final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
-        final String provider = prefs.getString("data_src", "smhi");
         if (autoLocation) {
+            // Get location asynchronously, has to be called from activity as it needs context
             getLocationIntractor.getLocation(this,this);
         } else {
-            currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (isWithinTimeLimit) {
-                        WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
-                                WeatherDatabase.class, "weathers_db")
-                                .fallbackToDestructiveMigration()
-                                .build();
-                        Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + provider);
-                        if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
-                            prefs.edit().putBoolean("cacheExists", true).commit();
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            prefs.edit().putBoolean("cacheExists", false).commit();
+            final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
+            final String provider = prefs.getString("data_src", "smhi");
+                currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!prefs.getBoolean("requiresRefresh", false) && isWithinTimeLimit) {
+                            WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
+                                    WeatherDatabase.class, "weathers_db")
+                                    .fallbackToDestructiveMigration()
+                                    .build();
+                            Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + provider);
+                            if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
+                                prefs.edit().putBoolean("cacheExists", true).commit();
+                            }
+                            weatherDatabase.close();
+                        } else {
+                            resetWeathers();
                         }
-                        weatherDatabase.close();
                     }
+                });
+                thread.start();
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             // Use cached data
             if (prefs.getBoolean("cacheExists", false)) {
                 prefs.edit().putBoolean("cacheExists", false).commit();
@@ -589,9 +646,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void setIsStart(boolean b) {
         isStart = b;
     }
-    // When location has been retrieved, launch all other tasks.
+
     @Override
     public void onFinishedRetrieveLocation(Coordinate coordinate) {
+        // When location has been retrieved, launch all other tasks.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("cacheExists", false).commit();
         final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
@@ -600,7 +658,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                if(isWithinTimeLimit) {
+                if (!prefs.getBoolean("requiresRefresh", false) && isWithinTimeLimit) {
                     WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
                             WeatherDatabase.class, "weathers_db")
                             .fallbackToDestructiveMigration()
@@ -610,6 +668,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                         prefs.edit().putBoolean("cacheExists", true).commit();
                     }
                     weatherDatabase.close();
+                } else {
+                    resetWeathers();
                 }
             }
         });
@@ -639,20 +699,18 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void resetWeathers() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (System.currentTimeMillis() - prefs.getLong("cacheTime", 0) > cacheTotalValidTime) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
-                            WeatherDatabase.class, "weathers_db")
-                            .fallbackToDestructiveMigration()
-                            .build();
-                    weatherDatabase.daoAccess().deleteAllWeathers();
-                    weatherDatabase.close();
-                    prefs.edit().putLong("cacheTime", System.currentTimeMillis()).commit();
-                }
-            }).start();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                WeatherDatabase weatherDatabase = Room.databaseBuilder(getApplicationContext(),
+                        WeatherDatabase.class, "weathers_db")
+                        .fallbackToDestructiveMigration()
+                        .build();
+                weatherDatabase.daoAccess().deleteAllWeathers();
+                weatherDatabase.close();
+                prefs.edit().putLong("cacheTime", System.currentTimeMillis()).putBoolean("requiresRefresh", false).commit();
+            }
+        }).start();
     }
 
     @Override
@@ -700,49 +758,41 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         return Color.rgb((int) r, (int) g, (int) b);
     }
 
-    private void setWindDirectionUI(@WindDirection.Direction int windDirection) {
+    private void setWindDirectionText(@WindDirection.Direction int windDirection) {
         String windDirectionString;
 
         switch (windDirection) {
             case WindDirection.N:
                 windDirectionString = getResources().getString(R.string.north);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(180);
                 break;
             case WindDirection.NE:
                 windDirectionString = getResources().getString(R.string.northeast);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(225);
                 break;
             case WindDirection.E:
                 windDirectionString = getResources().getString(R.string.east);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(270);
                 break;
             case WindDirection.SE:
                 windDirectionString = getResources().getString(R.string.southeast);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(315);
                 break;
             case WindDirection.S:
                 windDirectionString = getResources().getString(R.string.south);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(0);
                 break;
             case WindDirection.SW:
                 windDirectionString = getResources().getString(R.string.southwest);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(45);
                 break;
             case WindDirection.W:
                 windDirectionString = getResources().getString(R.string.west);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(90);
                 break;
             case WindDirection.NW:
                 windDirectionString = getResources().getString(R.string.northwest);
                 icWindDirectionText.setText(windDirectionString);
-                windIcon.setRotation(135);
                 break;
         }
     }
@@ -770,6 +820,39 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > reloadValidTime) {
             mainPresenter.updateLocationAndUI();
+        }
+        if (preferences.getBoolean("relative_wind", false)) {
+            compass.start();
+        } else {
+            Animation an = new RotateAnimation(-currentAzimuth, 0,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                    0.5f);
+
+            an.setDuration(1);
+            an.setRepeatCount(0);
+            an.setFillAfter(true);
+            windIcon.startAnimation(an);
+        }
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("relative_wind", false)) {
+            compass.start();
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("relative_wind", false)) {
+            compass.stop();
+        }
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("relative_wind", false)) {
+            compass.stop();
         }
     }
     @Override
@@ -830,17 +913,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        getMenuInflater().inflate(R.menu.menu_main_toolbar, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_stats:
-                Intent intent= new Intent(MainActivity.this, GraphsActivity.class);
-                intent.putExtra("dayList", (Serializable) currentDayList);
-                startActivity(intent);
-                break;
             case R.id.menu_map:
                 Intent intent2 = new Intent(MainActivity.this, MapActivity.class);
                 startActivity(intent2);

@@ -107,6 +107,12 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                             if (parameter.getName().equals("pmean")) {
                                 hourItem.setRainAmountString(getPrecipitationString(parameter.getValues().get(0)));
                             }
+                            if (parameter.getName().equals("pmin")) {
+                                hourItem.setRainAmountStringLow(getPrecipitationString(parameter.getValues().get(0)));
+                            }
+                            if (parameter.getName().equals("pmax")) {
+                                hourItem.setRainAmountStringHigh(getPrecipitationString(parameter.getValues().get(0)));
+                            }
                             if (parameter.getName().equals("tcc_mean")) {
                                 hourItem.setCloudCoverString(String.valueOf(Math.round((parameter.getValues().get(0) / 8) * 100)) + "%");
                             }
@@ -116,15 +122,40 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                             if (parameter.getName().equals("wd")) {
                                 int wdInt = (int) Math.round(parameter.getValues().get(0));
                                  @WindDirection.Direction int currentWindDirection = WindDirection.N;
-                                if (isBetween(wdInt, 337.5f, 360 ) || isBetween(wdInt, 0f, 22.5f)) currentWindDirection = WindDirection.N;
-                                else if (isBetween(wdInt, 22.5f, 67.5f )) currentWindDirection = WindDirection.NE;
-                                else if (isBetween(wdInt, 67.5f, 112.5f )) currentWindDirection = WindDirection.E;
-                                else if (isBetween(wdInt, 112.5f, 157.5f )) currentWindDirection = WindDirection.SE;
-                                else if (isBetween(wdInt, 157.5f, 202.5f )) currentWindDirection = WindDirection.S;
-                                else if (isBetween(wdInt, 202.5f, 247.5f )) currentWindDirection = WindDirection.SW;
-                                else if (isBetween(wdInt, 247.5f, 292.5f )) currentWindDirection = WindDirection.W;
-                                else if (isBetween(wdInt, 292.5f, 337.5f )) currentWindDirection = WindDirection.NW;
-
+                                 int windDrawable = R.drawable.ic_wi_direction_s;
+                                if (isBetween(wdInt, 337.5f, 360 ) || isBetween(wdInt, 0f, 22.5f)) {
+                                    currentWindDirection = WindDirection.N;
+                                    windDrawable = R.drawable.ic_wi_direction_n;
+                                }
+                                else if (isBetween(wdInt, 22.5f, 67.5f )) {
+                                    currentWindDirection = WindDirection.NE;
+                                    windDrawable = R.drawable.ic_wi_direction_ne;
+                                }
+                                else if (isBetween(wdInt, 67.5f, 112.5f )) {
+                                    currentWindDirection = WindDirection.E;
+                                    windDrawable = R.drawable.ic_wi_direction_e;
+                                }
+                                else if (isBetween(wdInt, 112.5f, 157.5f )) {
+                                    currentWindDirection = WindDirection.SE;
+                                    windDrawable = R.drawable.ic_wi_direction_se;
+                                }
+                                else if (isBetween(wdInt, 157.5f, 202.5f )) {
+                                    currentWindDirection = WindDirection.S;
+                                    windDrawable = R.drawable.ic_wi_direction_s;
+                                }
+                                else if (isBetween(wdInt, 202.5f, 247.5f )) {
+                                    currentWindDirection = WindDirection.SW;
+                                    windDrawable = R.drawable.ic_wi_direction_sw;
+                                }
+                                else if (isBetween(wdInt, 247.5f, 292.5f )) {
+                                    currentWindDirection = WindDirection.W;
+                                    windDrawable = R.drawable.ic_wi_direction_w;
+                                }
+                                else if (isBetween(wdInt, 292.5f, 337.5f )) {
+                                    currentWindDirection = WindDirection.NW;
+                                    windDrawable = R.drawable.ic_wi_direction_nw;
+                                }
+                                hourItem.setWindDrawable(windDrawable);
                                 hourItem.setWindDirection(currentWindDirection);
                             }
                             if (parameter.getName().equals("Wsymb2")) {
@@ -272,17 +303,17 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
         String precString;
         switch (sharedPreferences.getString("rain","mm")) {
             case "mm":
-                precString = String.valueOf(Math.round(prec)) + " mm";
+                precString = String.valueOf(prec) + " mm";
                 break;
             case "cm":
-                precString = String.valueOf(Math.round(prec / 10)) + " cm";
+                precString = String.valueOf(prec / 10) + " cm";
                 break;
             case "in":
                 DecimalFormat df = new DecimalFormat("#.###");
                 df.setRoundingMode(RoundingMode.CEILING);
                 precString = String.valueOf(df.format(prec / 25.4)) + "\"";
                 break;
-            default: precString = String.valueOf(Math.round(prec)) + " mm";
+            default: precString = String.valueOf(prec) + " mm";
         }
         return precString;
     }

@@ -5,12 +5,6 @@
         android:id="@+id/menu_stats"
         android:icon="@drawable/ic_stats"
         android:orderInCategory="1"
-        app:showAsAction="never"
+        app:showAsAction="always"
         android:title="@string/item_stats" />
-    <item
-        android:id="@+id/menu_map"
-        android:icon="@drawable/ic_map"
-        android:orderInCategory="2"
-        app:showAsAction="never"
-        android:title="@string/item_map" />
 </menu>

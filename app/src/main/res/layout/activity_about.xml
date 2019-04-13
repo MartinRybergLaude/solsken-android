@@ -427,6 +427,32 @@
                         android:textSize="12sp"
                         android:textColor="?attr/textColorSecondary"/>
                 </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/lib_photon"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photon"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Apache License 2.0"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

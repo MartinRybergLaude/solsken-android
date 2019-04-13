@@ -1,135 +1,138 @@
 package com.martinryberglaude.solsken.utils_weather;
 
+import com.martinryberglaude.solsken.App;
+import com.martinryberglaude.solsken.R;
+
 public class YRWeatherSymbol {
 
     public String getSymbolString(int id) {
         String symbolString;
         switch (id) {
             case 1:
-                symbolString = "Klart";
+                symbolString = App.getResourses().getString(R.string.clear);
                 break;
             case 2:
-                symbolString = "Lätt molnighet";
+                symbolString = App.getResourses().getString(R.string.light_cloudiness);
                 break;
             case 3:
-                symbolString = "Delvis molnigt";
+                symbolString = App.getResourses().getString(R.string.partly_cloudy);
                 break;
             case 4:
-                symbolString = "Molnigt";
+                symbolString = App.getResourses().getString(R.string.cloudy);
                 break;
             case 5:
-                symbolString = "Lätt regn";
+                symbolString = App.getResourses().getString(R.string.light_rain);
                 break;
             case 6:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 7:
-                symbolString = "Snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.sleet);
                 break;
             case 8:
-                symbolString = "Snöfall";
+                symbolString = App.getResourses().getString(R.string.snow);
                 break;
             case 9:
-                symbolString = "Lätt regn";
+                symbolString = App.getResourses().getString(R.string.light_rain);
                 break;
             case 10:
-                symbolString = "Regn";
+                symbolString = App.getResourses().getString(R.string.rain);
                 break;
             case 11:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 12:
-                symbolString = "Snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.sleet);
                 break;
             case 13:
-                symbolString = "Snöfall";
+                symbolString = App.getResourses().getString(R.string.snow);
                 break;
             case 14:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 15:
-                symbolString = "Dimma";
+                symbolString = App.getResourses().getString(R.string.fog);
                 break;
             case 20:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 21:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 22:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 23:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 24:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 25:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 26:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 27:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 28:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 29:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 30:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 31:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 32:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 33:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 34:
-                symbolString = "Åskväder";
+                symbolString = App.getResourses().getString(R.string.thunder_storm);
                 break;
             case 40:
-                symbolString = "Duggregn";
+                symbolString = App.getResourses().getString(R.string.drizzle);
                 break;
             case 41:
-                symbolString = "Regn";
+                symbolString = App.getResourses().getString(R.string.rain);
                 break;
             case 42:
-                symbolString = "Lätt snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.light_sleet);
                 break;
             case 43:
-                symbolString = "Kraftig snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.heavy_sleet);
                 break;
             case 44:
-                symbolString = "Lätt snöfall";
+                symbolString = App.getResourses().getString(R.string.light_snow);
                 break;
             case 45:
-                symbolString = "Kraftigt snöfall";
+                symbolString = App.getResourses().getString(R.string.heavy_snow);
                 break;
             case 46:
-                symbolString = "Duggregn";
+                symbolString = App.getResourses().getString(R.string.drizzle);
                 break;
             case 47:
-                symbolString = "Lätt snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.light_sleet);
                 break;
             case 48:
-                symbolString = "Kraftig snöblandat regn";
+                symbolString = App.getResourses().getString(R.string.heavy_sleet);
                 break;
             case 49:
-                symbolString = "Lätt snöfall";
+                symbolString = App.getResourses().getString(R.string.light_snow);
                 break;
             case 50:
-                symbolString = "Kraftigt snöfall";
+                symbolString = App.getResourses().getString(R.string.heavy_snow);
                 break;
             default:
-                 symbolString = "Klart";
+                symbolString = App.getResourses().getString(R.string.clear);
         }
         return symbolString;
     }
