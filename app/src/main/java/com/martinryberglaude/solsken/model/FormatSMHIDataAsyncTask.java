@@ -3,6 +3,7 @@ package com.martinryberglaude.solsken.model;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import com.martinryberglaude.solsken.App;
 import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
@@ -181,7 +182,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
                 dayItem.setSunriseString(sunriseSunsetString[0]);
                 dayItem.setSunsetString(sunriseSunsetString[1]);
 
-                // Find hihest and lowest temperature within the day
+                // Find highest and lowest temperature within the day
                 List<Integer> dayTemperaturesSet = new ArrayList<>();
                 for (HourItem hour : dayItem.getHourList()) {
                     String[] parts = hour.getTemperatureString().split("°");

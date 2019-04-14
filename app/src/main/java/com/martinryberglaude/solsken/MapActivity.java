@@ -29,7 +29,7 @@ public class MapActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar_map);
         applyToolbarTheme();
         TextView toolbarTitle = findViewById(R.id.title_map);
-        toolbarTitle.setText("Karta");
+        toolbarTitle.setText(getResources().getString(R.string.map));
         if (toolbar != null) {
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {

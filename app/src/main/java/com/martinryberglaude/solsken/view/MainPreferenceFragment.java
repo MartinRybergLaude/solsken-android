@@ -4,11 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.SettingsActivity;
+
+import java.util.Locale;
 
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;

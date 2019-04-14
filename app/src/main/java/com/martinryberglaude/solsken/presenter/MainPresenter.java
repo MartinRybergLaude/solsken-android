@@ -10,6 +10,7 @@ import com.martinryberglaude.solsken.networkSMHI.SMHIRetroWeatherData;
 import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Response;
 
