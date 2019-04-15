@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Solsken</string>
+
+    <string name="permission_welcome">Välkommen!</string>
+    <string name="permission_message">Appen behöver åtkomst till din plats för att kunna leverera ditt väder.</string>
+    <string name="permission_button">Godkänn</string>
+
+    <string name="general_error_title">Något gick fel!</string>
+    <string name="failed_load_location_error">Kunde inte ladda in den här platsen.</string>
+    <string name="permission_error">Något gick fel! Försök igen.</string>
+    <string name="weather_error">Vädret kunde inte laddas in!</string>
+    <string name="search_error">Platser kunde inte laddas in!</string>
+    <string name="location_not_supported_error">Denna plats stöds tyvärr inte!</string>
+    <string name="database_error">Dina platser kunde inte laddas in!</string>
+    <string name="database_remove_error">Kunde inte ta bort plats!</string>
+    <string name="gps_network_not_enabled_title">Använd plats är avstängt.</string>
+    <string name="gps_network_not_enabled_body">Ser ut som att använd plats är avstängt.
+        Utan plats kan du inte se vädret vid din nuvaranda position.
+        \n\nVill du sätta på plats?</string>
+    <string name="open_location_settings">Öppna inställningar</string>
+    <string name="no">Nej tack</string>
+
+    <string name="remove_location_title">Ta bort plats?</string>
+    <string name="remove_location_body">Detta tar bort den här platsen från listan. Du kan alltid lägga till den igen.</string>
+    <string name="remove_location_confirm">Ta bort</string>
+    <string name="remove_location_cancel">Avbryt</string>
+
+    <string name="item_map">Karta</string>
+    <string name="item_stats">Diagram</string>
+    <string name="item_warnings">Varningar</string>
+
+    <string name="today">Idag</string>
+    <string name="tomorrow">Imorgon</string>
+    <string name="places">Platser</string>
+    <string name="current_location">Nuvarande plats</string>
+    <string name="search_hint">Sök platser...</string>
+
+    <string name="day_mon">Mån</string>
+    <string name="day_tue">Tis</string>
+    <string name="day_wed">Ons</string>
+    <string name="day_thu">Tor</string>
+    <string name="day_fri">Fre</string>
+    <string name="day_sat">Lör</string>
+    <string name="day_sun">Sön</string>
+
+    <string name="north">Nord</string>
+    <string name="northeast">Nordöst</string>
+    <string name="east">Öst</string>
+    <string name="southeast">Sydöst</string>
+    <string name="south">Syd</string>
+    <string name="southwest">Sydväst</string>
+    <string name="west">Väst</string>
+    <string name="northwest">Nordväst</string>
+
+    <string name="precipitation">Nederbörd</string>
+    <string name="precipitation_low">Nederbörd min</string>
+    <string name="precipitation_median">Nederbörd median</string>
+    <string name="precipitation_high">Nederbörd max</string>
+    <string name="pressure">Lufttryck</string>
+    <string name="visibility">Synlighet</string>
+    <string name="humidity">Luftfuktighet</string>
+    <string name="gusts">Vindbyar</string>
+    <string name="cloud_cover">Molntäcke</string>
+    <string name="feels_like">Känns som</string>
+
+    <string name="settings">Inställningar</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="data">Data</string>
+    <string name="data_source">Välj datakälla</string>
+
+    <string name="theme">Tema</string>
+    <string name="dark_theme">Mörkt tema</string>
+    <string name="color_theme">Välj färgtema</string>
+
+    <string name="blue">Himmel</string>
+    <string name="orange">Solnedgång</string>
+    <string name="purple">Skymning</string>
+    <string name="green">Norrsken</string>
+
+    <string name="units">Enheter</string>
+    <string name="temperature">Temperatur</string>
+    <string name="wind">Vind</string>
+    <string name="hour_format">Klockformat</string>
+    <string name="relative_wind_title">Relativ vindriktning</string>
+    <string name="relative_wind_body">Gör vindriktningspilen relativ till telefonens rotation</string>
+    <string name="invalidate_cache_title">Rensa väderdata</string>
+    <string name="invalidate_cache">Ta bort all cachad väderdata</string>
+    <string name="cache_invalidated">Cachen rensades.</string>
+    <string name="other">Övrigt</string>
+
+    <string name="diagram">Diagram</string>
+    <string name="map">Karta</string>
+    <string name="about">Om</string>
+    <string name="developer">Utvecklare</string>
+    <string name="developer_name">Martin Ryberg Laude</string>
+    <string name="developer_location">Stockholm, Sweden</string>
+    <string name="developer_website">Besök webbsida</string>
+    <string name="developer_website_url">martinryberglaude.com</string>
+    <string name="developer_twitter">Min twitter</string>
+    <string name="developer_twitter_name">\u0040martini_rl</string>
+    <string name="developer_instagram">Min instagram</string>
+    <string name="developer_instagram_name">\u0040martinryberglaude</string>
+    <string name="licenses">Licenser</string>
+    <string name="license">Licens</string>
+
+    <string name="search_location_hint">Sök en plats...</string>
+    <string name="no_location_title">Oops!</string>
+    <string name="no_location_body">Kunde inte hitta någon plats med det namnet. Kom ihåg att endast Skandinavien och Finland stöds.</string>
+    <string name="search_location_title">Sök en plats</string>
+    <string name="search_location_body">Hitta en plats med hjälp av sökmotorn</string>
+    <string name="location_already_exists">Platsen är redan tillagd!</string>
+
+    <string name="clear">Klart</string>
+    <string name="almost_clear">Nästan klart</string>
+    <string name="light_cloudiness">Lätt molnighet</string>
+    <string name="partly_cloudy">Delvis molnigt</string>
+    <string name="varying_cloudiness">Varierande molnighet</string>
+    <string name="half_clear">Halvklart</string>
+    <string name="cloudy">Molnigt</string>
+    <string name="overcast">Mulet</string>
+    <string name="fog">Dimma</string>
+    <string name="light_rain_showers">Lätta regnskurar</string>
+    <string name="moderate_rain_showers">Måttliga regnskurar</string>
+    <string name="heavy_rain_showers">Kraftiga regnskurar</string>
+    <string name="thunder_storm">Åskväder</string>
+    <string name="light_sleet_showers">Lätta skurar snöblandat regn</string>
+    <string name="moderate_sleet_showers">Måttliga skurar snöblandat regn</string>
+    <string name="heavy_sleet_showers">Kraftiga skurar snöblandat regn</string>
+    <string name="light_snow_showers">Lätta snöskurar</string>
+    <string name="moderate_snow_showers">Måttliga snöskurar</string>
+    <string name="heavy_snow_showers">Kraftiga snöskurar</string>
+    <string name="rain">Regn</string>
+    <string name="light_rain">Lätt regn</string>
+    <string name="moderate_rain">Måttligt regn</string>
+    <string name="heavy_rain">Kraftigt regn</string>
+    <string name="thunder">Åska</string>
+    <string name="light_sleet">Lätt snöblandat regn</string>
+    <string name="sleet">Snöblandat regn</string>
+    <string name="moderate_sleet">Måttligt snöblandat regn</string>
+    <string name="heavy_sleet">Kraftigt snöblandat regn</string>
+    <string name="snow">Snöfall</string>
+    <string name="light_snow">Lätt snöfall</string>
+    <string name="moderate_snow">Måttligt snöfall</string>
+    <string name="heavy_snow">Kraftigt snöfall</string>
+    <string name="drizzle">Duggregn</string>
+</resources>

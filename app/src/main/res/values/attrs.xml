@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="primaryColor" format="reference" />
+    <attr name="secondaryColor" format="reference" />
+
+    <attr name="textColorPrimary" format="reference"/>
+    <attr name="textColorSecondary" format="reference"/>
+    <attr name="textColorPrimaryInverse" format="reference"/>
+    <attr name="textColorSecondaryInverse" format="reference"/>
+
+    <attr name="backgroundPrimary" format="reference" />
+    <attr name="backgroundSecondary" format="reference" />
+    <attr name="backgroundColored" format="reference" />
+
+</resources>

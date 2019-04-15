@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:padding="16dp"
+        android:gravity="bottom"
+        android:elevation="4dp"
+        android:clipToPadding="false">
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/places"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="?attr/colorPrimary"/>
+        <ImageButton
+            android:id="@+id/btn_search"
+            android:layout_alignParentRight="true"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_add"
+            android:tint="?attr/textColorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </RelativeLayout>
+</LinearLayout>

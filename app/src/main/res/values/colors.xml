@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="dayColor1">#0072ff</color>
+    <color name="dayColor2">#4d97ff</color>
+
+    <color name="dayPrimary">#0072ff</color>
+    <color name="daySecondary">#0568E2</color>
+    <color name="dayBGColored">#220072ff</color>
+
+    <color name="sunriseColor1">#ff9966</color>
+    <color name="sunriseColor2">#ff5e62</color>
+
+    <color name="sunrisePrimary">#ff5e62</color>
+    <color name="sunriseSecondary">#EC595B</color>
+    <color name="sunriseBGColored">#22ff5e62</color>
+
+    <color name="nightColor1">#4117b0</color>
+    <color name="nightColor2">#9730dc</color>
+
+    <color name="nightPrimary">#5B19DA</color>
+    <color name="nightSecondary">#5516CC</color>
+    <color name="nightBGColored">#225B19DA</color>
+
+    <color name="auroraColor1">#1D976C</color>
+    <color name="auroraColor2">#1AB47D</color>
+
+    <color name="auroraPrimary">#1AB47D</color>
+    <color name="auroraSecondary">#1B9C6F</color>
+    <color name="auroraBGColored">#221AB47D</color>
+
+    <color name="white">#fff</color>
+    <color name="black">#000</color>
+    <color name="lightGray">#f0f4fd</color>
+    <color name="darkerLightGray">#E0E3EC</color>
+    <color name="darkGray">#202020</color>
+    <color name="blueGray">#303049</color>
+
+    <color name="transparentWhite">#40ffffff</color>
+    <color name="transparent">#00ffffff</color>
+
+    <color name="background">#5683ff</color>
+    <color name="rainHigh">#225683ff</color>
+
+    <color name="textPrimaryInverse">#fff</color>
+    <color name="textSecondaryInverse">#DDDDDD</color>
+
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#3F3F3F</color>
 </resources>

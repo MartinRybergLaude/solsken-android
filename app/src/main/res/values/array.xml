@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="data_srcs">
+        <item>SMHI</item>
+        <item>YR.no (MET Norway)</item>
+    </string-array>
+    <string-array name="data_values">
+        <item>smhi</item>
+        <item>yr</item>
+    </string-array>
+
+    <string-array name="backgrounds">
+        <item>@string/blue</item>
+        <item>@string/orange</item>
+        <item>@string/purple</item>
+        <item>@string/green</item>
+    </string-array>
+    <string-array name="background_values">
+        <item>day</item>
+        <item>sunset</item>
+        <item>night</item>
+        <item>aurora</item>
+    </string-array>
+
+    <string-array name="temperature_units">
+        <item>Celsius (C)</item>
+        <item>Fahrenheit (F)</item>
+    </string-array>
+    <string-array name="temperature_units_values">
+        <item>c</item>
+        <item>f</item>
+    </string-array>
+
+    <string-array name="wind_units">
+        <item>m/s</item>
+        <item>km/h</item>
+        <item>mph</item>
+        <item>kts</item>
+        <item>Beaufort</item>
+    </string-array>
+    <string-array name="wind_units_values">
+        <item>mps</item>
+        <item>kmh</item>
+        <item>mph</item>
+        <item>kts</item>
+        <item>b</item>
+    </string-array>
+
+    <string-array name="pressure_units">
+        <item>hPa</item>
+        <item>bar</item>
+        <item>at</item>
+    </string-array>
+    <string-array name="pressure_units_values">
+        <item>hpa</item>
+        <item>bar</item>
+        <item>at</item>
+    </string-array>
+
+    <string-array name="visibility_units">
+        <item>km</item>
+        <item>miles</item>
+    </string-array>
+    <string-array name="visibility_units_values">
+        <item>km</item>
+        <item>miles</item>
+    </string-array>
+
+    <string-array name="rain_units">
+        <item>mm</item>
+        <item>cm</item>
+        <item>in</item>
+    </string-array>
+    <string-array name="rain_units_values">
+        <item>mm</item>
+        <item>cm</item>
+        <item>in</item>
+    </string-array>
+
+    <string-array name="hour_format">
+        <item>24h</item>
+        <item>12h</item>
+    </string-array>
+    <string-array name="hour_format_values">
+        <item>24h</item>
+        <item>12h</item>
+    </string-array>
+
+</resources>
