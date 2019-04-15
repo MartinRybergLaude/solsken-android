@@ -61,7 +61,7 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     @Override
     public void onFailureRetrieveSMHIData(Throwable t) {
         view.showRefresh(false);
-        view.showToast(weatherErrorString);
+        view.showLocationError();
     }
 
     @Override
@@ -78,7 +78,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFailureFormatSMHIDays() {
         view.showRefresh(false);
         view.showLocationError();
-        view.showToast(weatherErrorString);
     }
 
     @Override
@@ -92,7 +91,6 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFailureRetrieveYRData(Throwable t) {
         view.showRefresh(false);
         view.showLocationError();
-        view.showToast(weatherErrorString);
     }
 
     @Override
@@ -108,6 +106,5 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFailureFormatYRDays() {
         view.showRefresh(false);
         view.showLocationError();
-        view.showToast(weatherErrorString);
     }
 }

@@ -14,6 +14,12 @@
     <string name="location_not_supported_error">Denna plats stöds tyvärr inte!</string>
     <string name="database_error">Dina platser kunde inte laddas in!</string>
     <string name="database_remove_error">Kunde inte ta bort plats!</string>
+    <string name="gps_network_not_enabled_title">Använd plats är avstängt.</string>
+    <string name="gps_network_not_enabled_body">Ser ut som att använd plats är avstängt.
+        Utan plats kan du inte se vädret vid din nuvaranda position.
+        \n\nVill du sätta på plats?</string>
+    <string name="open_location_settings">Öppna inställningar</string>
+    <string name="no">Nej tack</string>
 
     <string name="remove_location_title">Ta bort plats?</string>
     <string name="remove_location_body">Detta tar bort den här platsen från listan. Du kan alltid lägga till den igen.</string>
@@ -104,6 +110,7 @@
     <string name="no_location_body">Kunde inte hitta någon plats med det namnet. Kom ihåg att endast Skandinavien och Finland stöds.</string>
     <string name="search_location_title">Sök en plats</string>
     <string name="search_location_body">Hitta en plats med hjälp av sökmotorn</string>
+    <string name="location_already_exists">Platsen är redan tillagd!</string>
 
     <string name="clear">Klart</string>
     <string name="almost_clear">Nästan klart</string>

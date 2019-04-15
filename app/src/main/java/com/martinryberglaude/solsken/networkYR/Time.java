@@ -54,6 +54,9 @@ public class Time {
     public String getDateString() {
         return to.split("T")[0];
     }
+    public String getDateStringFrom() {
+        return from.split("T")[0];
+    }
 
     public String getHourString() {
         String longHourString = to.split("T") [1];

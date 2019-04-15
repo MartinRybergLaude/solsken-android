@@ -75,9 +75,9 @@
             android:background="@drawable/rounded_btn_background"
             android:text="@string/permission_button"
             android:textColor="@color/white"
-            android:shadowColor="@color/sunriseColor1"
-            android:outlineAmbientShadowColor="@color/sunriseColor1"
-            android:outlineSpotShadowColor="@color/sunriseColor1" />
+            android:shadowColor="@color/dayColor1"
+            android:outlineAmbientShadowColor="@color/dayColor1"
+            android:outlineSpotShadowColor="@color/dayColor1" />
 
     </LinearLayout>
 </LinearLayout>

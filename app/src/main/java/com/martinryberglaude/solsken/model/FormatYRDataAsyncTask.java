@@ -79,10 +79,14 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
 
                 List<HourItem> hourList = new ArrayList<>();
                 boolean isFirst = true;
-                for (int i = 0; i < response.body().getProduct().getTime().size() - 5; i = i + 5) {
+               // for (int i = 0; i < response.body().getProduct().getTime().size() - 5; i = i + 5) {
+                for (int i = 0; i < response.body().getProduct().getTime().size(); i++) {
                         Time time2 = response.body().getProduct().getTime().get(i);
-                    if (time2.getDateString().equals(currentDate)) {
-                        Time timeNext = response.body().getProduct().getTime().get(i + 1);
+                    if (time2.getDateString().equals(currentDate) && time2.getDateStringFrom().equals(currentDate)) {
+                        Time timeNext = response.body().getProduct().getTime().get(i);
+                        if (i + 1 < response.body().getProduct().getTime().size()) {
+                            timeNext = response.body().getProduct().getTime().get(i + 1);
+                        }
 
                         HourItem hourItem = new HourItem();
                         SimpleDateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH':00:00Z'");

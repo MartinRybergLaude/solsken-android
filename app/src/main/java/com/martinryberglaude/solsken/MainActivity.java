@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -16,7 +17,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,6 +66,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -135,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private Locations selectedLocation;
     private int selectedDrawerPosition;
 
+    private boolean currLocEnabled = true;
+
     public Coordinate getCurrentCoordinate() {
         return currentCoordinate;
     }
@@ -203,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         toolbar.animate().alpha(0.0f).setDuration(0);
         mainView.animate().alpha(0.0f).setDuration(0);
 
-
+        sheetLayout.setVisibility(View.INVISIBLE);
 
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -220,21 +226,26 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 fadeView.getBackground().setAlpha(Math.round(slideOffset * 255));
             }
         });
-
         int target = getResources().getDimensionPixelSize(R.dimen.refresh_start);
         int start = getResources().getDimensionPixelSize(R.dimen.refresh_start);
         int end = getResources().getDimensionPixelSize(R.dimen.refresh_end);
         pullToRefresh.setProgressViewEndTarget(true, target);
         pullToRefresh.setProgressViewOffset(true, start, end);
 
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        getLocationIntractor = new RequestLocationModel(locationManager);
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        getLocationIntractor = new RequestLocationModel(lm);
         mainPresenter = new MainPresenter(this, new RequestSMHIWeatherModel(), new RequestYRWeatherModel(), getResources().getString(R.string.weather_error));
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                if (selectedDrawerPosition == -10) {
+                    checkLocationEnabled();
+                    if (currLocEnabled) {
+                        mainPresenter.updateLocationAndUI();
+                    }
+                }
                 // Check if content was refreshed less than five minutes ago
                 if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > reloadValidTime) {
                     // Actually refresh
@@ -251,6 +262,85 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         });
+
+        initDrawer();
+
+        ImageButton btnMenu = findViewById(R.id.btn_drawer);
+
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer.openDrawer();
+            }
+        });
+
+        ImageButton btnSearch = drawer.getHeader().findViewById(R.id.btn_search);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(MainActivity.this, SearchActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        fadeView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeTop() {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+            public void onSwipeRight() {
+                drawer.openDrawer();
+            }
+        });
+
+        compass = new Compass(MainActivity.this);
+        Compass.CompassListener cl = getCompassListener();
+        compass.setListener(cl);
+
+    }
+
+    private void checkLocationEnabled() {
+        currLocEnabled = true;
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            currLocEnabled = false;
+            showLocationError();
+            toolbar.animate().alpha(1.0f).setDuration(200);
+            // Inform user
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.gps_network_not_enabled_title))
+                    .setMessage(getString(R.string.gps_network_not_enabled_body))
+                    .setPositiveButton(getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 3);
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                        }
+                    })
+                    .show();
+        }
+    }
+    private void initDrawer() {
         PrimaryDrawerItem settingsItem = new PrimaryDrawerItem().withName(getString(R.string.settings)).withIcon(R.drawable.ic_settings).withIconTintingEnabled(true).withIdentifier(-20);
         PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withName(getString(R.string.about)).withIcon(R.drawable.ic_info).withIconTintingEnabled(true).withIdentifier(-30);
         List<IDrawerItem> drawerItems = new ArrayList<>();
@@ -272,10 +362,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch ((int) drawerItem.getIdentifier()) {
                             case -10:
-                                selectedDrawerPosition = -10;
-                                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                                autoLocation = true;
-                                mainPresenter.updateLocationAndUI();
+                                checkLocationEnabled();
+                                if (currLocEnabled) {
+                                    selectedDrawerPosition = -10;
+                                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                    autoLocation = true;
+                                    mainPresenter.updateLocationAndUI();
+                                }
                                 break;
                             case -20:
                                 Intent intent= new Intent(MainActivity.this, SettingsActivity.class);
@@ -326,38 +419,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 })
                 .build();
         updateDrawerItems();
-
-        ImageButton btnMenu = findViewById(R.id.btn_drawer);
-
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.openDrawer();
-            }
-        });
-
-        ImageButton btnSearch = drawer.getHeader().findViewById(R.id.btn_search);
-
-        btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(MainActivity.this, SearchActivity.class);
-                startActivityForResult(intent, 1);
-            }
-        });
-
-        fadeView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
-            public void onSwipeTop() {
-                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-            public void onSwipeRight() {
-                drawer.openDrawer();
-            }
-        });
-
-        compass = new Compass(MainActivity.this);
-        Compass.CompassListener cl = getCompassListener();
-        compass.setListener(cl);
     }
     private void updateDrawerItems() {
         RetrieveDatabaseLocationsAsyncTask retrieveTask = new RetrieveDatabaseLocationsAsyncTask(this);
@@ -377,6 +438,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         weatherList.add(weathers);
         weatherList.add(weathers2);
         RemoveDatabaseWeathersAsyncTask removeWeathersTask = new RemoveDatabaseWeathersAsyncTask(this, weatherList);
+        removeWeathersTask.delegate = this;
+        removeWeathersTask.execute();
     }
     private void getDrawerMenuItems() {
         drawer.removeAllItems();
@@ -525,13 +588,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             Geocoder geocoder;
             List<Address> addresses;
             geocoder = new Geocoder(this, Locale.getDefault());
+            String finalLocality;
             try {
                 addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
+                if (addresses.size() < 1) {
+                    return "?";
+                }
                 String city = addresses.get(0).getLocality();
                 String subCity = addresses.get(0).getSubLocality();
                 String subAdminArea = addresses.get(0).getSubAdminArea();
                 String streetAdress = addresses.get(0).getFeatureName();
-                String finalLocality;
+
                 if (subCity == null) {
                     if (city == null) {
                         if (subAdminArea == null) {
@@ -552,7 +619,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 return finalLocality;
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                return "?";
             }
         } else {
             return selectedLocation.getLocationName();
@@ -736,12 +803,19 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void onFailureRetrieveLocationn() {
-        showToast(getResources().getString(R.string.weather_error));
+    public void onFailureRetrieveLocation() {
+        showRefresh(false);
+        showLocationError();
     }
 
     @Override
     public void showLocationError() {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getTheme();
+        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        @ColorInt int color = typedValue.data;
+        toolbar.setBackgroundColor(color);
+        toolbar.animate().alpha(1.0f).setDuration(200);
         cityText.setText("");
         mainView.setVisibility(View.INVISIBLE);
         sheetLayout.setVisibility(View.INVISIBLE);
@@ -818,7 +892,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onResume() {
         super.onResume();
         SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > reloadValidTime) {
+        if (System.currentTimeMillis() - preferences.getLong("reloadTime", 0) > reloadValidTime && preferences.getLong("reloadTime", 0) != 0) {
             mainPresenter.updateLocationAndUI();
         }
         if (preferences.getBoolean("relative_wind", false)) {
@@ -833,6 +907,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             an.setFillAfter(true);
             windIcon.startAnimation(an);
         }
+
     }
     @Override
     protected void onStart() {
@@ -865,6 +940,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 break;
             case 2:
                  drawer.setSelection(selectedDrawerPosition);
+                break;
+            case 3:
+                checkLocationEnabled();
+                if (currLocEnabled) {
+                    drawer.setSelection(-10);
+                }
                 break;
         }
     }

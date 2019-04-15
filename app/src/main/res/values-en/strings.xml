@@ -14,6 +14,12 @@
     <string name="location_not_supported_error">This location is not supported!</string>
     <string name="database_error">Your locations could not be loaded!</string>
     <string name="database_remove_error">Could not remove location!</string>
+    <string name="gps_network_not_enabled_title">Location turned off</string>
+    <string name="gps_network_not_enabled_body">Looks like location is turned off.
+        Without it you will be unable to see the weather for your current location.
+        \n\nWould you like to enable it?</string>
+    <string name="open_location_settings">Open settings</string>
+    <string name="no">No thanks</string>
 
     <string name="remove_location_title">Remove location?</string>
     <string name="remove_location_body">This removes the location from the list. You can always add it again later.</string>
@@ -104,6 +110,7 @@
     <string name="no_location_body">Could not find a location with that name. Keep in mind only Scandinavia and Finland are supported.</string>
     <string name="search_location_title">Search location</string>
     <string name="search_location_body">Find a location using the search engine</string>
+    <string name="location_already_exists">Locations is already added!</string>
 
     <string name="clear">Clear</string>
     <string name="almost_clear">Almost clear</string>

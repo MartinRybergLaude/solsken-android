@@ -11,34 +11,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-            <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
+        <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/actionBarSize"
+            android:background="?attr/primaryColor"
+            android:layout_alignParentTop="true"
+            app:elevation="0dp">
+            <ImageButton
+                android:id="@+id/btn_drawer"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="?android:attr/actionBarSize"
-                android:background="?attr/primaryColor"
-                android:layout_alignParentTop="true"
-                app:elevation="0dp">
-                <ImageButton
-                    android:id="@+id/btn_drawer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_menu"
-                    android:tint="@color/white"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-                <TextView
-                    android:id="@+id/title_city"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:textColor="?attr/textColorPrimaryInverse"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="Stockholm"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
-            </androidx.appcompat.widget.Toolbar>
+                android:src="@drawable/ic_menu"
+                android:tint="@color/white"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+            <TextView
+                android:id="@+id/title_city"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textColor="?attr/textColorPrimaryInverse"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Stockholm"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+        </androidx.appcompat.widget.Toolbar>
         <TextView
             android:id="@+id/error_title"
             android:visibility="invisible"
@@ -133,7 +133,7 @@
 
                     <TableLayout
                         android:id="@+id/table"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="2dp"
                         android:layout_above="@+id/sunrise_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -143,8 +143,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -177,8 +177,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -213,8 +213,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -247,8 +247,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -280,13 +280,13 @@
                             </LinearLayout>
                         </TableRow>
                         <TableRow
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="3dp"
                             android:gravity="center">
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -319,8 +319,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -353,8 +353,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -387,8 +387,8 @@
                             <LinearLayout
                                 android:layout_width="80dp"
                                 android:layout_height="80dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="2dp"
+                                android:layout_marginLeft="2dp"
                                 android:orientation="vertical"
                                 android:background="@drawable/transparent_card_background">
                                 <ImageView
@@ -425,7 +425,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="220dp"
+                        android:layout_marginBottom="128dp"
                         android:orientation="horizontal"
                         android:gravity="center">
                         <TextView

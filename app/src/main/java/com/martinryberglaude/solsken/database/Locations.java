@@ -18,8 +18,6 @@ public class Locations {
 
     }
 
-
-
     public String getLocationCountry() {
         return locationCountry;
     }

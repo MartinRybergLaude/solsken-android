@@ -101,7 +101,7 @@ public class RequestLocationModel implements MainContract.RequestLocationIntract
                     }
                 }, looper);
             } else {
-                onFinishedListener.onFailureRetrieveLocationn();
+                onFinishedListener.onFailureRetrieveLocation();
             }
         }
     }

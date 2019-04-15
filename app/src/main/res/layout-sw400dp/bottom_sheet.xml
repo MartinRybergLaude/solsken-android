@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:elevation="4dp"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="126dp"
+    app:behavior_peekHeight="216dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
   <androidx.core.widget.NestedScrollView

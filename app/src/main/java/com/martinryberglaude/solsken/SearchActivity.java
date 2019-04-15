@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -50,12 +51,13 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     private boolean initRecyclerview = true;
 
     private static final String DATABASE_NAME = "locations_db";
-    private LocationDatabase locationDatabase;
 
     private String searchString;
 
     private TextView noLocTitle;
     private TextView noLocBody;
+
+    private boolean hasCancelled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,17 +97,23 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!s.toString().isEmpty()) {
+                    hasCancelled = false;
+                    if (call != null) {
+                        call.cancel();
+                    }
                     noLocTitle.setVisibility(View.INVISIBLE);
                     noLocBody.setVisibility(View.INVISIBLE);
                     recyclerView.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.VISIBLE);
-                    if (call != null) {
-                        call.cancel();
-                    }
                     searchString = s.toString();
                     handler.removeCallbacks(dataTask);
                     handler.postDelayed(dataTask, 2000);
                 } else {
+                    if (call != null) {
+                        call.cancel();
+                        Log.d("cancel", "done");
+                    }
+                    hasCancelled = true;
                     noLocTitle.setText(getResources().getString(R.string.search_location_title));
                     noLocBody.setText(getResources().getString(R.string.search_location_body));
                     progressBar.setVisibility(View.GONE);
@@ -120,17 +128,15 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
             }
         });
-
-        locationDatabase = Room.databaseBuilder(getApplicationContext(),
-                LocationDatabase.class, DATABASE_NAME)
-                .fallbackToDestructiveMigration()
-                .build();
     }
 
     Runnable dataTask = new Runnable() {
         @Override
         public void run() {
-            getPhotonData(searchString);
+            if (!hasCancelled) {
+                getPhotonData(searchString);
+            }
+            hasCancelled = false;
         }
     };
 
@@ -185,6 +191,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         toolbar.setBackgroundColor(color);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
     private void getPhotonData(String searchString) {
         GetPhotonDataService service = PhotonRetrofitClientInstance.getRetrofitInstance().create(GetPhotonDataService.class);
         call = service.getData(searchString, 5);
@@ -192,9 +202,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             @Override
             public void onResponse(Call<PhotonRetroLocations> call, Response<PhotonRetroLocations> response) {
                 if (response.body() != null) {
-                    FormatPhotonDataAsyncTask formatAsyncTask = new FormatPhotonDataAsyncTask();
-                    formatAsyncTask.delegate = SearchActivity.this;
-                    formatAsyncTask.execute(response);
+                    if (!call.isCanceled()) {
+                        FormatPhotonDataAsyncTask formatAsyncTask = new FormatPhotonDataAsyncTask();
+                        formatAsyncTask.delegate = SearchActivity.this;
+                        formatAsyncTask.execute(response);
+                    }
                 } else {
                     showToast(getResources().getString(R.string.search_error));
                 }
@@ -258,10 +270,13 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         showToast(getResources().getString(R.string.search_error));
         progressBar.setVisibility(View.GONE);
     }
-
+    private void setAlreadyExists(boolean b) {
+        alreadyExists = b;
+    }
+    private boolean alreadyExists = false;
     @Override
     public void onItemClick(final LocationItem locationItem) {
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Locations location = new Locations();
@@ -269,9 +284,36 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
                 location.setLocationCountry(locationItem.getCountryString());
                 location.setLocationLat(locationItem.getLat());
                 location.setLocationLon(locationItem.getLon());
-                locationDatabase.daoAccess().insertSingleLocation(location);
-                finish();
+                LocationDatabase locationDatabase = Room.databaseBuilder(getApplicationContext(),
+                        LocationDatabase.class, DATABASE_NAME)
+                        .fallbackToDestructiveMigration()
+                        .build();
+                List<Locations> locations = locationDatabase.daoAccess().fetchAllLocations();
+
+                for (Locations loc : locations) {
+                    if (loc.getLocationName().equals(location.getLocationName())) {
+                        setAlreadyExists(true);
+                    }
+                }
+                if (!alreadyExists) {
+                    locationDatabase.daoAccess().insertSingleLocation(location);
+                    locationDatabase.close();
+                    finish();
+                } else {
+                    locationDatabase.close();
+                }
             }
-        }).start();
+        });
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (alreadyExists) {
+            showToast(getString(R.string.location_already_exists));
+            setAlreadyExists(false);
+        }
     }
+
 }

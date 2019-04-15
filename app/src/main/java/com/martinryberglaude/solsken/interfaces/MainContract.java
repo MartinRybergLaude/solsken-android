@@ -57,7 +57,7 @@ public interface MainContract {
     interface RequestLocationIntractor {
         interface OnFinishedListerner {
             void onFinishedRetrieveLocation(Coordinate coordinate);
-            void onFailureRetrieveLocationn();
+            void onFailureRetrieveLocation();
         }
         void getLocation(OnFinishedListerner onFinishedListerner, Context context);
     }
