@@ -260,7 +260,34 @@
                         android:layout_marginLeft="16dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Retrofit"
+                        android:text="Retrofit 2"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Apache License 2.0"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/lib_okhttp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OkHttp"
                         android:textColor="?attr/textColorPrimary"/>
                     <TextView
                         android:layout_marginLeft="16dp"
@@ -376,6 +403,32 @@
                         android:textColor="?attr/textColorSecondary"/>
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/lib_weather_icons"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weather Icons"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SIL OFL 1.1"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
+                <RelativeLayout
                     android:id="@+id/lib_smhi"
                     android:clickable="true"
                     android:focusable="true"
@@ -450,6 +503,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Apache License 2.0"
+                        android:textSize="12sp"
+                        android:textColor="?attr/textColorSecondary"/>
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/lib_windy"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Windy API v4"
+                        android:textColor="?attr/textColorPrimary"/>
+                    <TextView
+                        android:layout_marginLeft="16dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Custom"
                         android:textSize="12sp"
                         android:textColor="?attr/textColorSecondary"/>
                 </RelativeLayout>

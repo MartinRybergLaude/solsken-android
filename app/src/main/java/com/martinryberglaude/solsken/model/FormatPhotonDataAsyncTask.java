@@ -31,7 +31,8 @@ public class FormatPhotonDataAsyncTask extends AsyncTask<Object, Integer, List<L
 
         Set<LocationItem> locationList = new LinkedHashSet<>();
         for (PhotonRetroFeature retroFeature : response.body().getFeatures()) {
-            if (isCoordinateInPolygon(boundary, new Coordinate(retroFeature.getGeometry().getCoordinates().get(0), retroFeature.getGeometry().getCoordinates().get(1)))) {
+            if (isCoordinateInPolygon(boundary, new Coordinate(retroFeature.getGeometry().getCoordinates().get(0), retroFeature.getGeometry().getCoordinates().get(1)))
+                    && retroFeature.getProperties().getName() != null && retroFeature.getProperties().getCountry() != null && retroFeature.getGeometry().getCoordinates() != null) {
                 LocationItem item = new LocationItem();
                 item.setCityString(retroFeature.getProperties().getName());
                 item.setCountryString(retroFeature.getProperties().getCountry());

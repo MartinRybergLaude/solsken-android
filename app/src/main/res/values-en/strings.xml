@@ -110,7 +110,7 @@
     <string name="no_location_body">Could not find a location with that name. Keep in mind only Scandinavia and Finland are supported.</string>
     <string name="search_location_title">Search location</string>
     <string name="search_location_body">Find a location using the search engine</string>
-    <string name="location_already_exists">Locations is already added!</string>
+    <string name="location_already_exists">Location is already added!</string>
 
     <string name="clear">Clear</string>
     <string name="almost_clear">Almost clear</string>

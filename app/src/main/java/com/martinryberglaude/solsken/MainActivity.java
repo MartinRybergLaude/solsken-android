@@ -316,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if(!gps_enabled && !network_enabled) {
             currLocEnabled = false;
             showLocationError();
-            toolbar.animate().alpha(1.0f).setDuration(200);
             // Inform user
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.gps_network_not_enabled_title))
@@ -814,8 +813,15 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Resources.Theme theme = getTheme();
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         @ColorInt int color = typedValue.data;
+
+        TypedValue typedValue2 = new TypedValue();
+        theme.resolveAttribute(R.attr.colorSecondary, typedValue2, true);
+        @ColorInt int color2 = typedValue2.data;
+
         toolbar.setBackgroundColor(color);
         toolbar.animate().alpha(1.0f).setDuration(200);
+        getWindow().setStatusBarColor(color2);
+
         cityText.setText("");
         mainView.setVisibility(View.INVISIBLE);
         sheetLayout.setVisibility(View.INVISIBLE);

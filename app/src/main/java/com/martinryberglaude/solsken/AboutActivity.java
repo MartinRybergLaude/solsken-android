@@ -34,6 +34,15 @@ public class AboutActivity extends AppCompatActivity {
             "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
             "See the License for the specific language governing permissions and " +
             "limitations under the License.";
+    private String licenseOkHttp = "Copyright 2013 Square, Inc. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
+            "you may not use this file except in compliance with the License. " +
+            "You may obtain a copy of the License at\n\n" +
+            "http://www.apache.org/licenses/LICENSE-2.0\n\n" +
+            "Unless required by applicable law or agreed to in writing, software " +
+            "distributed under the License is distributed on an \"AS IS\" BASIS, " +
+            "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
+            "See the License for the specific language governing permissions and " +
+            "limitations under the License.";
     private String licenseGson = "Copyright 2008 Google Inc. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +
             "You may obtain a copy of the License at\n\n" +
@@ -74,6 +83,15 @@ public class AboutActivity extends AppCompatActivity {
             "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. " +
             "See the License for the specific language governing permissions and " +
             "limitations under the License.";
+    private String licenseWeatherIcons = "Copyright (c) 2015, Erik Flowers (erik@helloerik.com).\n\n" +
+            "This Font Software is licensed under the SIL Open Font License, Version 1.1.";
+    private String licenseWindy = "Windy API is free and with unrestricted traffic usage, but offers only the gfs forecast model and only wind,rain,clouds, temperature, pressure,currents and waves layer." +
+            " The Windy logo MUST remain as it is, i.e. clickable and without modification." +
+            " However, you can move the Windy logo wherever you want within the Windy map." +
+            " For the free version of the API, we reserve the right to" +
+            " 1) display advertisement inside the Windy map," +
+            " 2) place \"Download Windy App\" message from time to time on mobile devices, or" +
+            " 3) discontinue free version of Windy API v4 at any time without prior notice";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +171,14 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
+        RelativeLayout libOkHttp = findViewById(R.id.lib_okhttp);
+        libOkHttp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLicenseDialog(licenseOkHttp);
+            }
+        });
+
         RelativeLayout libGson = findViewById(R.id.lib_gson);
         libGson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +233,20 @@ public class AboutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showLicenseDialog(licensePhoton);
+            }
+        });
+        RelativeLayout libWeatherIcons = findViewById(R.id.lib_weather_icons);
+        libWeatherIcons.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLicenseDialog(licenseWeatherIcons);
+            }
+        });
+        RelativeLayout libWindy = findViewById(R.id.lib_windy);
+        libWindy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLicenseDialog(licenseWindy);
             }
         });
     }
