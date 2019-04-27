@@ -85,12 +85,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         MainContract.RetrieveDatabaseWeathersIntractor.OnFinishedListener,
         MainContract.RemoveDatabaseWeathersIntractor.OnFinishedListener{
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private RecyclerViewAdapterDays adapter;
     private RecyclerView recyclerView;
     private NestedScrollView recyclerScrollView;
     private MainPresenter mainPresenter;
     private Toolbar toolbar;
-    private Window window;
     private FrameLayout mainView;
     private Drawer drawer;
     private boolean isStart = true;
@@ -168,8 +169,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             finish();
             return;
         }
-
-        window = getWindow();
         recyclerView = findViewById(R.id.recycler_view_days);
         recyclerScrollView = findViewById(R.id.recycler_scroll_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
@@ -221,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 int blendedColorStatusBar = blendColors(statusBarColor, statusBarColorDark, slideOffset);
                 int blendedColorToolbar = blendColors(statusBarColor, toolbarColor, slideOffset);
 
-                window.setStatusBarColor(blendedColorStatusBar);
+                setStatusBarColor(blendedColorStatusBar);
                 toolbar.setBackgroundColor(blendedColorToolbar);
                 fadeView.getBackground().setAlpha(Math.round(slideOffset * 255));
             }
@@ -345,12 +344,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         List<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(settingsItem);
         drawerItems.add(aboutItem);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         drawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withHeader(R.layout.nav_header)
-                .withTranslucentStatusBar(false)
+                .withTranslucentStatusBar(true)
                 .withDisplayBelowStatusBar(false)
+                .withHasStableIds(true)
                 .withDrawerGravity(Gravity.START)
                 .withStickyDrawerItems(drawerItems)
                 .withStickyFooterShadow(false)
@@ -364,6 +365,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                 checkLocationEnabled();
                                 if (currLocEnabled) {
                                     selectedDrawerPosition = -10;
+                                    prefs.edit().putInt("selectedLoc", -10).commit();
                                     sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                     autoLocation = true;
                                     mainPresenter.updateLocationAndUI();
@@ -383,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         autoLocation = false;
                                         selectedLocation = location;
+                                        prefs.edit().putInt("selectedLoc", location.getLocationId()).commit();
                                         selectedDrawerPosition = location.getLocationId();
                                         mainPresenter.updateLocationAndUI();
                                     }
@@ -448,7 +451,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         for (Locations location : locList) {
             drawer.addItem(new PrimaryDrawerItem().withIdentifier(location.getLocationId()).withName(location.getLocationName()).withIcon(R.drawable.ic_location).withIconTintingEnabled(true));
         }
-        drawer.setSelection(-10);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        drawer.setSelection(prefs.getInt("selectedLoc", -10));
     }
 
     @Override
@@ -457,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         switch (theme) {
             case "sunset":
                 mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_sunrise));
-                window.setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
+                setStatusBarColor(getResources().getColor(R.color.sunriseColor1));
                 toolbar.setBackgroundColor(getResources().getColor(R.color.sunriseColor1));
                 statusBarColor = getResources().getColor(R.color.sunriseColor1);
                 statusBarColorDark = getResources().getColor(R.color.sunriseSecondary);
@@ -466,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             // Is night
             case "night":
                 mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_night));
-                window.setStatusBarColor(getResources().getColor(R.color.nightColor1));
+                setStatusBarColor(getResources().getColor(R.color.nightColor1));
                 toolbar.setBackgroundColor(getResources().getColor(R.color.nightColor1));
                 statusBarColor = getResources().getColor(R.color.nightColor1);
                 statusBarColorDark = getResources().getColor(R.color.nightSecondary);
@@ -475,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             // Is day
             case "day":
                 mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_day));
-                window.setStatusBarColor(getResources().getColor(R.color.dayColor1));
+                setStatusBarColor(getResources().getColor(R.color.dayColor1));
                 toolbar.setBackgroundColor(getResources().getColor(R.color.dayColor1));
                 statusBarColor = getResources().getColor(R.color.dayColor1);
                 statusBarColorDark = getResources().getColor(R.color.daySecondary);
@@ -483,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 break;
             case "aurora":
                 mainView.setBackground(ContextCompat.getDrawable(this, R.drawable.background_aurora));
-                window.setStatusBarColor(getResources().getColor(R.color.auroraColor1));
+                setStatusBarColor(getResources().getColor(R.color.auroraColor1));
                 toolbar.setBackgroundColor(getResources().getColor(R.color.auroraColor1));
                 statusBarColor = getResources().getColor(R.color.auroraColor1);
                 statusBarColorDark = getResources().getColor(R.color.auroraSecondary);
@@ -637,6 +641,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private boolean hasPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+    private void setStatusBarColor(@ColorInt int color){
+        drawer.getDrawerLayout().setStatusBarBackgroundColor(color);
     }
 
     @Override
@@ -809,8 +816,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void showLocationError() {
-        TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getTheme();
+
+        TypedValue typedValue = new TypedValue();
         theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
         @ColorInt int color = typedValue.data;
 
@@ -819,8 +827,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         @ColorInt int color2 = typedValue2.data;
 
         toolbar.setBackgroundColor(color);
-        toolbar.animate().alpha(1.0f).setDuration(200);
-        getWindow().setStatusBarColor(color2);
+        setStatusBarColor(color2);
+        Log.d(TAG, "color SET");
 
         cityText.setText("");
         mainView.setVisibility(View.INVISIBLE);
@@ -1030,7 +1038,23 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void onFinishedRemoveDatabaseLocations(long identifier) {
         // Remove visible drawer item
         drawer.removeItem(identifier);
-        drawer.setSelection(-10);
+
+        // Set selection to something else (not current location)
+        List<Long> idList = new ArrayList<>();
+        if (drawer.getDrawerItems().size() > 1) {
+            if (identifier != selectedDrawerPosition) {
+                drawer.setSelection(selectedDrawerPosition);
+            } else {
+                for (IDrawerItem item : drawer.getDrawerItems()) {
+                    if (item.getIdentifier() != -10 && item.getIdentifier() != -20 && item.getIdentifier() != -30) {
+                        idList.add(item.getIdentifier());
+                    }
+                }
+                drawer.setSelection(idList.get(0));
+            }
+        } else {
+            drawer.setSelection(-10);
+        }
     }
 
     @Override

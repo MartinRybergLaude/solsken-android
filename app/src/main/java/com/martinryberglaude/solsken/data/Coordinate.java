@@ -3,10 +3,12 @@ package com.martinryberglaude.solsken.data;
 public class Coordinate {
     private double lon;
     private double lat;
+    private String name;
 
-    public Coordinate(double lon, double lat) {
+    public Coordinate(double lon, double lat, String name) {
         this.lon = lon;
         this.lat = lat;
+        this.name = name;
     }
 
     public double getLon() {
@@ -15,5 +17,9 @@ public class Coordinate {
 
     public double getLat() {
         return lat;
+    }
+
+    public String getName() {
+        return name;
     }
 }
