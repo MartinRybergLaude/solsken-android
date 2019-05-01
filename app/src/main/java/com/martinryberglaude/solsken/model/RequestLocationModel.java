@@ -11,42 +11,19 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
-import android.os.SystemClock;
 
-import com.martinryberglaude.solsken.MainActivity;
 import com.martinryberglaude.solsken.data.Coordinate;
-import com.martinryberglaude.solsken.data.LocationItem;
+import com.martinryberglaude.solsken.data.NamedCoordinate;
 import com.martinryberglaude.solsken.interfaces.MainContract;
-import com.martinryberglaude.solsken.interfaces.SearchContract;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class RequestLocationModel extends AsyncTask<Object, Integer, Coordinate> implements MainContract.RequestLocationIntractor {
+public class RequestLocationModel  implements MainContract.RequestLocationIntractor {
 
-    private LocationManager locationManager;
-    private Context context;
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
-    public MainContract.RequestLocationIntractor.OnFinishedListerner delegate = null;
-
-    public RequestLocationModel(LocationManager locationManager, Context context) {
-        this.locationManager = locationManager;
-        this.context = context;
-    }
-    private int locationAgeMinutes(Location last) {
-        return (int) locationAgeMillis(last) / (60*1000);
-    }
-    private long locationAgeSeconds(Location last) {
-        return (locationAgeMillis(last) / 1000);
-    }
-    private long locationAgeMillis(Location last) {
-        return (SystemClock.elapsedRealtimeNanos() - last
-                .getElapsedRealtimeNanos()) / 1000000;
-    }
     @SuppressLint("MissingPermission")
-    @Override
-    protected Coordinate doInBackground(Object... objects) {
+    public void getLocation(final OnFinishedListerner onFinishedListener, final Context context) {
         // Get last known location
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Criteria c = new Criteria();
@@ -56,102 +33,116 @@ public class RequestLocationModel extends AsyncTask<Object, Integer, Coordinate>
         c.setCostAllowed(true);
         c.setPowerRequirement(Criteria.POWER_LOW);
         String provider = locationManager.getBestProvider(c, true);
-        Location lastKnownLocation;
-        lastKnownLocation = locationManager.getLastKnownLocation(provider);
 
-        // Check if last known location was recorded less than two minutes ago
-        if (lastKnownLocation != null && locationAgeMillis(lastKnownLocation) < TWO_MINUTES) {
-            delegate.onFinishedRetrieveLocation(new Coordinate(lastKnownLocation.getLongitude(), lastKnownLocation.getLatitude()));
+        // Last known location was too old, retrieve new location
+        boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        final Looper looper = null;
+        // Prefer gps location
+        if (isGPSEnabled) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    GetAdress getAdress = new GetAdress(context, new Coordinate(location.getLongitude(), location.getLatitude()), onFinishedListener);
+                    getAdress.execute();
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                }
+            }, looper);
+            // No network available, get location through GPS
+        } else if (isNetworkEnabled) {
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            locationManager.requestSingleUpdate(criteria, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    GetAdress getAdress = new GetAdress(context, new Coordinate(location.getLongitude(), location.getLatitude()), onFinishedListener);
+                    getAdress.execute();
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                }
+            }, looper);
         } else {
-            // Last known location was too old, retrieve new location
-            boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            final Looper looper = null;
-            // Prefer gps location
-            if (isGPSEnabled) {
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_FINE);
-                locationManager.requestSingleUpdate(criteria, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        return new Coordinate(location.getLongitude(), location.getLatitude(), requestAdressString(location.getLatitude(), location.getLongitude()));
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                    }
-                }, looper);
-                // No network available, get location through GPS
-            } else if (isNetworkEnabled) {
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-                locationManager.requestSingleUpdate(criteria, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        onFinishedListener.onFinishedRetrieveLocation(new Coordinate(location.getLongitude(), location.getLatitude()));
-                    }
-
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                    }
-                }, looper);
-            } else {
-                onFinishedListener.onFailureRetrieveLocation();
-            }
+            onFinishedListener.onFailureRetrieveLocation();
         }
     }
-    private String requestAdressString(double lon, double lat) {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(context, Locale.getDefault());
-        String finalLocality;
-        try {
-            addresses = geocoder.getFromLocation(lat, lon, 1);
-            if (addresses.size() < 1) {
-                return "?";
-            }
-            String city = addresses.get(0).getLocality();
-            String subCity = addresses.get(0).getSubLocality();
-            String subAdminArea = addresses.get(0).getSubAdminArea();
-            String streetAdress = addresses.get(0).getFeatureName();
 
-            if (subCity == null) {
-                if (city == null) {
-                    if (subAdminArea == null) {
-                        if (streetAdress == null) {
-                            finalLocality = "?";
+    public class GetAdress extends AsyncTask<Void, Void, String> {
+        private Context context;
+        private Coordinate coordinate;
+        private OnFinishedListerner onFinishedListener;
+
+        public GetAdress(Context context, Coordinate coordinate, OnFinishedListerner onFinishedListerner) {
+            this.context = context;
+            this.coordinate = coordinate;
+            this.onFinishedListener = onFinishedListerner;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            Geocoder geocoder;
+            List<Address> addresses;
+            geocoder = new Geocoder(context, Locale.getDefault());
+            String finalLocality;
+            try {
+                addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
+                if (addresses.size() < 1) {
+                    return "?";
+                }
+                String city = addresses.get(0).getLocality();
+                String subCity = addresses.get(0).getSubLocality();
+                String subAdminArea = addresses.get(0).getSubAdminArea();
+                String streetAdress = addresses.get(0).getFeatureName();
+
+                if (subCity == null) {
+                    if (city == null) {
+                        if (subAdminArea == null) {
+                            if (streetAdress == null) {
+                                finalLocality = "?";
+                            } else {
+                                finalLocality = streetAdress;
+                            }
                         } else {
-                            finalLocality = streetAdress;
+                            finalLocality = subAdminArea;
                         }
                     } else {
-                        finalLocality = subAdminArea;
+                        finalLocality = city;
                     }
                 } else {
-                    finalLocality = city;
+                    finalLocality = subCity;
                 }
-            } else {
-                finalLocality = subCity;
+                return finalLocality;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "?";
             }
-            return finalLocality;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "?";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            onFinishedListener.onFinishedRetrieveLocation(new NamedCoordinate(coordinate.getLon(), coordinate.getLat(), result));
         }
     }
 }

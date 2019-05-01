@@ -13,15 +13,16 @@ import androidx.room.Room;
 
 public class RetrieveDatabaseWeathersAsyncTask extends AsyncTask<Object, Integer, Weathers> implements MainContract.RetrieveDatabaseWeathersIntractor {
 
-    public OnFinishedListener delegate = null;
+    private OnFinishedListener delegate;
     private static final String DATABASE_NAME = "weathers_db";
     private WeatherDatabase weatherDatabase;
     private WeakReference<Context> contextRef;
     private String id;
 
-    public RetrieveDatabaseWeathersAsyncTask(Context context, String id) {
+    public RetrieveDatabaseWeathersAsyncTask(Context context, String id, OnFinishedListener delegate) {
         this.contextRef = new WeakReference<>(context);
         this.id = id;
+        this.delegate = delegate;
     }
 
     @Override

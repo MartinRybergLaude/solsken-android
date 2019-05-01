@@ -2,6 +2,7 @@ package com.martinryberglaude.solsken.model;
 
 import android.os.AsyncTask;
 
+import com.martinryberglaude.solsken.App;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.LocationItem;
 import com.martinryberglaude.solsken.interfaces.SearchContract;
@@ -17,21 +18,20 @@ import retrofit2.Response;
 
 public class FormatPhotonDataAsyncTask extends AsyncTask<Object, Integer, List<LocationItem>> implements SearchContract.FormatLocationIntractor {
 
-    public SearchContract.FormatLocationIntractor.OnFinishedListener delegate = null;
+    private SearchContract.FormatLocationIntractor.OnFinishedListener delegate;
+
+    public FormatPhotonDataAsyncTask(SearchContract.FormatLocationIntractor.OnFinishedListener delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
     protected List<LocationItem> doInBackground(Object... objects) {
 
         Response<PhotonRetroLocations> response = (Response<PhotonRetroLocations>) objects[0];
-        List<Coordinate> boundary = new ArrayList<>();
-        boundary.add(new Coordinate(2.250475, 52.500440));
-        boundary.add(new Coordinate(27.392184, 52.542473));
-        boundary.add(new Coordinate(37.934697, 70.742227));
-        boundary.add(new Coordinate(-8.553029, 70.666011));
 
         Set<LocationItem> locationList = new LinkedHashSet<>();
         for (PhotonRetroFeature retroFeature : response.body().getFeatures()) {
-            if (isCoordinateInPolygon(boundary, new Coordinate(retroFeature.getGeometry().getCoordinates().get(0), retroFeature.getGeometry().getCoordinates().get(1)))
+            if (isCoordinateInBoundaries( new Coordinate(retroFeature.getGeometry().getCoordinates().get(0), retroFeature.getGeometry().getCoordinates().get(1)))
                     && retroFeature.getProperties().getName() != null && retroFeature.getProperties().getCountry() != null && retroFeature.getGeometry().getCoordinates() != null) {
                 LocationItem item = new LocationItem();
                 item.setCityString(retroFeature.getProperties().getName());
@@ -51,7 +51,8 @@ public class FormatPhotonDataAsyncTask extends AsyncTask<Object, Integer, List<L
         delegate.onFinishedFormatLocations(result);
     }
 
-    private boolean isCoordinateInPolygon(List<Coordinate> polygon, Coordinate testPoint) {
+    private boolean isCoordinateInBoundaries(Coordinate testPoint) {
+        List<Coordinate> polygon = new ArrayList<>(App.getMapBoundaries());
         boolean result = false;
         int j = polygon.size() - 1;
         for (int i = 0; i < polygon.size(); i++) {

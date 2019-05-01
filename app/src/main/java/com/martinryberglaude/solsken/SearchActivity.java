@@ -41,6 +41,8 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements SearchContract.FormatLocationIntractor.OnFinishedListener, SearchContract.LocationItemClickListener {
 
+    private static final String TAG = SearchActivity.class.getSimpleName();
+
     private Toolbar toolbar;
     private EditText searchEdittext;
     private Call<PhotonRetroLocations> call;
@@ -203,8 +205,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             public void onResponse(Call<PhotonRetroLocations> call, Response<PhotonRetroLocations> response) {
                 if (response.body() != null) {
                     if (!call.isCanceled()) {
-                        FormatPhotonDataAsyncTask formatAsyncTask = new FormatPhotonDataAsyncTask();
-                        formatAsyncTask.delegate = SearchActivity.this;
+                        FormatPhotonDataAsyncTask formatAsyncTask = new FormatPhotonDataAsyncTask(SearchActivity.this);
                         formatAsyncTask.execute(response);
                     }
                 } else {
@@ -215,6 +216,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             public void onFailure(Call<PhotonRetroLocations> call, Throwable t) {
                 if (!call.isCanceled()) {
                     showToast(getResources().getString(R.string.search_error));
+                    progressBar.setVisibility(View.INVISIBLE);
+
                 } else {
                     progressBar.setVisibility(View.GONE);
                 }

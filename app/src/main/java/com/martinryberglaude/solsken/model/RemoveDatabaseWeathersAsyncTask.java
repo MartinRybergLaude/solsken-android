@@ -17,15 +17,16 @@ import androidx.room.Room;
 
 public class RemoveDatabaseWeathersAsyncTask extends AsyncTask<Void, Boolean, String> implements MainContract.RemoveDatabaseWeathersIntractor {
 
-    public OnFinishedListener delegate = null;
+    private OnFinishedListener delegate;
     private static final String DATABASE_NAME = "weathers_db";
     private WeatherDatabase weatherDatabase;
     private List<Weathers> weathers;
     private WeakReference<Context> contextRef;
 
-    public RemoveDatabaseWeathersAsyncTask(Context context, List<Weathers> weathers) {
+    public RemoveDatabaseWeathersAsyncTask(Context context, List<Weathers> weathers, OnFinishedListener delegate) {
         this.contextRef = new WeakReference<>(context);
         this.weathers = new ArrayList<>(weathers);
+        this.delegate = delegate;
     }
 
     @Override

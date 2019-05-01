@@ -25,6 +25,8 @@ import java.util.Calendar;
 
 public class HoursActivity extends AppCompatActivity {
 
+    private static final String TAG = HoursActivity.class.getSimpleName();
+
     private RecyclerView recyclerView;
     private Toolbar toolbar;
     private DayItem dayItem;

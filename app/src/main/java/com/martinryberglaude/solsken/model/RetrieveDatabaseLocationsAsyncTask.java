@@ -14,13 +14,14 @@ import androidx.room.Room;
 
 public class RetrieveDatabaseLocationsAsyncTask extends AsyncTask<Object, Integer, List<Locations>> implements MainContract.RetrieveDatabaseLocationsIntractor {
 
-    public MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener delegate = null;
+    private MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener delegate;
     private static final String DATABASE_NAME = "locations_db";
     private LocationDatabase locationDatabase;
     private WeakReference<Context> contextRef;
 
-    public RetrieveDatabaseLocationsAsyncTask(Context context) {
+    public RetrieveDatabaseLocationsAsyncTask(Context context, MainContract.RetrieveDatabaseLocationsIntractor.OnFinishedListener delegate) {
         this.contextRef = new WeakReference<>(context);
+        this.delegate = delegate;
     }
 
     @Override

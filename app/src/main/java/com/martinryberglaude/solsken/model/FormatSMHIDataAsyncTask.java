@@ -8,6 +8,7 @@ import com.martinryberglaude.solsken.R;
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.HourItem;
+import com.martinryberglaude.solsken.data.NamedCoordinate;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.interfaces.MainContract;
@@ -33,16 +34,20 @@ import retrofit2.Response;
 
 public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatSMHIWeatherIntractor {
 
-    public MainContract.FormatSMHIWeatherIntractor.OnFinishedListener delegate = null;
+    private MainContract.FormatSMHIWeatherIntractor.OnFinishedListener delegate;
     private SharedPreferences sharedPreferences;
+    private Response<SMHIRetroWeatherData> response;
+    private NamedCoordinate coordinate;
+
+    public FormatSMHIDataAsyncTask(OnFinishedListener delegate, SharedPreferences sharedPreferences, Response<SMHIRetroWeatherData> response, NamedCoordinate coordinate) {
+        this.delegate = delegate;
+        this.sharedPreferences = sharedPreferences;
+        this.response = response;
+        this.coordinate = coordinate;
+    }
 
     @Override
     protected List<DayItem> doInBackground(Object... params) {
-
-        Response<SMHIRetroWeatherData> response = (Response<SMHIRetroWeatherData>) params[0];
-        sharedPreferences = (SharedPreferences) params[1];
-        Coordinate coordinate = (Coordinate) params[2];
-
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
@@ -350,7 +355,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
-    private int getWeatherIconToday(SMHIRetroParameter parameter, Coordinate coordinate, Calendar calendar) {
+    private int getWeatherIconToday(SMHIRetroParameter parameter, NamedCoordinate coordinate, Calendar calendar) {
         TimeOfDay timeOfDay = getTimeOfDay(coordinate, calendar);
         int symbolInt = (int) Math.round(parameter.getValues().get(0));
         int drawableInt;
@@ -479,7 +484,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
             return temperatureC;
         }
     }
-    private String[] getSunriseSunsetStrings(Coordinate coordinate, Calendar calendar) {
+    private String[] getSunriseSunsetStrings(NamedCoordinate coordinate, Calendar calendar) {
         Calendar[] calendars = ca.rmen.sunrisesunset.SunriseSunset.getSunriseSunset(calendar, coordinate.getLat(), coordinate.getLon());
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
         String sunriseString = getClockString(hourFormat.format(calendars[0].getTime()));
@@ -487,7 +492,7 @@ public class FormatSMHIDataAsyncTask extends AsyncTask<Object, Integer, List<Day
 
         return new String[] {sunriseString, sunsetString};
     }
-    private TimeOfDay getTimeOfDay(Coordinate coordinate, Calendar current) {
+    private TimeOfDay getTimeOfDay(NamedCoordinate coordinate, Calendar current) {
         if (!ca.rmen.sunrisesunset.SunriseSunset.isDay(current, coordinate.getLat(), coordinate.getLon())) {
             return TimeOfDay.NIGHT;
         }

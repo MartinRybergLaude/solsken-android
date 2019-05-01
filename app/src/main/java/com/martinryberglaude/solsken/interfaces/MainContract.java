@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
+import com.martinryberglaude.solsken.data.NamedCoordinate;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.database.Locations;
 import com.martinryberglaude.solsken.database.Weathers;
@@ -22,9 +23,8 @@ public interface MainContract {
         void setColorTheme();
         void showToast(String message);
         void showLocationError();
-        String requestAdressString(Coordinate coordinate);
         void showRefresh(boolean b);
-        Coordinate getCurrentCoordinate();
+        NamedCoordinate getCurrentCoordinate();
         void updateLocationAndUI();
         SharedPreferences getSharedPreferences();
         void setIsStart(boolean b);
@@ -43,7 +43,7 @@ public interface MainContract {
             void onFinishedRetrieveSMHIData(Response<SMHIRetroWeatherData> response);
             void onFailureRetrieveSMHIData(Throwable t);
         }
-        void getSMHIWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
+        void getSMHIWeatherData(OnFinishedListerner onFinishedListerner, NamedCoordinate coordinate);
     }
 
     interface RequestYRWeatherIntractor {
@@ -51,12 +51,12 @@ public interface MainContract {
             void onFinishedRetrieveYRData(Response<YRRetroWeatherData> response);
             void onFailureRetrieveYRData(Throwable t);
         }
-        void getYRWeatherData(OnFinishedListerner onFinishedListerner, Coordinate coordinate);
+        void getYRWeatherData(OnFinishedListerner onFinishedListerner, NamedCoordinate coordinate);
     }
 
     interface RequestLocationIntractor {
         interface OnFinishedListerner {
-            void onFinishedRetrieveLocation(Coordinate coordinate);
+            void onFinishedRetrieveLocation(NamedCoordinate namedCoordinate);
             void onFailureRetrieveLocation();
         }
         void getLocation(OnFinishedListerner onFinishedListerner, Context context);

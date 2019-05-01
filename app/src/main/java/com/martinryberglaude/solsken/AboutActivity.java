@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 public class AboutActivity extends AppCompatActivity {
 
+    private static final String TAG = AboutActivity.class.getSimpleName();
+
     private Toolbar toolbar;
     private String licenseRetrofit = "Copyright 2013 Square, Inc. \n\nLicensed under the Apache License, Version 2.0 (the \"License\"); " +
             "you may not use this file except in compliance with the License. " +

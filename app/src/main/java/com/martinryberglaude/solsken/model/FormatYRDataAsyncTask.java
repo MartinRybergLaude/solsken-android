@@ -4,13 +4,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.martinryberglaude.solsken.R;
-import com.martinryberglaude.solsken.data.Coordinate;
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.HourItem;
+import com.martinryberglaude.solsken.data.NamedCoordinate;
 import com.martinryberglaude.solsken.data.TimeOfDay;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.interfaces.MainContract;
-import com.martinryberglaude.solsken.networkYR.Location;
 import com.martinryberglaude.solsken.networkYR.Symbol;
 import com.martinryberglaude.solsken.networkYR.Time;
 import com.martinryberglaude.solsken.networkYR.YRRetroWeatherData;
@@ -34,16 +33,20 @@ import retrofit2.Response;
 public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayItem>> implements MainContract.FormatYRWeatherIntractor {
 
 
-    public MainContract.FormatYRWeatherIntractor.OnFinishedListener delegate = null;
+    private MainContract.FormatYRWeatherIntractor.OnFinishedListener delegate;
     private SharedPreferences sharedPreferences;
+    private Response<YRRetroWeatherData> response;
+    private NamedCoordinate coordinate;
+
+    public FormatYRDataAsyncTask(OnFinishedListener delegate, SharedPreferences sharedPreferences, Response<YRRetroWeatherData> response, NamedCoordinate coordinate) {
+        this.delegate = delegate;
+        this.sharedPreferences = sharedPreferences;
+        this.response = response;
+        this.coordinate = coordinate;
+    }
 
     @Override
     protected List<DayItem> doInBackground(Object... params) {
-
-        Response<YRRetroWeatherData> response = (Response<YRRetroWeatherData>) params[0];
-        sharedPreferences = (SharedPreferences) params[1];
-        Coordinate coordinate = (Coordinate) params[2];
-
         List<DayItem> dayList = new ArrayList<>();
         List<String> dateList = new ArrayList<>();
         String currentDate;
@@ -377,7 +380,7 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
-    private int getWeatherIconToday(Symbol symbol, Coordinate coordinate, Calendar calendar) {
+    private int getWeatherIconToday(Symbol symbol, NamedCoordinate coordinate, Calendar calendar) {
         TimeOfDay timeOfDay = getTimeOfDay(coordinate, calendar);
         int drawableInt;
         switch (Integer.parseInt(symbol.getNumber())) {
@@ -547,7 +550,7 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
             return temperatureC;
         }
     }
-    private String[] getSunriseSunsetStrings(Coordinate coordinate, Calendar calendar) {
+    private String[] getSunriseSunsetStrings(NamedCoordinate coordinate, Calendar calendar) {
         Calendar[] calendars = ca.rmen.sunrisesunset.SunriseSunset.getSunriseSunset(calendar, coordinate.getLat(), coordinate.getLon());
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
         String sunriseString = getClockString(hourFormat.format(calendars[0].getTime()));
@@ -555,7 +558,7 @@ public class FormatYRDataAsyncTask extends AsyncTask<Object, Integer, List<DayIt
 
         return new String[] {sunriseString, sunsetString};
     }
-    private TimeOfDay getTimeOfDay(Coordinate coordinate, Calendar current) {
+    private TimeOfDay getTimeOfDay(NamedCoordinate coordinate, Calendar current) {
         if (!ca.rmen.sunrisesunset.SunriseSunset.isDay(current, coordinate.getLat(), coordinate.getLon())) {
             return TimeOfDay.NIGHT;
         }

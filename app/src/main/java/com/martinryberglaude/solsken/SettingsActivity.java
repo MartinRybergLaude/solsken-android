@@ -16,6 +16,8 @@ import com.martinryberglaude.solsken.view.MainPreferenceFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private static final String TAG = SettingsActivity.class.getSimpleName();
+
     private Toolbar toolbar;
 
     @Override

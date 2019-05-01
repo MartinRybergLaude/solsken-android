@@ -21,6 +21,8 @@ import androidx.core.app.ActivityCompat;
 
 public class PermissionActivity extends AppCompatActivity {
 
+    private static final String TAG = PermissionActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

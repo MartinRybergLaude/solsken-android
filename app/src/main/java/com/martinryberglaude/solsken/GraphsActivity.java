@@ -48,6 +48,8 @@ import java.util.List;
 
 public class GraphsActivity extends AppCompatActivity {
 
+    private static final String TAG = GraphsActivity.class.getSimpleName();
+
     private Toolbar toolbar;
 
     @Override
@@ -179,7 +181,7 @@ public class GraphsActivity extends AppCompatActivity {
         dataSet2.setDrawFilled(false);
         dataSet2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
-        LineData lineData = new LineData(dataSet, dataSet2);
+        LineData lineData = new LineData(dataSet2, dataSet);
         chart.setData(lineData);
         chart.setVisibleXRangeMaximum(8);
         chart.getAxisLeft().setAxisMinimum(yAxisLeft.getAxisMinimum() - 1);

@@ -53,9 +53,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedRetrieveSMHIData(Response<SMHIRetroWeatherData> response) {
-      FormatSMHIDataAsyncTask formatAsyncTask = new FormatSMHIDataAsyncTask();
-      formatAsyncTask.delegate = this;
-      formatAsyncTask.execute(response, view.getSharedPreferences(), view.getCurrentCoordinate());
+      FormatSMHIDataAsyncTask formatAsyncTask = new FormatSMHIDataAsyncTask(this, view.getSharedPreferences(), response, view.getCurrentCoordinate());
+      formatAsyncTask.execute();
     }
 
     @Override
@@ -68,8 +67,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFinishedFormatSMHIDays(List<DayItem> dayList) {
         view.addWeather(dayList);
         view.showRefresh(false);
-        if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
-        else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);
+        if (isStart) view.updateWeatherUI(dayList, view.getCurrentCoordinate().getName(), true);
+        else view.updateWeatherUI(dayList, view.getCurrentCoordinate().getName(), false);
         isStart = false;
         view.setIsStart(false);
     }
@@ -82,9 +81,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
 
     @Override
     public void onFinishedRetrieveYRData(Response<YRRetroWeatherData> response) {
-        FormatYRDataAsyncTask formatAsyncTask = new FormatYRDataAsyncTask();
-        formatAsyncTask.delegate = this;
-        formatAsyncTask.execute(response, view.getSharedPreferences(), view.getCurrentCoordinate());
+        FormatYRDataAsyncTask formatAsyncTask = new FormatYRDataAsyncTask(this, view.getSharedPreferences(), response, view.getCurrentCoordinate());
+        formatAsyncTask.execute();
     }
 
     @Override
@@ -97,8 +95,8 @@ public class MainPresenter implements MainContract.Presenter, MainContract.Reque
     public void onFinishedFormatYRDays(List<DayItem> dayList) {
         view.addWeather(dayList);
         view.showRefresh(false);
-        if (isStart) view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), true);
-        else view.updateWeatherUI(dayList, view.requestAdressString(view.getCurrentCoordinate()), false);
+        if (isStart) view.updateWeatherUI(dayList, view.getCurrentCoordinate().getName(), true);
+        else view.updateWeatherUI(dayList, view.getCurrentCoordinate().getName(), false);
         isStart = false;
     }
 

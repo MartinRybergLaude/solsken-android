@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -24,7 +25,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.martinryberglaude.solsken.data.DayItem;
 import com.martinryberglaude.solsken.data.HourItem;
+import com.martinryberglaude.solsken.data.NamedCoordinate;
 import com.martinryberglaude.solsken.data.WindDirection;
 import com.martinryberglaude.solsken.database.Locations;
 import com.martinryberglaude.solsken.database.WeatherDatabase;
@@ -142,10 +143,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     private boolean currLocEnabled = true;
 
-    public Coordinate getCurrentCoordinate() {
+    public NamedCoordinate getCurrentCoordinate() {
         return currentCoordinate;
     }
-    private Coordinate currentCoordinate;
+    private NamedCoordinate currentCoordinate;
     private MainContract.RequestLocationIntractor getLocationIntractor;
 
     private List<DayItem> currentDayList;
@@ -231,8 +232,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         pullToRefresh.setProgressViewEndTarget(true, target);
         pullToRefresh.setProgressViewOffset(true, start, end);
 
-        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        getLocationIntractor = new RequestLocationModel(lm);
+        getLocationIntractor = new RequestLocationModel();
         mainPresenter = new MainPresenter(this, new RequestSMHIWeatherModel(), new RequestYRWeatherModel(), getResources().getString(R.string.weather_error));
 
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -423,13 +423,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         updateDrawerItems();
     }
     private void updateDrawerItems() {
-        RetrieveDatabaseLocationsAsyncTask retrieveTask = new RetrieveDatabaseLocationsAsyncTask(this);
-        retrieveTask.delegate = this;
+        RetrieveDatabaseLocationsAsyncTask retrieveTask = new RetrieveDatabaseLocationsAsyncTask(this, this);
         retrieveTask.execute();
     }
     private void removeDrawerMenuItem(Locations location) {
-        RemoveDatabaseLocationsAsyncTask removeTask = new RemoveDatabaseLocationsAsyncTask(this, location);
-        removeTask.delegate = this;
+        RemoveDatabaseLocationsAsyncTask removeTask = new RemoveDatabaseLocationsAsyncTask(this, location, this);
         removeTask.execute();
 
         Weathers weathers = new Weathers();
@@ -439,8 +437,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         List<Weathers> weatherList = new ArrayList<>();
         weatherList.add(weathers);
         weatherList.add(weathers2);
-        RemoveDatabaseWeathersAsyncTask removeWeathersTask = new RemoveDatabaseWeathersAsyncTask(this, weatherList);
-        removeWeathersTask.delegate = this;
+        RemoveDatabaseWeathersAsyncTask removeWeathersTask = new RemoveDatabaseWeathersAsyncTask(this, weatherList, this);
         removeWeathersTask.execute();
     }
     private void getDrawerMenuItems() {
@@ -585,49 +582,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Toast.makeText(MainActivity.this, message,
                 Toast.LENGTH_LONG).show();
     }
-    @Override
-    public String requestAdressString(Coordinate coordinate) {
-        if (autoLocation) {
-            Geocoder geocoder;
-            List<Address> addresses;
-            geocoder = new Geocoder(this, Locale.getDefault());
-            String finalLocality;
-            try {
-                addresses = geocoder.getFromLocation(coordinate.getLat(), coordinate.getLon(), 1);
-                if (addresses.size() < 1) {
-                    return "?";
-                }
-                String city = addresses.get(0).getLocality();
-                String subCity = addresses.get(0).getSubLocality();
-                String subAdminArea = addresses.get(0).getSubAdminArea();
-                String streetAdress = addresses.get(0).getFeatureName();
-
-                if (subCity == null) {
-                    if (city == null) {
-                        if (subAdminArea == null) {
-                            if (streetAdress == null) {
-                                finalLocality = "?";
-                            } else {
-                                finalLocality = streetAdress;
-                            }
-                        } else {
-                            finalLocality = subAdminArea;
-                        }
-                    } else {
-                        finalLocality = city;
-                    }
-                } else {
-                    finalLocality = subCity;
-                }
-                return finalLocality;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "?";
-            }
-        } else {
-            return selectedLocation.getLocationName();
-        }
-    }
 
     @Override
     public void showRefresh(final boolean b) {
@@ -656,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             prefs.edit().putBoolean("cacheExists", false).commit();
             final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
             final String provider = prefs.getString("data_src", "smhi");
-                currentCoordinate = new Coordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat());
+                currentCoordinate = new NamedCoordinate(selectedLocation.getLocationLon(), selectedLocation.getLocationLat(), selectedLocation.getLocationName());
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -665,7 +619,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                     WeatherDatabase.class, "weathers_db")
                                     .fallbackToDestructiveMigration()
                                     .build();
-                            Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + provider);
+                            Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(currentCoordinate.getName() + provider);
                             if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
                                 prefs.edit().putBoolean("cacheExists", true).commit();
                             }
@@ -702,11 +656,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private void loadCachedData() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String provider = prefs.getString("data_src","smhi");
-        String id = requestAdressString(currentCoordinate) + provider;
+        String id = currentCoordinate.getName() + provider;
         mainPresenter.loadColorTheme();
 
-        RetrieveDatabaseWeathersAsyncTask retrieveTask = new RetrieveDatabaseWeathersAsyncTask(this, id);
-        retrieveTask.delegate = this;
+        RetrieveDatabaseWeathersAsyncTask retrieveTask = new RetrieveDatabaseWeathersAsyncTask(this, id, this);
         retrieveTask.execute();
     }
 
@@ -721,13 +674,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void onFinishedRetrieveLocation(Coordinate coordinate) {
+    public void onFinishedRetrieveLocation(NamedCoordinate namedCoordinate) {
         // When location has been retrieved, launch all other tasks.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("cacheExists", false).commit();
         final boolean isWithinTimeLimit = System.currentTimeMillis() - prefs.getLong("cacheTime", 999999999) < cacheTotalValidTime;
         final String dataSource = prefs.getString("data_src", "smhi");
-        this.currentCoordinate = coordinate;
+        this.currentCoordinate = namedCoordinate;
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -736,7 +689,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                             WeatherDatabase.class, "weathers_db")
                             .fallbackToDestructiveMigration()
                             .build();
-                    Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(requestAdressString(currentCoordinate) + dataSource);
+                    Weathers weathers = weatherDatabase.daoAccess().fetchWeathersById(currentCoordinate.getName() + dataSource);
                     if (weathers != null && System.currentTimeMillis() - weathers.getExpirationTime() < cacheValidTime) {
                         prefs.edit().putBoolean("cacheExists", true).commit();
                     }
@@ -758,13 +711,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             loadCachedData();
         } else {
             // No cached data, load new data.
-            this.currentCoordinate = coordinate;
+            this.currentCoordinate = namedCoordinate;
             mainPresenter.loadColorTheme();
-
-            if (dataSource.equals("smhi")) {
-                mainPresenter.requestWeatherData(true);
+            if (!isCoordinateInBoundaries(new Coordinate(namedCoordinate.getLon(), namedCoordinate.getLat()))) {
+                showLocationError();
             } else {
-                mainPresenter.requestWeatherData(false);
+                if (dataSource.equals("smhi")) {
+                    mainPresenter.requestWeatherData(true);
+                } else {
+                    mainPresenter.requestWeatherData(false);
+                }
             }
         }
     }
@@ -792,7 +748,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void run() {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String id = requestAdressString(currentCoordinate) + prefs.getString("data_src", "smhi");
+                String id = currentCoordinate.getName() + prefs.getString("data_src", "smhi");
                 Weathers weathers = new Weathers();
                 weathers.setWeatherId(id);
                 weathers.setDayList(dayList);
@@ -819,22 +775,24 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Resources.Theme theme = getTheme();
 
         TypedValue typedValue = new TypedValue();
-        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
-        @ColorInt int color = typedValue.data;
+        theme.resolveAttribute(R.attr.primaryColor, typedValue, true);
 
         TypedValue typedValue2 = new TypedValue();
-        theme.resolveAttribute(R.attr.colorSecondary, typedValue2, true);
-        @ColorInt int color2 = typedValue2.data;
+        theme.resolveAttribute(R.attr.secondaryColor, typedValue2, true);
 
-        toolbar.setBackgroundColor(color);
-        setStatusBarColor(color2);
-        Log.d(TAG, "color SET");
+        @ColorInt int colorPrimary = ContextCompat.getColor(this, typedValue.resourceId);
+        @ColorInt int colorSeconday = ContextCompat.getColor(this, typedValue2.resourceId);
+
+        toolbar.setBackgroundColor(colorPrimary);
+        toolbar.animate().alpha(1.0f).setDuration(200);
+        setStatusBarColor(colorSeconday);
 
         cityText.setText("");
         mainView.setVisibility(View.INVISIBLE);
         sheetLayout.setVisibility(View.INVISIBLE);
         locationErrorTitle.setVisibility(View.VISIBLE);
         locationErrorBody.setVisibility(View.VISIBLE);
+        showRefresh(false);
     }
     private int blendColors(int from, int to, float ratio) {
         final float inverseRatio = 1f - ratio;
@@ -883,6 +841,20 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 icWindDirectionText.setText(windDirectionString);
                 break;
         }
+    }
+    private boolean isCoordinateInBoundaries(Coordinate testPoint) {
+        List<Coordinate> polygon = new ArrayList<>(App.getMapBoundaries());
+        boolean result = false;
+        int j = polygon.size() - 1;
+        for (int i = 0; i < polygon.size(); i++) {
+            if (polygon.get(i).getLon() < testPoint.getLon() && polygon.get(j).getLon() >= testPoint.getLon() || polygon.get(j).getLon() < testPoint.getLon() && polygon.get(i).getLon() >= testPoint.getLon()) {
+                if (polygon.get(j).getLat() + (testPoint.getLon() - polygon.get(j).getLon()) / (polygon.get(j).getLon() - polygon.get(i).getLon()) * (polygon.get(j).getLat() - polygon.get(i).getLat()) < testPoint.getLat()) {
+                    result = !result;
+                }
+            }
+            j = i;
+        }
+        return result;
     }
     @Override
     public void onBackPressed() {
@@ -1065,11 +1037,13 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void onFinishedRetrieveDatabaseWeathers(Weathers result) {
         showRefresh(false);
-        if (Calendar.getInstance().getTime().getTime() - result.getDayList().get(0).getHourList().get(0).getDate().getTime() > 30 * 60 * 1000) {
+        long difference = Calendar.getInstance().getTime().getTime() - result.getDayList().get(0).getHourList().get(0).getDate().getTime();
+        while (difference > 30 * 60 * 1000) {
             result.getDayList().get(0).getHourList().remove(0);
+            difference = Calendar.getInstance().getTime().getTime() - result.getDayList().get(0).getHourList().get(0).getDate().getTime();
         }
-        if (isStart) updateWeatherUI(result.getDayList(), requestAdressString(getCurrentCoordinate()), true);
-        else updateWeatherUI(result.getDayList(), requestAdressString(getCurrentCoordinate()), false);
+        if (isStart) updateWeatherUI(result.getDayList(), currentCoordinate.getName(), true);
+        else updateWeatherUI(result.getDayList(), currentCoordinate.getName(), false);
         isStart = false;
     }
 

@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 public class MapActivity extends AppCompatActivity {
 
+    private static final String TAG = MapActivity.class.getSimpleName();
+
     private Toolbar toolbar;
 
     @Override
