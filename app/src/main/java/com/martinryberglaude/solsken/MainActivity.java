@@ -510,8 +510,16 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 locationErrorTitle.setVisibility(View.INVISIBLE);
                 locationErrorBody.setVisibility(View.INVISIBLE);
 
-                DayItem dayItem = dayList.get(0);
+                DayItem dayItem;
+
+                if (dayList.get(0).getHourList().isEmpty()) {
+                    dayItem = dayList.get(1);
+                } else  {
+                    dayItem = dayList.get(0);
+                }
+
                 HourItem hourItem = dayItem.getHourList().get(0);
+
                 cityText.setText(city);
                 wsymb2Text.setText(hourItem.getWsymb2String());
                 temperatureText.setText(hourItem.getTemperatureString());
