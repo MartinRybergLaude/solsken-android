@@ -238,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 if (selectedDrawerPosition == -10) {
                     checkLocationEnabled();
@@ -339,8 +340,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         }
     }
     private void initDrawer() {
-        PrimaryDrawerItem settingsItem = new PrimaryDrawerItem().withName(getString(R.string.settings)).withIcon(R.drawable.ic_settings).withIconTintingEnabled(true).withIdentifier(-20);
-        PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withName(getString(R.string.about)).withIcon(R.drawable.ic_info).withIconTintingEnabled(true).withIdentifier(-30);
+        PrimaryDrawerItem settingsItem = new PrimaryDrawerItem().withName(getString(R.string.settings)).withIcon(R.drawable.ic_settings).withIconTintingEnabled(true).withIdentifier(-20).withSelectedBackgroundAnimated(false);
+        PrimaryDrawerItem aboutItem = new PrimaryDrawerItem().withName(getString(R.string.about)).withIcon(R.drawable.ic_info).withIconTintingEnabled(true).withIdentifier(-30).withSelectedBackgroundAnimated(false);
         List<IDrawerItem> drawerItems = new ArrayList<>();
         drawerItems.add(settingsItem);
         drawerItems.add(aboutItem);
@@ -366,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                                 if (currLocEnabled) {
                                     selectedDrawerPosition = -10;
                                     prefs.edit().putInt("selectedLoc", -10).commit();
+                                    recyclerScrollView.fullScroll(View.FOCUS_UP);
                                     sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                     autoLocation = true;
                                     mainPresenter.updateLocationAndUI();
@@ -382,6 +384,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                             default:
                                 for (Locations location : locList) {
                                     if (drawerItem.getIdentifier() == location.getLocationId()) {
+                                        recyclerScrollView.fullScroll(View.FOCUS_UP);
                                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                                         autoLocation = false;
                                         selectedLocation = location;
@@ -443,10 +446,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private void getDrawerMenuItems() {
         drawer.removeAllItems();
 
-        drawer.addItem(new PrimaryDrawerItem().withIdentifier(-10).withName(getString(R.string.current_location)).withIcon(R.drawable.ic_my_location).withIconTintingEnabled(true));
+        drawer.addItem(new PrimaryDrawerItem().withIdentifier(-10).withName(getString(R.string.current_location)).withIcon(R.drawable.ic_my_location).withIconTintingEnabled(true).withSelectedBackgroundAnimated(false));
 
         for (Locations location : locList) {
-            drawer.addItem(new PrimaryDrawerItem().withIdentifier(location.getLocationId()).withName(location.getLocationName()).withIcon(R.drawable.ic_location).withIconTintingEnabled(true));
+            drawer.addItem(new PrimaryDrawerItem().withIdentifier(location.getLocationId()).withName(location.getLocationName()).withIcon(R.drawable.ic_location).withIconTintingEnabled(true).withSelectedBackgroundAnimated(false));
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         drawer.setSelection(prefs.getInt("selectedLoc", -10));
@@ -499,6 +502,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     public void updateWeatherUI(final List<DayItem> dayList, final String city, final boolean initRecyclerview) {
         final SharedPreferences preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         currentDayList = new ArrayList<>(dayList);
+        long difference = Calendar.getInstance().getTime().getTime() - currentDayList.get(0).getHourList().get(0).getDate().getTime();
+        while (difference > 30 * 60 * 1000) {
+            currentDayList.get(0).getHourList().remove(0);
+            difference = Calendar.getInstance().getTime().getTime() - currentDayList.get(0).getHourList().get(0).getDate().getTime();
+        }
 
         // Wait 200ms for refresh animation to finish
         final Handler handler = new Handler();
@@ -929,11 +937,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         switch (requestCode) {
             case 1:
                 updateDrawerItems();
-                drawer.setSelection(selectedDrawerPosition);
+                drawer.setSelection(selectedDrawerPosition, false);
+                recyclerScrollView.fullScroll(View.FOCUS_UP);
                 sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 break;
             case 2:
-                 drawer.setSelection(selectedDrawerPosition);
+                drawer.setSelection(selectedDrawerPosition, false);
+                recyclerScrollView.fullScroll(View.FOCUS_UP);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 break;
             case 3:
                 checkLocationEnabled();

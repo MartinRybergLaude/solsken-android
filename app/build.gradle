@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.martinryberglaude.solsken"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 3
-        versionName "1.02"
+        targetSdkVersion 29
+        versionCode 4
+        versionName "1.03"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

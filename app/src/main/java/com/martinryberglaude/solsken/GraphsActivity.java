@@ -7,8 +7,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ import java.util.List;
 public class GraphsActivity extends AppCompatActivity {
 
     private static final String TAG = GraphsActivity.class.getSimpleName();
+    private boolean isDarkMode = false;
 
     private Toolbar toolbar;
 
@@ -71,6 +74,11 @@ public class GraphsActivity extends AppCompatActivity {
                 }
             });
         }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("dark_theme", false)) {
+            isDarkMode = true;
+        }
+
         DayItem dayItem = (DayItem) getIntent().getSerializableExtra("dayItem");
         List<HourItem> hourList = new ArrayList<>(dayItem.getHourList());
 
@@ -99,10 +107,15 @@ public class GraphsActivity extends AppCompatActivity {
     }
 
     private void initChartTemperature(List<HourItem> hourList, LineChart chart) {
+
+        if (isDarkMode) {
+            chart.setBackgroundColor(Color.BLACK);
+            chart.getAxisLeft().setTextColor(Color.WHITE);
+            chart.getXAxis().setTextColor(Color.WHITE);
+            chart.getLegend().setTextColor(Color.WHITE);
+        }
+
         chart.setNoDataText(getString(R.string.general_error_title));
-        chart.setDrawGridBackground(true);
-        chart.setGridBackgroundColor(getResources().getColor(R.color.white));
-        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setDrawBorders(false);
         chart.setAutoScaleMinMaxEnabled(false);
         chart.setPinchZoom(false);
@@ -128,19 +141,32 @@ public class GraphsActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         xAxis.setGranularity(1.0f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            xAxis.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
+
 
         YAxis yAxisRight = chart.getAxisRight();
         yAxisRight.setDrawLabels(false);
         yAxisRight.setDrawGridLines(false);
         yAxisRight.setDrawAxisLine(false);
-        yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisRight.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
 
         YAxis yAxisLeft = chart.getAxisLeft();
         yAxisLeft.setGranularityEnabled(true);
         yAxisLeft.setGranularity(1.0f);
         yAxisLeft.setDrawAxisLine(false);
-        yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -154,7 +180,9 @@ public class GraphsActivity extends AppCompatActivity {
         for (HourItem hourItem : hourList) {
             if (hourItem.getTemperatureString() != null) {
                 String[] temperatures = hourItem.getTemperatureString().split("°");
-                entries.add(new Entry(count, Integer.parseInt(temperatures[0]), getResources().getDrawable(hourItem.getWsymb2Drawable())));
+                Drawable icon = getResources().getDrawable(hourItem.getWsymb2Drawable());
+                if (isDarkMode) { icon.setTint(Color.WHITE); }
+                entries.add(new Entry(count, Integer.parseInt(temperatures[0]), icon));
             }
             if (hourItem.getFeelsLikeString() != null) {
                 String[] temperatures = hourItem.getFeelsLikeString().split("°");
@@ -189,10 +217,13 @@ public class GraphsActivity extends AppCompatActivity {
         chart.getData().setHighlightEnabled(false);
     }
     private void initChartWind(List<HourItem> hourList, LineChart chart) {
+        if (isDarkMode) {
+            chart.setBackgroundColor(Color.BLACK);
+            chart.getAxisLeft().setTextColor(Color.WHITE);
+            chart.getXAxis().setTextColor(Color.WHITE);
+            chart.getLegend().setTextColor(Color.WHITE);
+        }
         chart.setNoDataText(getString(R.string.general_error_title));
-        chart.setDrawGridBackground(true);
-        chart.setGridBackgroundColor(getResources().getColor(R.color.white));
-        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setDrawBorders(false);
         chart.setAutoScaleMinMaxEnabled(false);
         chart.setPinchZoom(false);
@@ -218,19 +249,32 @@ public class GraphsActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         xAxis.setGranularity(1.0f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            xAxis.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
+
 
         YAxis yAxisRight = chart.getAxisRight();
         yAxisRight.setDrawLabels(false);
         yAxisRight.setDrawGridLines(false);
         yAxisRight.setDrawAxisLine(false);
-        yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisRight.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
 
         YAxis yAxisLeft = chart.getAxisLeft();
         yAxisLeft.setGranularityEnabled(true);
         yAxisLeft.setGranularity(1.0f);
         yAxisLeft.setDrawAxisLine(false);
-        yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -244,7 +288,9 @@ public class GraphsActivity extends AppCompatActivity {
         for (HourItem hourItem : hourList) {
             if (hourItem.getWindSpeedString() != null) {
                 String[] winds = hourItem.getWindSpeedString().split(" ");
-                entries.add(new Entry(count, Integer.parseInt(winds[0]), getResources().getDrawable(hourItem.getWindDrawable())));
+                Drawable icon = getResources().getDrawable(hourItem.getWindDrawable());
+                if (isDarkMode) {icon.setTint(Color.WHITE);}
+                entries.add(new Entry(count, Integer.parseInt(winds[0]), icon));
             }
             if (hourItem.getGustSpeedString() != null) {
                 String[] gusts = hourItem.getGustSpeedString().split(" ");
@@ -279,10 +325,13 @@ public class GraphsActivity extends AppCompatActivity {
         chart.getData().setHighlightEnabled(false);
     }
     private void initChartPressure(List<HourItem> hourList, LineChart chart) {
+        if (isDarkMode) {
+            chart.setBackgroundColor(Color.TRANSPARENT);
+            chart.getAxisLeft().setTextColor(Color.WHITE);
+            chart.getXAxis().setTextColor(Color.WHITE);
+            chart.getLegend().setTextColor(Color.WHITE);
+        }
         chart.setNoDataText(getString(R.string.general_error_title));
-        chart.setDrawGridBackground(true);
-        chart.setGridBackgroundColor(getResources().getColor(R.color.white));
-        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setDrawBorders(false);
         chart.setAutoScaleMinMaxEnabled(false);
         chart.setPinchZoom(false);
@@ -308,19 +357,32 @@ public class GraphsActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         xAxis.setGranularity(1.0f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            xAxis.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
+
 
         YAxis yAxisRight = chart.getAxisRight();
         yAxisRight.setDrawLabels(false);
         yAxisRight.setDrawGridLines(false);
         yAxisRight.setDrawAxisLine(false);
-        yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisRight.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
 
         YAxis yAxisLeft = chart.getAxisLeft();
         yAxisLeft.setGranularityEnabled(true);
         yAxisLeft.setGranularity(1.0f);
         yAxisLeft.setDrawAxisLine(false);
-        yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -356,10 +418,13 @@ public class GraphsActivity extends AppCompatActivity {
         chart.getData().setHighlightEnabled(false);
     }
     private void initChartPrecipitation(List<HourItem> hourList, CombinedChart chart) {
+        if (isDarkMode) {
+            chart.setBackgroundColor(Color.TRANSPARENT);
+            chart.getAxisLeft().setTextColor(Color.WHITE);
+            chart.getXAxis().setTextColor(Color.WHITE);
+            chart.getLegend().setTextColor(Color.WHITE);
+        }
         chart.setNoDataText(getString(R.string.general_error_title));
-        chart.setDrawGridBackground(true);
-        chart.setGridBackgroundColor(getResources().getColor(R.color.white));
-        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setDrawBorders(false);
         chart.setAutoScaleMinMaxEnabled(false);
         chart.setPinchZoom(false);
@@ -385,19 +450,32 @@ public class GraphsActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         xAxis.setGranularity(1.0f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            xAxis.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
+
 
         YAxis yAxisRight = chart.getAxisRight();
         yAxisRight.setDrawLabels(false);
         yAxisRight.setDrawGridLines(false);
         yAxisRight.setDrawAxisLine(false);
-        yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisRight.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
 
         YAxis yAxisLeft = chart.getAxisLeft();
         yAxisLeft.setGranularityEnabled(true);
-        yAxisLeft.setGranularity(0.5f);
+        yAxisLeft.setGranularity(1.0f);
         yAxisLeft.setDrawAxisLine(false);
-        yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -461,10 +539,13 @@ public class GraphsActivity extends AppCompatActivity {
         chart.getData().setHighlightEnabled(false);
     }
     private void initChartHumidity(List<HourItem> hourList, LineChart chart) {
+        if (isDarkMode) {
+            chart.setBackgroundColor(Color.TRANSPARENT);
+            chart.getAxisLeft().setTextColor(Color.WHITE);
+            chart.getXAxis().setTextColor(Color.WHITE);
+            chart.getLegend().setTextColor(Color.WHITE);
+        }
         chart.setNoDataText(getString(R.string.general_error_title));
-        chart.setDrawGridBackground(true);
-        chart.setGridBackgroundColor(getResources().getColor(R.color.white));
-        chart.setBackgroundColor(getResources().getColor(R.color.white));
         chart.setDrawBorders(false);
         chart.setAutoScaleMinMaxEnabled(false);
         chart.setPinchZoom(false);
@@ -490,19 +571,32 @@ public class GraphsActivity extends AppCompatActivity {
         xAxis.setDrawAxisLine(false);
         xAxis.setGranularity(1.0f);
         xAxis.setGranularityEnabled(true);
-        xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            xAxis.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            xAxis.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
+
 
         YAxis yAxisRight = chart.getAxisRight();
         yAxisRight.setDrawLabels(false);
         yAxisRight.setDrawGridLines(false);
         yAxisRight.setDrawAxisLine(false);
-        yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisRight.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisRight.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
 
         YAxis yAxisLeft = chart.getAxisLeft();
         yAxisLeft.setGranularityEnabled(true);
         yAxisLeft.setGranularity(1.0f);
         yAxisLeft.setDrawAxisLine(false);
-        yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        if (isDarkMode) {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.lighterDarkGray));
+        } else {
+            yAxisLeft.setGridColor(getResources().getColor(R.color.darkerLightGray));
+        }
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {

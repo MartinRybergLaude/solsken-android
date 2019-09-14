@@ -33,6 +33,7 @@
     <color name="lightGray">#f0f4fd</color>
     <color name="darkerLightGray">#E0E3EC</color>
     <color name="darkGray">#202020</color>
+    <color name="lighterDarkGray">#3F3F3F</color>
     <color name="blueGray">#303049</color>
 
     <color name="transparentWhite">#40ffffff</color>
